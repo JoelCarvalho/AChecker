@@ -1,9 +1,10 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
@@ -12,8 +13,7 @@
 // $Id: checker_results.tmpl.php 501 2011-02-25 17:43:05Z greg $
 
 // display seals
-if (is_array($this->seals))
-{
+if (is_array($this->seals)) {
 ?>
 <h3><?php echo _AC('valid_icons');?></h3>
 <p><?php echo _AC('valid_icons_text');?></p>
@@ -23,8 +23,7 @@ if (is_array($this->seals))
 	if (isset($this->user_link_id))
 		$user_link_url = '&amp;id='.$this->user_link_id;
 	
-	foreach ($this->seals as $seal)
-	{
+	foreach ($this->seals as $seal) {
 ?>
 	<img class="inline-badge" src="<?php echo SEAL_ICON_FOLDER . $seal['seal_icon_name'];?>"
     alt="<?php echo $seal['title']; ?>" height="32" width="102"/>

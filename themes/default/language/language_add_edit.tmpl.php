@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 global $onload;
 $onload = "initial();";
@@ -17,7 +24,7 @@ $onload = "initial();";
 include(AC_INCLUDE_PATH.'header.inc.php');
 ?>
 
-<form name="input_form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?><?php if (isset($_GET["id"])) echo '?id='.intval($_GET["id"]); ?>" >
+<form name="input_form" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?><?php if (isset($_GET["id"])) echo '?id='.$_GET["id"]; ?>" >
 <?php if (isset($this->row["language_code"])) {?>
 <input type="hidden" name="language_code" value="<?php echo $this->row["language_code"]; ?>" />
 <input type="hidden" name="charset" value="<?php echo $this->row["charset"]; ?>" />
@@ -39,8 +46,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 			<select name="lang_code" id="lang_code">
 				<option value="-1">-- <?php echo _AC('select');?> --</option>
 <?php 
-	foreach ($this->rows_lang as $row_lang)
-	{
+	foreach ($this->rows_lang as $row_lang) {
 ?>
 				<option value="<?php echo $row_lang['code_3letters']; ?>" <?php if ((isset($_POST["lang_code"]) && $_REQUEST["lang_code"] == $row_lang['code_3letters']) || (!isset($_REQUEST["lang_code"]) && $this->row["lang_code"] == $row_lang['code_3letters'])) echo 'selected="selected"'; ?>><?php echo $row_lang["description"]. ' - '. $row_lang['code_3letters']; ?></option>
 <?php
@@ -107,14 +113,13 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 <script type="text/JavaScript">
 //<!--
 
-function initial()
-{
+function initial() {
 	// set cursor focus
 	document.input_form.lang_code.focus();
 }
 
 function CheckAll(element_name, selectall_checkbox_name) {
-	for (var i=0;i<document.input_form.elements.length;i++)	{
+	for (var i=0;i<document.input_form.elements.length;i++) {
 		var e = document.input_form.elements[i];
 		if ((e.name == element_name) && (e.type=='checkbox')) {
 			e.checked = document.input_form[selectall_checkbox_name].checked;

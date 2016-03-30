@@ -1,17 +1,24 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\UserGroupsDAO;
+use QChecker\DAO\DAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include(AC_INCLUDE_PATH.'classes/DAO/UserGroupsDAO.class.php');
 
@@ -75,8 +82,8 @@ if (isset($_GET['include']) && $_GET['include'] == 'one') {
 }
 
 if ($_GET['search']) {
-	$page_string .= htmlspecialchars(SEP).'search='.urlencode($stripslashes($_GET['search']));
-	$search = $addslashes($_GET['search']);
+	$page_string .= htmlspecialchars(SEP).'search='.urlencode($_GET['search']);
+	$search = addslashes($_GET['search']);
 	$search = explode(' ', $search);
 
 	if ($_GET['include'] == 'all') {
@@ -136,7 +143,7 @@ $user_rows = $dao->execute($sql);
 
 if ( isset($_GET['apply_all']) && $_GET['change_status'] >= -1) {
 	$ids = '';
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = $result->fetch_assoc()) {
 		$ids .= $row['user_id'].','; 
 	}
 	$ids = substr($ids,0,-1);

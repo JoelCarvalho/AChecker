@@ -1,15 +1,18 @@
-<?php
+<?php namespace QChecker\Language;
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\DAO\LanguagesDAO;
+use \mysqli;
 
 require_once(dirname(__FILE__) . '/Language.class.php');
 
@@ -19,352 +22,360 @@ require_once(dirname(__FILE__) . '/Language.class.php');
 //define('AC_LANG_STATUS_PUBLISHED',   3);
 
 /**
-* LanguageManager
-* Class for managing available languages as Language Objects.
-* @access	public
-* @author	Joel Kronenberg
-* @see		Language.class.php
-* @package	Language
-*/
+ * LanguageManager
+ * Class for managing available languages as Language Objects.
+ * @access    public
+ * @author    Joel Kronenberg
+ * @see        Language.class.php
+ * @package    Language
+ */
 class LanguageManager {
 
-	/**
-	* This array stores references to all the Language Objects
-	* that are available in this installation.
-	* @access private
-	* @var array
-	*/
-	var $allLanguages;
-	
-	/**
-	* This array stores references to the Language Objects
-	* that are available in this installation.
-	* @access private
-	* @var array
-	*/
-	var $availableLanguages;
+    /**
+     * This array stores references to all the Language Objects
+     * that are available in this installation.
+     * @access private
+     * @var array
+     */
+    var $allLanguages;
 
-	/**
-	* The number of languages that are available. Does not include
-	* character set variations.
-	* @access private
-	* @var integer
-	*/
-	var $numEnabledLanguages;
+    /**
+     * This array stores references to the Language Objects
+     * that are available in this installation.
+     * @access private
+     * @var array
+     */
+    var $availableLanguages;
 
-	/**
-	* Constructor.
-	* 
-	* Initializes availableLanguages and numLanguages.
-	*/
-	function LanguageManager() {
-		require_once(AC_INCLUDE_PATH. 'classes/DAO/LanguagesDAO.class.php');
-		$languagesDAO = new LanguagesDAO();
-		
-		// initialize available lanuguages. Available languages are the ones with status "enabled"
-		$rows = $languagesDAO->getAllEnabled();
-		
-		// if there's no enabled language, set to default language and default charset
-		if (!is_array($rows))
-		{
-			$rows = array($languagesDAO->getByLangCodeAndCharset(DEFAULT_LANGUAGE_CODE, DEFAULT_CHARSET));
-		}
-		foreach ($rows as $i => $row) {
-			$this->availableLanguages[$row['language_code']][$row['charset']] = new Language($row);
-		}
-		$this->numEnabledLanguages = count($this->availableLanguages);
+    /**
+     * The number of languages that are available. Does not include
+     * character set variations.
+     * @access private
+     * @var integer
+     */
+    var $numEnabledLanguages;
 
-			// initialize available lanuguages. Available languages are the ones with status "enabled"
-		$rows = $languagesDAO->getAll();
-		
-		foreach ($rows as $i => $row) {
-			$this->allLanguages[$row['language_code']][$row['charset']] = new Language($row);
-		}
-	}
+    /**
+     * Constructor.
+     *
+     * Initializes availableLanguages and numLanguages.
+     */
+    function __construct()
+    {
+        require_once(AC_INCLUDE_PATH . 'classes/DAO/LanguagesDAO.class.php');
+        $languagesDAO = new LanguagesDAO();
+
+        // initialize available lanuguages. Available languages are the ones with status "enabled"
+        $rows = $languagesDAO->getAllEnabled();
+
+        // if there's no enabled language, set to default language and default charset
+        if (!is_array($rows)) {
+            $rows = array($languagesDAO->getByLangCodeAndCharset(DEFAULT_LANGUAGE_CODE, DEFAULT_CHARSET));
+        }
+        foreach ($rows as $i => $row) {
+            $this->availableLanguages[$row['language_code']][$row['charset']] = new Language($row);
+        }
+        $this->numEnabledLanguages = count($this->availableLanguages);
+
+        // initialize available lanuguages. Available languages are the ones with status "enabled"
+        $rows = $languagesDAO->getAll();
+
+        foreach ($rows as $i => $row) {
+            $this->allLanguages[$row['language_code']][$row['charset']] = new Language($row);
+        }
+    }
 
 
-	/**
-	* Returns a valid Language Object based on the given language $code and optional
-	* $charset, FALSE if it can't be found.
-	* @access	public
-	* @param	string $code		The language code of the language to return.
-	* @param	string $charset		Optionally, the character set of the language to find.
-	* @return	boolean|Language	Returns FALSE if the requested language code and
-	*								character set cannot be found. Returns a Language Object for the
-	*								specified language code and character set.
-	* @see		getMyLanguage()
-	*/
-	function getLanguage($code, $charset = '') {
-		if (!$charset) {
-			if (isset($this->allLanguages[$code])) {
-				return current($this->allLanguages[$code]);
-			} else {
-				return FALSE;
-			}
-		}
+    /**
+     * Returns a valid Language Object based on the given language $code and optional
+     * $charset, FALSE if it can't be found.
+     * @access    public
+     * @param    string $code The language code of the language to return.
+     * @param    string $charset Optionally, the character set of the language to find.
+     * @return    boolean|Language    Returns FALSE if the requested language code and
+     *                                character set cannot be found. Returns a Language Object for the
+     *                                specified language code and character set.
+     * @see        getMyLanguage()
+     */
+    function getLanguage($code, $charset = '')
+    {
+        if (!$charset) {
+            if (isset($this->allLanguages[$code])) {
+                return current($this->allLanguages[$code]);
+            } else {
+                return FALSE;
+            }
+        }
 
-		foreach ($this->allLanguages[$code] as $language) {
-			if ($language->getCharacterSet() == $charset) {
-				return $language;
-			}
-		}
-		return FALSE;
-	}
+        foreach ($this->allLanguages[$code] as $language) {
+            if ($language->getCharacterSet() == $charset) {
+                return $language;
+            }
+        }
+        return FALSE;
+    }
 
-	/**
-	* Tries to detect the user's current language preference/setting from (in order):
-	* _GET, _POST, _SESSION, HTTP_ACCEPT_LANGUAGE, HTTP_USER_AGENT. If no match can be made
-	* then it tries to detect a default setting (defined in config.inc.php) or a fallback
-	* setting, false if all else fails.
-	* @access	public
-	* @return	boolean|Language	Returns a Language Object matching the user's current session.
-	*								Returns FALSE if a valid Language Object cannot be found
-	*								to match the request
-	* @see		getLanguage()
-	*/
-	function getMyLanguage() {
-		global $addslashes, $db; 
+    /**
+     * Tries to detect the user's current language preference/setting from (in order):
+     * _GET, _POST, _SESSION, HTTP_ACCEPT_LANGUAGE, HTTP_USER_AGENT. If no match can be made
+     * then it tries to detect a default setting (defined in config.inc.php) or a fallback
+     * setting, false if all else fails.
+     * @access    public
+     * @return    boolean|Language    Returns a Language Object matching the user's current session.
+     *                                Returns FALSE if a valid Language Object cannot be found
+     *                                to match the request
+     * @see        getLanguage()
+     */
+    function getMyLanguage(){
 
-		if (isset($_GET) && !empty($_GET['lang']) && isset($this->availableLanguages[$_GET['lang']])) {
-			$language = $this->getLanguage($_GET['lang']);
+        if (isset($_GET) && !empty($_GET['lang']) && isset($this->availableLanguages[$_GET['lang']])) {
+            $language = $this->getLanguage($_GET['lang']);
 
-			if ($language) {
-				return $language;
-			}
+            if ($language) {
+                return $language;
+            }
 
-		} 
+        }
 
-		if (isset($_POST) && !empty($_POST['lang']) && isset($this->availableLanguages[$_POST['lang']])) {
-			$language = $this->getLanguage($_POST['lang']);
+        if (isset($_POST) && !empty($_POST['lang']) && isset($this->availableLanguages[$_POST['lang']])) {
+            $language = $this->getLanguage($_POST['lang']);
 
-			if ($language) {
-				return $language;
-			}
+            if ($language) {
+                return $language;
+            }
 
-		} 
-		if (isset($_SESSION) && isset($_SESSION['lang']) && !empty($_SESSION['lang']) && isset($this->availableLanguages[$_SESSION['lang']])) {
-			$language = $this->getLanguage($_SESSION['lang']);
+        }
+        if (isset($_SESSION) && isset($_SESSION['lang']) && !empty($_SESSION['lang']) && isset($this->availableLanguages[$_SESSION['lang']])) {
+            $language = $this->getLanguage($_SESSION['lang']);
 
-			if ($language) {
-				return $language;
-			}
-		}
+            if ($language) {
+                return $language;
+            }
+        }
 
-		if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 
-			// Language is not defined yet :
-			// try to find out user's language by checking its HTTP_ACCEPT_LANGUAGE
-			$accepted    = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-			$acceptedCnt = count($accepted);
-			reset($accepted);
-			for ($i = 0; $i < $acceptedCnt; $i++) {
-				foreach ($this->availableLanguages as $codes) {
-					foreach ($codes as $language) {
-						if ($language->isMatchHttpAcceptLanguage($accepted[$i])) {
-							return $language;
-						}
-					}
-				}
-			}
-		}
-		
-		if (!empty($_SERVER['HTTP_USER_AGENT'])) {
+            // Language is not defined yet :
+            // try to find out user's language by checking its HTTP_ACCEPT_LANGUAGE
+            $accepted = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            $acceptedCnt = count($accepted);
+            reset($accepted);
+            for ($i = 0; $i < $acceptedCnt; $i++) {
+                foreach ($this->availableLanguages as $codes) {
+                    foreach ($codes as $language) {
+                        if ($language->isMatchHttpAcceptLanguage($accepted[$i])) {
+                            return $language;
+                        }
+                    }
+                }
+            }
+        }
 
-			// Language is not defined yet :
-			// try to find out user's language by checking its HTTP_USER_AGENT
-			foreach ($this->availableLanguages as $codes) {
-				foreach ($codes as $language) {
-					if ($language->isMatchHttpUserAgent($_SERVER['HTTP_USER_AGENT'])) {
-						return $language;
-					}
-				}
-			}
-		}
+        if (!empty($_SERVER['HTTP_USER_AGENT'])) {
 
-		// Didn't catch any valid lang : we use the default settings
-		if (isset($this->availableLanguages[DEFAULT_LANGUAGE_CODE])) {
-			$language = $this->getLanguage(DEFAULT_LANGUAGE_CODE, DEFAULT_CHARSET);
+            // Language is not defined yet :
+            // try to find out user's language by checking its HTTP_USER_AGENT
+            foreach ($this->availableLanguages as $codes) {
+                foreach ($codes as $language) {
+                    if ($language->isMatchHttpUserAgent($_SERVER['HTTP_USER_AGENT'])) {
+                        return $language;
+                    }
+                }
+            }
+        }
 
-			if ($language) {
-				return $language;
-			}
-		}
-		
-		// else pick one at random:
-		reset($this->availableLanguages);
-		$uknown_language = current($this->availableLanguages);
-		if ($unknown_language) {
-			return FALSE;
-		}
-		
-		return current($uknown_language);
-	}
+        // Didn't catch any valid lang : we use the default settings
+        if (isset($this->availableLanguages[DEFAULT_LANGUAGE_CODE])) {
+            $language = $this->getLanguage(DEFAULT_LANGUAGE_CODE, DEFAULT_CHARSET);
 
-	function getAvailableLanguages() {
-		return $this->availableLanguages;
-	}
+            if ($language) {
+                return $language;
+            }
+        }
 
-	// public
-	function printDropdown($current_language, $name, $id) {
-		echo '<select name="'.$name.'" id="'.$id.'">';
+        // else pick one at random:
+        reset($this->availableLanguages);
+        $unknown_language = current($this->availableLanguages);
+        if ($unknown_language) {
+            return FALSE;
+        }
 
-		foreach ($this->availableLanguages as $codes) {
-			$language = current($codes);
-			if ($language->getStatus() == AC_STATUS_ENABLED) {
-				echo '<option value="'.$language->getCode().'"';
-				if ($language->getCode() == $current_language) {
-					echo ' selected="selected"';
-				}
-				echo '>'.htmlspecialchars($language->getNativeName()).'</option>';
-			}
-		}
-		echo '</select>';
-	}
+        return current($uknown_language);
+    }
 
-	// public
-	function printList($current_language, $name, $id, $url) {
+    function getAvailableLanguages()
+    {
+        return $this->availableLanguages;
+    }
 
-		$delim = false;
-		foreach ($this->availableLanguages as $codes) {
-			$language = current($codes);
+    // public
+    function printDropdown($current_language, $name, $id)
+    {
+        echo '<select name="' . $name . '" id="' . $id . '">';
 
-			if ($language->getStatus() == AC_STATUS_ENABLED) {
+        foreach ($this->availableLanguages as $codes) {
+            $language = current($codes);
+            if ($language->getStatus() == AC_STATUS_ENABLED) {
+                echo '<option value="' . $language->getCode() . '"';
+                if ($language->getCode() == $current_language) {
+                    echo ' selected="selected"';
+                }
+                echo '>' . htmlspecialchars($language->getNativeName()) . '</option>';
+            }
+        }
+        echo '</select>';
+    }
 
-				if ($delim){
-					echo ' | ';
-				}
+    // public
+    function printList($current_language, $name, $id, $url)
+    {
 
-				if ($language->getCode() == $current_language) {
-					echo '<strong>'.$language->getNativeName().'</strong>';
-				} else {
-					echo '<a href="'.$url.'lang='.$language->getCode().'">'.$language->getNativeName().'</a> ';
-				}
+        $delim = false;
+        foreach ($this->availableLanguages as $codes) {
+            $language = current($codes);
 
-				$delim = true;
-			}
-		}
-	}
+            if ($language->getStatus() == AC_STATUS_ENABLED) {
 
-	// public
-	function getNumEnabledLanguages() {
-		return $this->numEnabledLanguages;
-	}
+                if ($delim) {
+                    echo ' | ';
+                }
 
-	// public
-	// checks whether or not the language exists
-	function exists($code) {
-		return isset($this->allLanguages[$code]);
-	}
+                if ($language->getCode() == $current_language) {
+                    echo '<strong>' . $language->getNativeName() . '</strong>';
+                } else {
+                    echo '<a href="' . $url . 'lang=' . $language->getCode() . '">' . $language->getNativeName() . '</a> ';
+                }
 
-	// public
-	// import language pack from specified file
-	// return imported AChecker version if it does not match with the current version
-	function import($filename, $ignore_version = false) {
-		require_once(AC_INCLUDE_PATH . 'lib/pclzip.lib.php');
+                $delim = true;
+            }
+        }
+    }
 
-		$import_path = AC_TEMP_DIR . 'import/';
+    // public
+    function getNumEnabledLanguages()
+    {
+        return $this->numEnabledLanguages;
+    }
 
-		$archive = new PclZip($filename);
-		if ($archive->extract(PCLZIP_OPT_PATH,	$import_path) == 0) {
-			exit('Error : ' . $archive->errorInfo(true));
-		}
-		
-		// import
-		$rtn = $this->import_from_path($import_path, $ignore_version);
-		
-		// the achecker version from the imported language pack does not match with the current version
-		// the array of ("imported version", "import path") is returned
-		if (is_array($rtn)) return $rtn;
-		
-		// remove uploaded zip file
-		@unlink($filename);
-		
-		return true;
-	}
+    // public
+    // checks whether or not the language exists
+    function exists($code)
+    {
+        return isset($this->allLanguages[$code]);
+    }
 
-	// public
-	// import the languages from the files that are in the given folder 
-	public function import_from_path($import_path, $ignore_version=false) {
-		require_once(AC_INCLUDE_PATH . 'classes/Language/LanguageParser.class.php');
+    // public
+    // import language pack from specified file
+    // return imported AChecker version if it does not match with the current version
+    function import($filename, $ignore_version = false)
+    {
+        require_once(AC_INCLUDE_PATH . 'lib/pclzip.lib.php');
 
-		global $languageManager, $msg;
+        $import_path = AC_TEMP_DIR . 'import/';
 
-		$language_xml = @file_get_contents($import_path.'language.xml');
+        $archive = new PclZip($filename);
+        if ($archive->extract(PCLZIP_OPT_PATH, $import_path) == 0) {
+            exit('Error : ' . $archive->errorInfo(true));
+        }
 
-		$languageParser = new LanguageParser();
-		$languageParser->parse($language_xml);
-		$languageEditor = $languageParser->getLanguageEditor(0);
+        // import
+        $rtn = $this->import_from_path($import_path, $ignore_version);
 
-		$import_version = $languageEditor->getACheckerVersion();
-		if ($import_version != VERSION && !$ignore_version) {
-			return array('version'=>$import_version, "import_path"=>$import_path);
-		}
+        // the achecker version from the imported language pack does not match with the current version
+        // the array of ("imported version", "import path") is returned
+        if (is_array($rtn)) return $rtn;
 
-		if ($languageManager->exists($languageEditor->getCode())) {
-			$msg->addError('LANG_EXISTS');
-		}
+        // remove uploaded zip file
+        @unlink($filename);
 
-		if (!$msg->containsErrors()) {
-			$languageEditor->import($import_path . 'language_text.sql');
-			$msg->addFeedback('IMPORT_LANG_SUCCESS');
-		}
-		$this->cleanup_language_files($import_path);
-		return true;
-	}
-	
-	// public
-	// remove language files in the given folder
-	public function cleanup_language_files($import_path) {
-		// remove the files:
-		@unlink($import_path . 'language.xml');
-		@unlink($import_path . 'language_text.sql');
-		@unlink($import_path . 'readme.txt');
-	}
-	
-	// public
-	// imports LIVE language from the achecker language database
-	function liveImport($language_code) {
-		global $db;
+        return true;
+    }
 
-		$tmp_lang_db = mysql_connect(AC_LANG_DB_HOST, AC_LANG_DB_USER, AC_LANG_DB_PASS);
-		// set database connection using utf8
-		mysql_query("SET NAMES 'utf8'", $tmp_lang_db);
-		
-		if (!$tmp_lang_db) {
-			/* AC_ERROR_NO_DB_CONNECT */
-			echo 'Unable to connect to db.';
-			exit;
-		}
-		if (!mysql_select_db('dev_achecker_langs', $tmp_lang_db)) {
-			echo 'DB connection established, but database "dev_achecker_langs" cannot be selected.';
-			exit;
-		}
+    // public
+    // import the languages from the files that are in the given folder
+    public function import_from_path($import_path, $ignore_version = false)
+    {
+        require_once(AC_INCLUDE_PATH . 'classes/Language/LanguageParser.class.php');
 
-		$sql = "SELECT * FROM languages_SVN WHERE language_code='$language_code'";
-		$result = mysql_query($sql, $tmp_lang_db);
+        global $languageManager, $msg;
 
-		if ($row = mysql_fetch_assoc($result)) {
-			$row['reg_exp'] = addslashes($row['reg_exp']);
-			$row['native_name'] = addslashes($row['native_name']);
-			$row['english_name'] = addslashes($row['english_name']);
+        $language_xml = @file_get_contents($import_path . 'language.xml');
 
-			$sql = "REPLACE INTO ".TABLE_PREFIX."languages VALUES ('{$row['language_code']}', '{$row['charset']}', '{$row['reg_exp']}', '{$row['native_name']}', '{$row['english_name']}', 3)";
-			$result = mysql_query($sql, $db);
+        $languageParser = new LanguageParser();
+        $languageParser->parse($language_xml);
+        $languageEditor = $languageParser->getLanguageEditor(0);
 
-			$sql = "SELECT * FROM language_text_SVN WHERE language_code='$language_code'";
-			$result = mysql_query($sql, $tmp_lang_db);
+        $import_version = $languageEditor->getACheckerVersion();
+        if ($import_version != QCHECKER_VERSION && !$ignore_version) {
+            return array('version' => $import_version, "import_path" => $import_path);
+        }
 
-			$sql = "REPLACE INTO ".TABLE_PREFIX."language_text VALUES ";
-			while ($row = mysql_fetch_assoc($result)) {
-				$row['text'] = addslashes($row['text']);
-				$row['context'] = addslashes($row['context']);
-				$sql .= "('{$row['language_code']}', '{$row['variable']}', '{$row['term']}', '{$row['text']}', '{$row['revised_date']}', '{$row['context']}'),";
-			}
-			$sql = substr($sql, 0, -1);
-			mysql_query($sql, $db);
-		}
-	}
-	
+        if ($languageManager->exists($languageEditor->getCode())) {
+            $msg->addError('LANG_EXISTS');
+        }
+
+        if (!$msg->containsErrors()) {
+            $languageEditor->import($import_path . 'language_text.sql');
+            $msg->addFeedback('IMPORT_LANG_SUCCESS');
+        }
+        $this->cleanup_language_files($import_path);
+        return true;
+    }
+
+    // public
+    // remove language files in the given folder
+    public function cleanup_language_files($import_path)
+    {
+        // remove the files:
+        @unlink($import_path . 'language.xml');
+        @unlink($import_path . 'language_text.sql');
+        @unlink($import_path . 'readme.txt');
+    }
+
+    // public
+    // imports LIVE language from the achecker language database
+    function liveImport($language_code){
+        global $db;
+
+        $tmp_lang_db = new mysqli(AC_LANG_DB_HOST, AC_LANG_DB_USER, AC_LANG_DB_PASS);
+        // set database connection using utf8
+        $tmp_lang_db->query("SET NAMES 'utf8'");
+
+        if (!$tmp_lang_db) {
+            /* AC_ERROR_NO_DB_CONNECT */
+            echo 'Unable to connect to db.';
+            exit;
+        }
+        if (!$tmp_lang_db->select_db('dev_achecker_langs')) {
+            echo 'DB connection established, but database "dev_achecker_langs" cannot be selected.';
+            exit;
+        }
+
+        $sql = "SELECT * FROM languages_SVN WHERE language_code='$language_code'";
+        $result = $tmp_lang_db->query($sql);
+
+        if ($row = $result->fetch_assoc()) {
+            $row['reg_exp'] = addslashes($row['reg_exp']);
+            $row['native_name'] = addslashes($row['native_name']);
+            $row['english_name'] = addslashes($row['english_name']);
+
+            $sql = "REPLACE INTO " . TABLE_PREFIX . "languages VALUES ('{$row['language_code']}', '{$row['charset']}', '{$row['reg_exp']}', '{$row['native_name']}', '{$row['english_name']}', 3)";
+            $result = $db->query($sql);
+
+            $sql = "SELECT * FROM language_text_SVN WHERE language_code='$language_code'";
+            $result = $tmp_lang_db->query($sql);
+
+            $sql = "REPLACE INTO " . TABLE_PREFIX . "language_text VALUES ";
+            while ($row = $result->fetch_assoc()) {
+                $row['text'] = addslashes($row['text']);
+                $row['context'] = addslashes($row['context']);
+                $sql .= "('{$row['language_code']}', '{$row['variable']}', '{$row['term']}', '{$row['text']}', '{$row['revised_date']}', '{$row['context']}'),";
+            }
+            $sql = substr($sql, 0, -1);
+            $db->query($sql);
+        }
+    }
+
 }
 
 

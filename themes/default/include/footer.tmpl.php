@@ -1,22 +1,28 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
 
 global $languageManager, $_my_uri;
 
-if($languageManager->getNumEnabledLanguages() > 1)
-{
+if($languageManager->getNumEnabledLanguages() > 1) {
 ?>
 
 <div align="center" id="lang" style="clear: both;"><br />
@@ -36,20 +42,14 @@ if($languageManager->getNumEnabledLanguages() > 1)
 </div><br /><br />
 <?php } ?>
 
-
-
-<div style="margin-left:auto; margin-right:auto; width:20em;">
-	<small><?php echo _AC("acheck_copyright"); ?></small><br />
-	
-</div>
-
-
 </div> <!--  end center-content div -->
-<div class="bottom"><span></span></div><!--  bottom for liquid-round theme -->
+
+<div class="bottom" style="padding-top:20px">
+	<small>
+		<span style="padding-top:10px"><?php echo _AC("qchecker_copyright"); ?></span>
+	</small><!--  bottom for liquid-round theme -->
 </div> <!-- end liquid-round div -->
-<div style="margin-left:auto; margin-right:auto; width:56px;">
-		<a href="http://inclusivedesign.ca/"><img width="56" src="<?php echo $this->base_path.'themes/'.$this->theme; ?>/images/IDI.png" height="73" alt="Inclusive Design Institute" title="Inclusive Design Institute" style="border:none;"/></a> 
-	</div>
+
 <script language="javascript" type="text/javascript">
 //<!--
 var selected;
@@ -70,7 +70,7 @@ function rowselectbox(obj, checked, handler) {
 }
 //-->
 </script>
-<div align="center" style="clear:both;margin-left:auto; width:15em;margin-right:auto;">
+<div align="center" style="margin-top:10px;clear:both;margin-left:auto; width:15em;margin-right:auto;">
 	<a href="documentation/web_service_api.php" title="<?php echo _AC("web_service_api"); ?>" target="_new"><?php echo _AC('web_service_api'); ?></a>
 </div>
 </body>
@@ -86,8 +86,7 @@ $mtime = $mtime[1] + $mtime[0];
 $endtime = $mtime; 
 $totaltime = ($endtime - $starttime); 
 
-if (defined('AC_DEVEL') && AC_DEVEL) 
-{
+if (defined('AC_DEVEL') && AC_DEVEL) {
 	debug(TABLE_PREFIX, 'TABLE_PREFIX');
 	debug(DB_NAME, 'DB_NAME');
 	debug($totaltime. ' seconds.', "TIME USED"); 

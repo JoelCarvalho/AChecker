@@ -1,49 +1,50 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\UsersDAO;
+use QChecker\Utils\ACheckerMailer;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 require(AC_INCLUDE_PATH.'vitals.inc.php');
 require_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 
 global $_current_user;
 
-if (!isset($_current_user)) 
-{
+if (!isset($_current_user)) {
 	require(AC_INCLUDE_PATH.'header.inc.php');
 	$msg->printInfos('INVALID_USER');
 	require(AC_INCLUDE_PATH.'footer.inc.php');
 	exit;
 }
 
-if (isset($_POST['cancel'])) 
-{
+if (isset($_POST['cancel'])) {
 	$msg->addFeedback('CANCELLED');
 	Header('Location: ../index.php');
 	exit;
 }
 
-if (isset($_POST['submit'])) 
-{
+if (isset($_POST['submit'])) {
 	$this_password = $_POST['form_password_hidden'];
 
 	// password check
-	if (!empty($this_password)) 
-	{
+	if (!empty($this_password)) {
 		//check if old password entered is correct
-		if ($row = $_current_user->getInfo()) 
-		{
-			if ($row['password'] != $this_password) 
-			{
+		if ($row = $_current_user->getInfo()) {
+			if ($row['password'] != $this_password) {
 				$msg->addError('WRONG_PASSWORD');
 				Header('Location: change_email.php');
 				exit;
@@ -58,29 +59,24 @@ if (isset($_POST['submit']))
 	}
 		
 	// email check
-	if ($_POST['email'] == '') 
-	{
+	if ($_POST['email'] == '') {
 		$msg->addError(array('EMPTY_FIELDS', _AC('email')));
 	} 
 	else 
 	{
-		if(!preg_match("/^[a-z0-9\._-]+@+[a-z0-9\._-]+\.+[a-z]{2,6}$/i", $_POST['email'])) 
-		{
+		if(!preg_match("/^[a-z0-9\._-]+@+[a-z0-9\._-]+\.+[a-z]{2,6}$/i", $_POST['email'])) {
 			$msg->addError('EMAIL_INVALID');
 		}
 		
 		$usersDAO = new UsersDAO();
 		$row = $usersDAO->getUserByEmail($_POST['email']);
-		if ($row['user_id'] > 0 && $row['user_id'] <> $_SESSION['user_id'])
-		{
+		if ($row['user_id'] > 0 && $row['user_id'] <> $_SESSION['user_id']) {
 			$msg->addError('EMAIL_EXISTS');
 		}
 	}
 
-	if (!$msg->containsErrors()) 
-	{
-		if (defined('AC_EMAIL_CONFIRMATION') && AC_EMAIL_CONFIRMATION) 
-		{
+	if (!$msg->containsErrors()) {
+		if (defined('AC_EMAIL_CONFIRMATION') && AC_EMAIL_CONFIRMATION) {
 			//send confirmation email
 			$row    = $_current_user->getInfo();
 

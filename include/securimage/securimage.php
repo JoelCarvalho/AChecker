@@ -416,8 +416,7 @@ class Securimage {
    * </code>
    *
    */
-  function Securimage()
-  {
+  function Securimage() {
     if ( session_id() == '' ) { // no session has been started yet, which is needed for validation
       session_start();
     }
@@ -436,8 +435,7 @@ class Securimage {
    *
    * @param string $background_image  The path to an image to use as the background for the CAPTCHA
    */
-  function show($background_image = "")
-  {
+  function show($background_image = "") {
     if($background_image != "" && is_readable($background_image)) {
       $this->bgimg = $background_image;
     }
@@ -459,8 +457,7 @@ class Securimage {
    * @param string $code  The code the user entered
    * @return boolean  true if the code was correct, false if not
    */
-  function check($code)
-  {
+  function check($code) {
     $this->code_entered = $code;
     $this->validate();
     return $this->correct_code;
@@ -472,8 +469,7 @@ class Securimage {
    * @access private
    *
    */
-  function doImage()
-  {
+  function doImage() {
     if($this->use_transparent_text == true || $this->bgimg != "") {
       $this->im = imagecreatetruecolor($this->image_width, $this->image_height);
       $bgcolor = imagecolorallocate($this->im, hexdec(substr($this->image_bg_color, 1, 2)), hexdec(substr($this->image_bg_color, 3, 2)), hexdec(substr($this->image_bg_color, 5, 2)));
@@ -505,8 +501,7 @@ class Securimage {
    * @access private
    *
    */
-  function setBackground()
-  {
+  function setBackground() {
     $dat = @getimagesize($this->bgimg);
     if($dat == false) { return; }
 
@@ -530,8 +525,7 @@ class Securimage {
    * @access private
    *
    */
-  function arcLines()
-  {
+  function arcLines() {
     $colors = explode(',', $this->randomColor());
     imagesetthickness($this->im, 3);
 
@@ -578,8 +572,7 @@ class Securimage {
    * @access private
    *
    */
-  function drawLines()
-  {
+  function drawLines() {
     $linecolor = imagecolorallocate($this->im, hexdec(substr($this->line_color, 1, 2)), hexdec(substr($this->line_color, 3, 2)), hexdec(substr($this->line_color, 5, 2)));
     imagesetthickness($this->im, $this->line_thickness);
 
@@ -610,8 +603,7 @@ class Securimage {
    * @access private
    *
    */
-  function drawWord()
-  {
+  function drawWord() {
     if ($this->use_gd_font == true) {
       if (!is_int($this->gd_font_file)) { //is a file name
         $font = @imageloadfont($this->gd_font_file);
@@ -675,8 +667,7 @@ class Securimage {
    * @since 1.0.1
    *
    */
-  function createCode()
-  {
+  function createCode() {
     $this->code = false;
 
     if ($this->use_wordlist && is_readable($this->wordlist_file)) {
@@ -697,8 +688,7 @@ class Securimage {
    * @param int $len  The code length
    * @return string
    */
-  function generateCode($len)
-  {
+  function generateCode($len) {
     $code = '';
 
     for($i = 1, $cslen = strlen($this->charset); $i <= $len; ++$i) {
@@ -714,8 +704,7 @@ class Securimage {
    * @since 1.0.2
    * @return mixed  false on failure, a word on success
    */
-  function readCodeFromFile()
-  {
+  function readCodeFromFile() {
     $fp = @fopen($this->wordlist_file, 'rb');
     if (!$fp) return false;
 
@@ -745,16 +734,14 @@ class Securimage {
    * @access private
    *
    */
-  function output()
-  {
+  function output() {
     header("Expires: Sun, 1 Jan 2000 12:00:00 GMT");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
     header("Cache-Control: no-store, no-cache, must-revalidate");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
 
-    switch($this->image_type)
-    {
+    switch($this->image_type) {
       case SI_IMAGE_JPEG:
         header("Content-Type: image/jpeg");
         imagejpeg($this->im, null, 90);
@@ -782,8 +769,7 @@ class Securimage {
    * @return string  WAV data
    *
    */
-  function getAudibleCode()
-  {
+  function getAudibleCode() {
     $letters = array();
     $code    = $this->getCode();
 
@@ -805,8 +791,7 @@ class Securimage {
    * @access private
    *
    */
-  function saveData()
-  {
+  function saveData() {
     $_SESSION['securimage_code_value'] = strtolower($this->code);
   }
 
@@ -816,8 +801,7 @@ class Securimage {
    * @access private
    *
    */
-  function validate()
-  {
+  function validate() {
     if ( isset($_SESSION['securimage_code_value']) && !empty($_SESSION['securimage_code_value']) ) {
       if ( $_SESSION['securimage_code_value'] == strtolower(trim($this->code_entered)) ) {
         $this->correct_code = true;
@@ -836,8 +820,7 @@ class Securimage {
    * @since 1.0.1
    * @return string
    */
-  function getCode()
-  {
+  function getCode() {
     if (isset($_SESSION['securimage_code_value']) && !empty($_SESSION['securimage_code_value'])) {
       return $_SESSION['securimage_code_value'];
     } else {
@@ -851,8 +834,7 @@ class Securimage {
    * @access private
    * @return boolean
    */
-  function checkCode()
-  {
+  function checkCode() {
     return $this->correct_code;
   }
 
@@ -863,8 +845,7 @@ class Securimage {
    * @param array $letters  Array of letters to build a file from
    * @return string  WAV file data
    */
-  function generateWAV($letters)
-  {
+  function generateWAV($letters) {
     $first = true; // use first file to write the header...
     $data_len    = 0;
     $files       = array();
@@ -941,9 +922,9 @@ class Securimage {
    * Random color generation
    * @return	a 6 digits color code string 
    */
-  function randomColor(){
+  function randomColor() {
 	  $str = '#';
-	  for($i=0;$i<3;$i++){
+	  for($i=0;$i<3;$i++) {
 		  $str .= rand(0, 255);
 	  }
 	  return $str;

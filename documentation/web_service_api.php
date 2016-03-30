@@ -1,52 +1,79 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include(AC_INCLUDE_PATH.'header.inc.php');
+
+$webservice_id='825bf3e5033d3ed1da82580dc5b701796364953d';
+
+if(is_object($_current_user)){
+    $row=$_current_user->getInfo();
+    $webservice_id=$row[web_service_id];
+}
+
+$ws_op_1='uri=http://www.ubi.pt&guide=WCAG2-AA,UDEMO&context=QChecker.Chrome&resolution=1200x600';
+$ws_url_1=AC_BASE_HREF.'api/check.php?id='.$webservice_id.'&'.$ws_op_1;
+$ws_op_2='uri=http://www.ubi.pt&guide=WCAG2-AA.G11,WCAG2-AA.G13.133&context=QChecker.PhantomJS';
+$ws_url_2=AC_BASE_HREF.'api/check.php?id='.$webservice_id.'&'.$ws_op_2;
+$ws_op_3='uri=http://www.ubi.pt&check=ACR-1,ACR-16';
+$ws_url_3=AC_BASE_HREF.'api/check.php?id='.$webservice_id.'&'.$ws_op_3;
+
 ?>
 <div class="output-form" style="line-height:150%">
 
-<h1>AChecker Web Service API</h1>
-<p>Interface applications with the AChecker through its experimental API. This is version 0.1, dated Mar 2009.</p>
-<p>Two types AChecker web service API are provided:</p>
-  <ul style="list-style:decimal;">
-    <li>Accessibility validation review;</li>
-    <li>Save or reverse decisions made on accessibility checks that a human must make.</li>
-  </ul>
+<h1>QChecker API v1.6</h1>
+<p>This API was deeply improved to extend the initial functionality of <a href="http://achecker.ca/" target="_blank">AChecker</a>. The main goal of our work was to improve this API, checkpoints specification and the evaluation core.
+  To achieve this goals we also refactored and updated some code from <a href="https://github.com/inclusive-design/AChecker" target="_blank">AChecker GitHub</a> since March of 2015.
+  Since we removed diversity of reports generation but we added some significant features in the HTML report version and we made many changes in the core we decided to fork our work in this renamed and extended version.</p>
 
+  <h3>Contributors</h3>
+    <h4>RELEASE Group - University of Beira Interior (<a href="http://www.ubi.pt/en/" target="_blank">website</a>)</h4>
+    <h4>PT Innovation (<a href="http://www.ptinovacao.pt/en/" target="_blank">website</a>)</h4>
+<p></p>
+  <h3>New Features</h3>
+  <ul style="list-style:decimal;">
+    <li>Improved Review with filters, search, collapsible elements and more;</li>
+    <li>Extend Review information with Execution Times, current date, HTML and print screens saved;</li>
+    <li>Context specification using Host, Driver, Configuration and Resolution references;</li>
+    <li>Guideline groups and sub-groups reference for evaluation;</li>
+    <li>Checkpoints reference for evaluation using abbreviations and/or ID's;</li>
+    <li>New lists for Passed (OK) and Skipped Checkpoints;</li>
+    <li>New abstraction of checkpoint specification using assertions;</li>
+    <li>Dynamic repair information available in checkpoint specification;</li>
+    <li>Dynamic checkpoint skip available in specification;</li>
+  </ul>
+  <p></p>
 
 <h2 id="TableOfContents">Table of Contents</h2>
-
     <div id="toc">
       <ul>
-        <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#validation">Validation</a>
+        <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#api_desc">QChecker API Description</a>
           <ul>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#requestformat_validation">Validation request format</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#rest_sample_response_validation">Sample REST validation response</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#restresponse_validation">REST response format reference</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#html_sample_response_validation">Sample HTML validation response</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#resterror_validation">Validation error response reference</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#requestformat_validation">API Request Format</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#api_request_ex">API Request Examples</a></li>
           </ul>
         </li>
-        <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#decision">Make or Reverse Decisions</a>
+        <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#cucumber">Cucumber</a>
           <ul>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#requestformat_decision">Make/reverse decisions request format</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#rest_sample_response_decision">Sample REST make/reverse decisions response</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#restresponse_decision">REST response format reference</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#html_sample_response_decision">Sample HTML made/reverse decisions response</a></li>
-            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#resterror_decision">Make/reverse decisions error response reference</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#scenario_spec">Scenario Specification</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#scenario_ex">Scenario Examples</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#data_spec">Data-Driven Scenario Specification</a></li>
+            <li><a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#cucumber_exec">Cucumber Execution And Reports</a></li>
           </ul>
         </li>
       </ul>
@@ -54,15 +81,16 @@ include(AC_INCLUDE_PATH.'header.inc.php');
     
     <p id="skip"></p>
 
-<div id="validation">
+  <br/><br/>
 
-<h2 id="requestformat_validation">Validation request format</h2>
+<div id="api_desc">
+<h2>QChecker API Description</h2><br/>
+<h3 id="requestformat_validation">API Request Format</h3>
 
-<p>Below is a table of the parameter you can use to send a request to AChecker for validating URI.</p>
+<p>Below is a table of parameters you can use to send a request to QChecker for URI Evaluation.</p>
 
-<p>If you want to use AChecker public validation server, use the parameters below in conjunction with the following base URI:<br />
-<kbd><?php echo AC_BASE_HREF; ?>checkacc.php</kbd> <br />
-(replace with the address of your own server if you want to call a private instance of the validator)</p>
+<p>To use QChecker public server, configure request parameters with ones listed below in conjunction with the following base URI:<br />
+<b><?php echo AC_BASE_HREF; ?>api/check.php</b> <small>(replace with the address of your own server if you want to call a private instance of QChecker)</small></p>
 
 <table class="data" rules="all">
 <tbody><tr>
@@ -71,591 +99,273 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 
 <tr>
   <th>uri</th>
-  <td>The encoded URL of the document to validate.</td>
+  <td>Encoded URL of the responsive and interactive user interface to evaluate.</td>
   <td>None, must be given.</td>
 </tr>
 
 <tr>
   <th>id</th>
-  <td>The "Web Service ID" generated once successfully registering into AChecker. 
-  This ID is a 40 characters long string. It can always be retrieved from user's "Profile" page.</td>
+  <td>"Web Service ID" generated once successfully registering into QChecker.
+    This ID is a 40 characters long string. It can always be retrieved from user's "Profile" page.
+    e.g. <i>id=825bf3e5033d3ed1da82580dc5b701796364953d</i>
+  </td>
   <td>None, must be given.</td>
 </tr>
 
 <tr>
   <th>guide</th>
-  <td>The guidelines to validate against. Separate each guideline with comma (,).</td>
-  <td>WCAG2-AA. <br/>Or one or some of these values: <br/>
-  BITV1: abbreviation of guideline bitv-1.0-(level-2);<br/>
-  508: abbreviation of guideline section-508;<br/>
-  STANCA: abbreviation of guideline stanca-act;<br/>
-  WCAG1-A: abbreviation of guideline wcag-1.0-(level-a);<br/>
-  WCAG1-AA: abbreviation of guideline wcag-1.0-(level-aa);<br/>
-  WCAG1-AAA: abbreviation of guideline wcag-1.0-(level-aaa);<br/>
-  WCAG2-A: abbreviation of guideline wcag-2.0-l1;<br/>
-  WCAG2-AA: abbreviation of guideline wcag-2.0-l2;<br/>
-  WCAG2-AAA: abbreviation of guideline wcag-2.0-l3.</td>
+  <td>Guidelines, groups and sub-groups to validate against. Separate each guideline abbreviation with comma (,).
+    e.g. <i>guide=WCAG2-AA,508</i></td>
+  <td>WCAG2-AA, more info: <a href="<?php echo AC_BASE_HREF; ?>guideline/index.php" target="_blank">Guidelines</a></td>
 </tr>
 
 <tr>
-  <th>output</th>
-  <td>Triggers the various outputs formats of the validator. If unset, the usual 
-  <a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#html_sample_response_validation">HTML format</a> 
-  will be sent. If set to rest, <a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#rest_sample_response_validation">
-  the REST interface</a> will be triggered.</td>
-  <td>html. Or either one of these values: html or rest</td>
+  <th>check</th>
+  <td>Checkpoints to validate against. Separate each checkpoint abbreviation and/or ID with comma (,). QChecker only consider valid values and will ignore redundant data.
+    e.g. <i>check=1,2,ACR-18,ACR-20</i>
+  </td>
+  <td>None, more info: <a href="<?php echo AC_BASE_HREF; ?>check/index.php" target="_blank">Checkpoints</a></td>
+</tr>
+
+<tr>
+  <th>context</th>
+  <td>Context to use in the evaluation. The provided URL will be visited in this context (HostName.DriverName) and some manipulations will be made to extract more data.
+    After this process QChecker evaluate the modified HTML including new data from AJAX invocations, some Javascript manipulations and more.
+    e.g. <i>context=QChecker.PhantomJS</i>
+  </td>
+  <td>None, more info: <a href="<?php echo AC_BASE_HREF; ?>api/contexts.php?all=true" target="_blank">Contexts</a></td>
+</tr>
+
+<tr>
+  <th>resolution</th>
+  <td>Resolution (WidthxHeight) used in specified context. Very useful for responsive interfaces. e.g. <i> resolution=400x700</i>
+  </td>
+  <td>None</td>
+</tr>
+
+<tr>
+  <th>config</th>
+  <td>Context can be extended using a javascript configuration, this value is a direct reference (without the extension) for a configuration file.
+    e.g. <i>config=default</i>
+  </td>
+  <td>None</td>
+</tr>
+
+<tr>
+  <th>port</th>
+  <td>Port used in the WebCrawler of specified Context. When not specified the default port of WebCrawler is used.
+    e.g. <i>port=8080</i>
+  </td>
+  <td>None</td>
 </tr>
 
 <tr>
   <th>offset</th>
-  <td>The line offset to begin validation on the html output from URI.</td>
+  <td>The line offset to begin validation on the html output from URI.
+    e.g. <i>offset=10</i>
+  </td>
   <td>0</td>
 </tr>
 </tbody></table>
 <br />
 
-<span style="font-weight: bold">Sample validation request</span>
-<p><?php echo AC_BASE_HREF; ?>checkacc.php?uri=http%3A%2F%2Fatutor.ca&
-id=888ca9e3f856baa0120755ecd8ffae6be3142029&output=html&guide=STANCA,WCAG2-AA&offset=10</p>
-<p>Goal: Validate URI <code>http://atutor.ca</code> against guidelines "Stanca Act" and "Wcag 2.0 L2". 
-Ignore the first 10 lines of html content from http://atutor.ca. Returns validation report
-in html format.</p>
+<h3 id="api_request_ex">API Request Examples</h3>
+  <p><b>Parameters</b>: <a href="<?php echo $ws_url_1;?>" target="_blank"><?php echo $ws_op_1;?></a><br/>
+  <b>Goal</b>: Evaluate URI <code>http://www.ubi.pt</code> against guidelines "WCAG 2.0 L2" and "Usability" using Chrome with 1200x600 resolution.</p>
 
-<h2 id="rest_sample_response_validation">sample REST validation response</h2><br/>
-<span style="font-weight:bold">Success Response</span>
-<p>A REST success response for the validation of a document (invalid) will look like this:</p>
+  <p><b>Parameters</b>: <a href="<?php echo $ws_url_2;?>" target="_blank"><?php echo $ws_op_2;?></a><br/>
+  <b>Goal</b>: Evaluate URI <code>http://www.ubi.pt</code> against Group "1.1 Text Alternatives" from guideline "WCAG 2.0 L2" and sub-group "Success Criteria 1.3.3" from guideline "WCAG 2.0 L2" using PhantomJS.</p>
 
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;resultset&gt;
-  &lt;summary&gt;
-    &lt;status&gt;FAIL&lt;/status&gt;
-    &lt;sessionID&gt;40-character-long string&lt;/sessionID&gt;
-    &lt;NumOfErrors&gt;number&lt;/NumOfErrors&gt;
-    &lt;NumOfLikelyProblems&gt;number&lt;/NumOfLikelyProblems&gt;
-    &lt;NumOfPotentialProblems&gt;number&lt;/NumOfPotentialProblems&gt;
+  <p><b>Parameters</b>: <a href="<?php echo $ws_url_3;?>" target="_blank"><?php echo $ws_op_3;?></a><br/>
+  <b>Goal</b>: Evaluate URI <code>http://www.ubi.pt</code> against Checkpoint ACR-1 and ACR-16 without any Browser.</p>
 
-    &lt;guidelines&gt;
-      &lt;guideline&gt;string&lt;/guideline&gt;
-      ...
-    &lt;/guidelines&gt;
-  &lt;/summary&gt;
-
-  &lt;results&gt;
-    &lt;result&gt;
-      &lt;resultType&gt;string&lt;/resultType&gt;
-      &lt;lineNum&gt;number&lt;/lineNum&gt;
-      &lt;columnNum&gt;number&lt;/columnNum&gt;
-    &lt;errorMsg&gt;encoded string&lt;/errorMsg&gt;
-    &lt;errorSourceCode&gt;encoded string&lt;/errorSourceCode&gt;
-    &lt;repair&gt;encoded string&lt;/repair&gt;
-    &lt;decisionPass&gt;encoded string&lt;/decisionPass&gt;
-    &lt;decisionFail&gt;encoded string&lt;/decisionFail&gt;
-    &lt;decisionMade&gt;string&lt;/decisionMade&gt;
-    &lt;decisionMadeDate&gt;string&lt;/decisionMadeDate&gt;
-    &lt;/result&gt; 
-    ...
-  &lt;/results&gt;
-&lt;/resultset&gt;
-</pre>
-
-<br />
-<span style="font-weight:bold">Error Response</span>
-
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;errors&gt;
-  &lt;totalCount&gt;number&lt;/totalCount&gt;
-  &lt;error code="401"&gt;
-    &lt;message&gt;Empty URI.&lt;/message&gt;
-  &lt;/error&gt;
-  &lt;error code="402"&gt;
-    &lt;message&gt;Empty web service ID.&lt;/message&gt;
-  &lt;/error&gt;
-&lt;/errors&gt;
-</pre>
-
-<h2 id="restresponse_validation">REST response format reference</h2>
-<table class="data" rules="all">
-<tbody><tr>
-<th>Element</th><th>Description</th>
-</tr>
-
-<tr>
-  <th>resultset</th>
-  <td>The root element of REST response. Encloses validation summary and results information.</td>
-</tr>
-
-<tr>
-  <th>summary</th>
-  <td>The summary element of the validation response. Encloses validation summary information, 
-      the numbers of different types of problems and the title of guidelines validating against.</td>
-</tr>
-
-<tr>
-  <th>status</th>
-  <td>Can be one of these values: FAIL, CONDITIONAL PASS, PASS. <br/>FAIL is set when there is/are known problem(s).
-      <br/>CONDITIONAL PASS is set when there is no known problems but there is/are likely or potential problem(s).<br/>
-      PASS is set when there is no problems found, OR, there is no known problems and likely/potential problems
-      have pass decisions made on.</td>
-</tr>
-
-<tr>
-  <th>sessionID</th>
-  <td>The same ID must be sent back in make/reverse decisions request in response to the validation request. 
-      This is to ensure the make/reverse decision request comes from the authenticated source.</td>
-</tr>
-
-<tr>
-  <th>NumOfErrors</th>
-  <td>Counts the number of known problems.</td>
-</tr>
-
-<tr>
-  <th>NumOfLikelyProblems</th>
-  <td>Counts the number of likely problems.</td>
-</tr>
-
-<tr>
-  <th>NumOfPotentialProblems</th>
-  <td>Counts the number of potential problems.</td>
-</tr>
-
-<tr>
-  <th>guidelines</th>
-  <td>The main guideline element. Encloses all the titles of the guidelines that have been validated against.</td>
-</tr>
-
-<tr>
-  <th>guideline</th>
-  <td>A child of <code>guidelines</code>. Encloses the title of the guideline that has been validated against.</td>
-</tr>
-
-<tr>
-  <th>results</th>
-  <td>Encapsulates all data about problems encountered through the validation process.</td>
-</tr>
-
-<tr>
-  <th>result</th>
-  <td>A child of <code>results</code>. Encloses details of one check problem.</td>
-</tr>
-
-<tr>
-  <th>resultType</th>
-  <td>A child of <code>result</code>. Can be one of these values: Error, Likely Problem, Potential Problem.</td>
-</tr>
-
-<tr>
-  <th>lineNum</th>
-  <td>A child of <code>result</code>. Within the source code of the validated document, refers to the line where the error was detected.</td>
-</tr>
-
-<tr>
-  <th>columnNum</th>
-  <td>A child of <code>result</code>. Within the source code of the validated document, refers to the column of the line where the error was detected.</td>
-</tr>
-
-<tr>
-  <th>errorMsg</th>
-  <td>A child of <code>result</code>. The actual error message.</td>
-</tr>
-
-<tr>
-  <th>errorSourceCode</th>
-  <td>A child of <code>result</code>. The line of the source where the error/problem was detected.</td>
-</tr>
-
-<tr>
-  <th>repair</th>
-  <td>A child of <code>result</code>. The actual message of how to repair. Only presented when resultType is "Error".</td>
-</tr>
-
-<tr>
-  <th>sequenceID</th>
-  <td>A child of <code>result</code>. The unique sequence ID identifying each error/problem. This ID is used to pinpoint each error/problem in make/reverse decision request.</td>
-</tr>
-
-<tr>
-  <th>decisionPass</th>
-  <td>A child of <code>result</code>. The actual text message of the pass decision. Only presented when resultType is "Likely Problem" or "Potential Problem".</td>
-</tr>
-
-<tr>
-  <th>decisionFail</th>
-  <td>A child of <code>result</code>. The actual text message of the fail decision. Only presented when resultType is "Likely Problem" or "Potential Problem".</td>
-</tr>
-
-<tr>
-  <th>decisionMade</th>
-  <td>A child of <code>result</code>. Only presented when the decision has been made by user. Can be one of these two values: PASS, FAIL. PASS is set when
-      pass decision is chosen by the user. Otherwise, FAIL is set.</td>
-</tr>
-
-<tr>
-  <th>decisionMadeDate</th>
-  <td>A child of <code>result</code>. Only presented when the decision has been made by user. The date and time when the decision was made.</td>
-</tr>
-
-<tr>
-  <th>errors</th>
-  <td>Encapsulates all data about errors encountered through the validation process.</td>
-</tr>
-
-<tr>
-  <th>totalCount</th>
-  <td>a child of <code>errors</code>. Counts the number of errors listed.</td>
-</tr>
-
-<tr>
-  <th>error</th>
-  <td>a child of <code>errors</code>. Encloses the actual error code and error message.</td>
-</tr>
-
-<tr>
-  <th>message</th>
-  <td>a child of <code>error</code>. The actual error message.</td>
-</tr>
-
-</tbody></table>
-
-<h2 id="html_sample_response_validation">Sample HTML validation response</h2><br/>
-<span style="font-weight:bold">Success Response</span>
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!DOCTYPE style PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;
-&lt;style type="text/css"&gt;
-ul {font-family: Arial; margin-bottom: 0px; margin-top: 0px; margin-right: 0px;}
-li.msg_err, li.msg_info { font-family: Arial; margin-bottom: 20px;list-style: none;}
-span.msg{font-family: Arial; line-height: 150%;}
-code.input { margin-bottom: 2ex; background-color: #F8F8F8; line-height: 130%;}
-span.err_type{ padding: .1em .5em; font-size: smaller;}
-&lt;/style&gt;
-&lt;input value="4eefdfed3b98badf1f138ec83712358d67ffac9e" type="hidden" name="sessionid" /&gt;
-&lt;p&gt;
-&lt;strong&gt;Result: &lt;/strong&gt;
-&lt;span style="background-color: red; border: solid green; padding-right: 1em; padding-left: 1em"&gt;FAIL&lt;/span&gt;&nbsp;&nbsp;
-&lt;span style="color:red"&gt;&lt;span style="font-weight: bold;"&gt;44 Errors&nbsp;&nbsp;103 Likely Problems&nbsp;&nbsp;217 Potential Problems&nbsp;&nbsp;&lt;/span&gt;&lt;/span&gt;
-&lt;strong&gt;&lt;br /&gt;
-&lt;strong&gt;Guides: &lt;/strong&gt;
-&lt;a title="BITV 1.0 (Level 2)(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=1"&gt;BITV 1.0 (Level 2)&lt;/a&gt;&nbsp;&nbsp;&lt;a title="Section 508(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=2"&gt;Section 508&lt;/a&gt;&nbsp;&nbsp;&lt;a title="Stanca Act(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=3"&gt;Stanca Act&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 1.0 (Level A)(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=4"&gt;WCAG 1.0 (Level A)&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 1.0 (Level AA)(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=5"&gt;WCAG 1.0 (Level AA)&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 1.0 (Level AAA)(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=6"&gt;WCAG 1.0 (Level AAA)&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 2.0 L1(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=7"&gt;WCAG 2.0 L1&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 2.0 L2(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=8"&gt;WCAG 2.0 L2&lt;/a&gt;&nbsp;&nbsp;&lt;a title="WCAG 2.0 L3(link opens in a new window)" target="_new" href="http://localhost/achecker/guideline/view_guideline.php?id=9"&gt;WCAG 2.0 L3&lt;/a&gt;&nbsp;&nbsp;
-&lt;/p&gt;
-&lt;h3&gt;Accessibility Review&lt;/h3&gt;
-&lt;h4&gt;Errors&lt;/h4&gt;
-&lt;div id="errors" style="margin-top:1em"&gt;
-  &lt;ul&gt;
-    ...         // error details
-  &lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;div id="likely_problems" style="margin-top:1em"&gt;
-  &lt;ul&gt;
-    ...         // likely problem details
-  &lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;div id="potential_problems" style="margin-top:1em"&gt;
-  &lt;ul&gt;
-    ...         // potential problem details
-  &lt;/ul&gt;
-&lt;/div&gt;
-</pre>
-
-
-<span style="font-weight: bold">Sample result detail of the check that decision has been made</span>
-
-<pre style="background-color:#F7F3ED;"> 
-&lt;li class="msg_info"&gt;
-  &lt;span class="err_type"&gt;&lt;img src="http://localhost/achecker/images/info.png" alt="Info" title="Info" width="15" height="15" /&gt;&lt;/span&gt;
-  &lt;em&gt;Line 247, Column 9&lt;/em&gt;:
-  &lt;span class="msg"&gt;
-  &lt;a href="http://localhost/achecker/checker/suggestion.php?id=197"
-              onclick="popup('http://localhost/achecker/checker/suggestion.php?id=197'); return false;" 
-              title="Suggest improvements on this error message" target="_new"&gt;Anchor text may not identify the link destination.&lt;/a&gt;
-  &lt;/span&gt;
-  &lt;pre&gt;&lt;code class="input"&gt;&lt;a href=&quot;/contact.php&quot;&gt;&lt;/code&gt;&lt;/pre&gt;
-  &lt;p class="helpwanted"&gt;
-  &lt;/p&gt;
-         
-  &lt;table&gt;
-    &lt;tr&gt;
-      &lt;td&gt;
-      &lt;input value="P" type="radio" name="d[<span style="font-weight: bold; color: red">5_2_54</span>]" id="pass5_2_54"  /&gt;
-      &lt;label for="pass5_2_54"&gt;Anchor has text that identifies the link destination.&lt;/label&gt;
-      &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;
-      &lt;input value="F" type="radio" name="d[<span style="font-weight: bold; color: red">5_2_54</span>]" id="fail5_2_54"  /&gt;
-      &lt;label for="fail5_2_54"&gt;Anchor does not have text that identifies the link destination.&lt;/label&gt;
-      &lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;
-      &lt;input value="N" type="radio" name="d[<span style="font-weight: bold; color: red">5_2_54</span>]" id="nodecision5_2_54" checked="checked" /&gt;
-      &lt;label for="nodecision5_2_54"&gt;No Decision&lt;/label&gt;
-      &lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/li&gt;
-</pre>
-
-<span style="font-weight: bold">Sample result detail of the check that decision has NOT been made</span>
-<pre style="background-color:#F7F3ED;"> 
-&lt;li class="msg_info"&gt;
-  &lt;span class="err_type"&gt;&lt;img src="http://localhost/achecker/images/info.png" alt="Info" title="Info" width="15" height="15" /&gt;&lt;/span&gt;
-  &lt;em&gt;Line 246, Column 9&lt;/em&gt;:
-  &lt;span class="msg"&gt;
-  &lt;a href="http://localhost/achecker/checker/suggestion.php?id=197"
-        onclick="popup('http://localhost/achecker/checker/suggestion.php?id=197'); return false;" 
-        title="Suggest improvements on this error message" target="_new"&gt;Anchor text may not identify the link destination.&lt;/a&gt;
-  &lt;/span&gt;
-  &lt;pre&gt;&lt;code class="input"&gt;&lt;a href=&quot;/archive.php&quot;&gt;&lt;/code&gt;&lt;/pre&gt;
-  &lt;p class="helpwanted"&gt;
-  &lt;/p&gt;
-         
-  &lt;table class="form-data"&gt;
-    &lt;tr&gt;
-      &lt;th align="left"&gt;Decision:&lt;/th&gt;
-      &lt;td&gt;Anchor has text that identifies the link destination.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;th align="left"&gt;Date:&lt;/th&gt;
-      &lt;td&gt;2009-03-04 14:33:06&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td colspan="2"&gt;
-      &lt;input value="Reverse Decision" type="submit" name="reverse[<span style="font-weight: bold; color: red">5_2_54</span>]" /&gt;
-      &lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/table&gt;
-&lt;/li&gt;
-</pre>
 
 <br/>
-<span style="font-weight:bold">Error Response</span><br/>
-<pre style="background-color:#F7F3ED;"> 
-&lt;div id="error"&gt;
-  &lt;h4&gt;The following errors occurred:&lt;/h4&gt;
-    &lt;ul&gt;
-      &lt;li&gt;Empty URI. &lt;small&gt;&lt;small&gt;(AC_ERROR_EMPTY_URI)&lt;/small&gt;&lt;/small&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-    &lt;ul&gt;
-      &lt;li&gt;Empty web service ID. &lt;small&gt;&lt;small&gt;(AC_ERROR_EMPTY_WEB_SERVICE_ID)&lt;/small&gt;&lt;/small&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-    &lt;ul&gt;
-      &lt;li&gt;No sequence ID is given. &lt;small&gt;&lt;small&gt;(AC_ERROR_SEQUENCEID_NOT_GIVEN)&lt;/small&gt;&lt;/small&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-&lt;/div&gt;
-</pre>
+  <h2 id="cucumber">Cucumber</h2>
 
-<h2 id="resterror_validation">Validation error response reference</h2>
-<table class="data" rules="all"><tbody>
-<tr>
-<th>Error Code</th><th>Description</th>
-</tr>
+  <p>For more information about BDD, Gherkin and Cucumber go to <a href="https://cucumber.io/" target="_blank">https://cucumber.io/</a>.</p>
 
-<tr>
-  <th>401</th>
-  <td>Empty URI.</td>
-</tr>
+  <h3 id="scenario_spec">Scenario Specification</h3>
 
-<tr>
-  <th>402</th>
-  <td>Invalid UR.</td>
-</tr>
+  <p>This Gherkin implementation allow the specification of every QChecker API Parameter using a more Natural Language. This implementation also allows developers and testers to easily automate U&A Evaluation of their systems.</p>
 
-<tr>
-  <th>403</th>
-  <td>Empty web service ID.</td>
-</tr>
+  <table class="data" rules="all">
+    <tbody><tr>
+      <th width="350px">Given</th><th>Description</th>
+    </tr>
 
-<tr>
-  <th>404</th>
-  <td>Invalid web service ID.</td>
-</tr>
+    <tr>
+      <th style="padding-left:20px;">I am on "URL"</th>
+      <td>Where <b>URL</b> is the encoded URL of the responsive and interactive user interface to evaluate.</td>
+    </tr>
+    <tr>
+      <th style="padding-left:20px;">My Context is "HOST.DRIVER"</th>
+      <td>Where <b>HOST</b> is the Hostname specified in <i>AC_host</i> table and <b>DRIVER</b> the specified driver name in <i>AC_context</i> table. You can check combined_name for every combination available <a href="<?php echo AC_BASE_HREF; ?>api/contexts.php?all=true" target="_blank">there</a>.</td>
+    </tr>
+    <tr>
+      <th style="padding-left:20px;">My Context ... With "CONFIG_NAME" Config</th>
+      <td>Where <b>CONFIG_NAME</b> is the desired javascript configuration. This value is a direct reference (without the extension) for a configuration file.</td>
+    </tr>
+    <tr>
+      <th style="padding-left:20px;">My Screen Resolution is "WIDTHxHEIGHT"</th>
+      <td>Where <b>WIDTH</b> is the desired browser width in px and <b>HEIGTH</b> the desired browser height in px.</td>
+    </tr>
 
-</tbody></table>
-</div>
+  </tbody></table>
 
-<div id="decision">
+  <table class="data" rules="all" style="margin-top:5px;">
+    <tbody><tr>
+      <th width="350px">When</th><th></th>
+    </tr>
 
-<h2 id="requestformat_decision">Make/reverse decisions request format</h2>
+    <tr>
+      <th style="padding-left:20px;">I Evaluate U&A</th>
+      <td>QChecker API invocation using Given Rules.</td>
+    </tr>
 
-<p>Below is a table of the parameter you can use to send a request to AChecker for making decisions on likely or potential problems.</p>
+    </tbody></table>
 
-<p>As said, if you want to use AChecker public validation server, use the parameters below in conjunction with the following base URI:<br />
-<kbd><?php echo AC_BASE_HREF; ?>checkacc.php</kbd> <br />
-(replace with the address of your own server if you want to call a private instance of the validator)</p>
+  <table class="data" rules="all"  style="margin-top:5px;">
+    <tbody>
+    <tr>
+      <th width="350px">Then</th><th></th>
+    </tr>
+    <tr>
+      <th style="padding-left:20px;">I Should Not Get TYPE Problems</th>
+      <td>Where <b>TYPE</b> (<b>Know</b>, <b>Likely</b>, <b>Potential</b>) is the type of Problems we don't want to have.</td>
+    </tr>
+    <tr>
+      <th style="padding-left:20px;">I Should Get Less Than N TYPE Problems</th>
+      <td>Where <b>N</b> is the number (minus one) of allowed problems and <b>TYPE</b> the allowed type.</td>
+    </tr>
+    </tbody></table><br/>
 
-<table class="data" rules="all">
-<tbody><tr>
-<th>Parameter</th><th>Description</th><th>Default value</th>
-</tr>
+  <h3 id="scenario_ex">Scenario Examples</h3>
 
-<tr>
-  <th>uri</th>
-  <td>The encoded URL of the document to validate.</td>
-  <td>None, must be given.</td>
-</tr>
+  <p><b>Scenario</b>: Evaluate ubi.pt against WCAG2-AA Using Chrome with 1200x800px</p>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;" >
+  <b>Scenario: SC1</b>
+  Given I am on "http://www.ubi.pt"
+    And My Context is "QChecker.Chrome"
+    And My Screen Resolution is "1200x800"
+    And I Want Check Guideline "WCAG2-AA"
+  When I Evaluate U&A
+  Then I Should Not Get Known Problems</pre>
 
-<tr>
-  <th>id</th>
-  <td>The "Web Service ID" generated once successfully registering into AChecker. 
-  This ID is a 40 characters long string. It can always be retrieved from user's "Profile" page.</td>
-  <td>None, must be given.</td>
-</tr>
+  <p><b>Scenario</b>: Evaluate ubi.pt against Group 1.1 of WCAG2-AA, Checkpoints ACR-116 And ACR-117 using ubi.js config file</p>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;">
+  <b>Scenario: SC2</b>
+  Given I am on "http://www.ubi.pt"
+    And My Context is "QChecker.PhantomJS" with "ubi" config
+    And I Want Check Guideline "WCAG2-AA.G11"
+    AND I Want Check Checkpoints "ACR-116,ACR-117"
+  When I Evaluate U&A
+  Then I Should Get Less Than 100 Potential Problems
+    And I Should Not Get Known Problems</pre>
 
-<tr>
-  <th>session</th>
-  <td>The "sessionid" embedded in the validation response. In REST format, it's the value of element &lt;sessionID&gt;.
-      In HTML format, it's the value of hidden variable "sessionid"</td>
-  <td>None, must be given.</td>
-</tr>
 
-<tr>
-  <th>output</th>
-  <td>Triggers the various outputs formats of the validator. If unset, the usual 
-  <a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#html_sample_response_validation"">HTML format</a> 
-  will be sent. If set to rest, <a href="<?php echo AC_BASE_HREF.'documentation/web_service_api.php'; ?>#rest_sample_response_validation">
-  the REST interface</a> will be triggered.</td>
-  <td>html. Or either one of these values: html or rest</td>
-</tr>
+  <h3 id="data_spec">Data-Driven Scenario Specification</h3>
+  <p>Since each scenario only evaluate one page using a specific Context we suggest the use of Outlines. This annotation allows the BDD specification to be mixed with Data-Driven concept. We can write some scenarios and feed them with data from one or more Cucumber tables.</p>
 
-<tr>
-  <th>[sequenceID]</th>
-  <td>The sequence ID in the validation response that identifies each likely or potential problems. In REST format, 
-  it's the value of element &lt;sequenceID&gt;. In HTML format, it's the key value of radio button array 
-  d[5_2_54], d[6_5_5] ... 5_2_54, 6_5_5 is the [sequenceID]. (This value is red-highlighted in above html sample response.)</td>
-  <td>None. This parameter can appear as many times as user desires. The value of [sequenceID] can be one of 
-  these: <br/>P : pass <br/>F : fail<br/>N : no decision</td>
-</tr>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;">
+  <b>Scenario Outline: SCO</b>
+  Given I am on &lt;url&gt;
+    And My Context is &lt;context&gt; With &lt;config&gt; Config
+    And I Want Check Guideline &lt;guideline>
+  When I Evaluate U&A
+  Then I Should Not Get Known Problems
 
-<tr>
-  <th>reverse</th>
-  <td>When this parameter is presented and set to "true", the decisions on sequenceIDs sent in the request are all set to 
-  "No Decision" (N) no matter what values are given for the sequenceIDs in the request.</td>
-  <td>None. When present, must be value "true"</td>
-</tr>
+  Examples:
+      | url                                   | guideline      | context              | config     |
+      | "http://www.ubi.pt/"                  | "WCAG2-AA"     | "QChecker.Chrome"    | "default"  |
+      | "http://www.ubi.pt/Pagina/missao"     | "WCAG2-AA"     | "QChecker.PhantomJS" | "ubi"      |
+      | "http://www.ubi.pt/Pagina/3os_ciclos" | "WCAG2-AA.G11" | "QChecker.Chrome"    | "ubi"      |</pre>
 
-</tbody></table>
-<br />
 
-<span style="font-weight: bold">Sample validation request</span>
-<p>http://localhost/achecker/decisions.php?uri=http%3A%2F%2Fatutor.ca&id=888ca9e3f856baa0120755ecd8ffae6be3142029
-&session=c124694572284112cb54679565ec13dd57ed6ccf&output=html&1=P&2=F&3=N&4=P</p>
-<p>Goal: Set decision on problem sequence ID 1 to pass decision, 2 to fail decision, 3 to no decision, 4 to pass decision.
-Return response in HTML format.</p>
-<p>http://localhost/achecker/decisions.php?uri=http%3A%2F%2Fatutor.ca&id=888ca9e3f856baa0120755ecd8ffae6be3142029
-&session=c124694572284112cb54679565ec13dd57ed6ccf&output=rest&1=P&2=F&3=N&4=P&reverse=true</p>
-<p>Goal: Reverse decisions on problem sequence ID 1, 2, 3, 4. All decisions for these sequence IDs are set to "decision
-has not been made". Return response in REST format.</p>
+  <h3 id="cucumber_exec">Cucumber Execution And Reports</h3>
 
-<h2 id="rest_sample_response_decision">Sample REST make/reverse decision response</h2><br/>
-<span style="font-weight:bold">Success Response</span>
-<p>A REST success response for the make/reverse decision request will look like this:</p>
+  <p>This Cucumber implementation generates additional console logs and save report files in <i>features/reports/execution_date_time/</i> besides the usual cucumber reports.
+    This additional logs can be hidden using <b>DEBUG = false</b> in file <i>support/env.rb</i>, but if this change is made don't use the option -o in the command line.</p>
 
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;summary&gt;
-  &lt;status&gt;success&lt;/status&gt;
-&lt;/summary&gt;
-</pre>
+  <p>Recommended Execution</p>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;">
+    > cucumber --name SCO --expand -s -o cucumber-details.log</pre>
 
-<br />
-<span style="font-weight:bold">Error Response</span>
+  <p>Console Output</p>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;">
+    [WEBCRAWLER] URL => http://www.ubi.pt/
+    [WEBCRAWLER] Guidelines => WCAG2-AA
+    [WEBCRAWLER] Context => QChecker.Chrome
+    [WEBCRAWLER] Config => default
+    [TESTC] Report Saved => www.ubi.pt__QChecker.Chrome_1445539145.html
+    [ERROR] 43 Known Problems Found
 
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;errors&gt;
-  &lt;totalCount&gt;number&lt;/totalCount&gt;
-  &lt;error code="401"&gt;
-    &lt;message&gt;Empty URI.&lt;/message&gt;
-  &lt;/error&gt;
-  &lt;error code="402"&gt;
-    &lt;message&gt;Empty web service ID.&lt;/message&gt;
-  &lt;/error&gt;
-&lt;/errors&gt;
-</pre>
+    [WEBCRAWLER] URL => http://www.ubi.pt/Pagina/missao
+    [WEBCRAWLER] Guidelines => WCAG2-AA
+    [WEBCRAWLER] Context => QChecker.PhantomJS
+    [WEBCRAWLER] Config => ubi
+    [TESTC] Report Saved => www.ubi.pt_Pagina_missao_QChecker.PhantomJS_1445539152.html
+    [ERROR] 22 Known Problems Found
 
-<h2 id="restresponse_decision">REST response format reference</h2>
-<table class="data" rules="all">
-<tbody><tr>
-<th>Element</th><th>Description</th>
-</tr>
+    [WEBCRAWLER] URL => http://www.ubi.pt/Pagina/3os_ciclos
+    [WEBCRAWLER] Guidelines => WCAG2-AA.G11
+    [WEBCRAWLER] Context => QChecker.Chrome
+    [WEBCRAWLER] Config => ubi
+    [TESTC] Report Saved => www.ubi.pt_Pagina_3os_ciclos_QChecker.Chrome_1445539185.html
+    [ERROR] 9 Known Problems Found
+  </pre>
 
-<tr>
-  <th>summary</th>
-  <td>The summary element of the validation response. Encloses the validation summary result.</td>
-</tr>
+  <p>cucumber-details.log</p>
+  <pre style="margin-left:20px;margin-right:20px;background-color:#F7F3ED;">
+      Scenario: | "http://www.ubi.pt/" | "WCAG2-AA" | "QChecker.Chrome" | "default" |
+        Given I am on "http://www.ubi.pt/"
+        And My Context is "QChecker.Chrome" With "default" Config
+        And I Want Check Guideline "WCAG2-AA"
+        When I Evaluate U&A
+        Then I Should Not Get Known Problems
+      43 Known Problems Found (RuntimeError)
+      ./features/support/start.rb:22:in `fail_with'
+      ./features/support/validator.rb:122:in `checkNot'
+      ./features/step_definitions/checker_steps.rb:37:in `/^I Should Not Get (Known|Likely|Potential) Problems$/'
+      features/documentation_demo.feature:13:in `Then I Should Not Get Known Problems'
+      features/documentation_demo.feature:9:in `Then I Should Not Get Known Problems'
 
-<tr>
-  <th>status</th>
-  <td>a child of <code>summary</code>. Only has one value: success.</td>
-</tr>
+      Scenario: | "http://www.ubi.pt/Pagina/missao" | "WCAG2-AA" | "QChecker.PhantomJS" | "ubi" |
+        Given I am on "http://www.ubi.pt/Pagina/missao"
+        And My Context is "QChecker.PhantomJS" With "ubi" Config
+        And I Want Check Guideline "WCAG2-AA"
+        When I Evaluate U&A
+        Then I Should Not Get Known Problems
+      22 Known Problems Found (RuntimeError)
+      ./features/support/start.rb:22:in `fail_with'
+      ./features/support/validator.rb:122:in `checkNot'
+      ./features/step_definitions/checker_steps.rb:37:in `/^I Should Not Get (Known|Likely|Potential) Problems$/'
+      features/documentation_demo.feature:14:in `Then I Should Not Get Known Problems'
+      features/documentation_demo.feature:9:in `Then I Should Not Get Known Problems'
 
-<tr>
-  <th>errors</th>
-  <td>Encapsulates all data about errors encountered through the validation process.</td>
-</tr>
+      Scenario: | "http://www.ubi.pt/Pagina/3os_ciclos" | "WCAG2-AA.G11" | "QChecker.Chrome" | "ubi" |
+        Given I am on "http://www.ubi.pt/Pagina/3os_ciclos"
+        And My Context is "QChecker.Chrome" With "ubi" Config
+        And I Want Check Guideline "WCAG2-AA.G11"
+        When I Evaluate U&A
+        Then I Should Not Get Known Problems
+      9 Known Problems Found (RuntimeError)
+      ./features/support/start.rb:22:in `fail_with'
+      ./features/support/validator.rb:122:in `checkNot'
+      ./features/step_definitions/checker_steps.rb:37:in `/^I Should Not Get (Known|Likely|Potential) Problems$/'
+      features/documentation_demo.feature:15:in `Then I Should Not Get Known Problems'
+      features/documentation_demo.feature:9:in `Then I Should Not Get Known Problems'
 
-<tr>
-  <th>totalCount</th>
-  <td>a child of <code>errors</code>. Counts the number of errors listed.</td>
-</tr>
+      Failing Scenarios:
+      cucumber features/documentation_demo.feature:13
+      cucumber features/documentation_demo.feature:14
+      cucumber features/documentation_demo.feature:15
 
-<tr>
-  <th>error</th>
-  <td>a child of <code>errors</code>. Encloses the actual error code and error message.</td>
-</tr>
+      3 scenarios (3 failed)
+      15 steps (3 failed, 12 passed)
+      0m30.792s
+  </pre>
 
-<tr>
-  <th>message</th>
-  <td>a child of <code>error</code>. The actual error message.</td>
-</tr>
-
-</tbody></table>
-
-<h2 id="html_sample_response_decision">Sample HTML validation response</h2><br/>
-<span style="font-weight:bold">Success Response</span>
-
-<pre style="background-color:#F7F3ED;"> 
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;div id="success"&gt;Success&lt;/div&gt;
-</pre>
-
-<h2 id="resterror_decision">Validation error response reference</h2>
-<table class="data" rules="all"><tbody>
-<tr>
-<th>Error Code</th><th>Description</th>
-</tr>
-
-<tr>
-  <th>401</th>
-  <td>Empty URI.</td>
-</tr>
-
-<tr>
-  <th>402</th>
-  <td>Invalid UR.</td>
-</tr>
-
-<tr>
-  <th>403</th>
-  <td>Empty web service ID.</td>
-</tr>
-
-<tr>
-  <th>404</th>
-  <td>Invalid web service ID.</td>
-</tr>
-
-<tr>
-  <th>405</th>
-  <td>No sequence id is given.</td>
-</tr>
-
-</tbody></table>
 </div>
 
 </div>

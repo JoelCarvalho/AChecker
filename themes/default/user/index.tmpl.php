@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 include(AC_INCLUDE_PATH.'header.inc.php');
 ?>
@@ -137,7 +144,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 	</tr>
 	</tfoot>
 	<tbody>
-		<?php if (is_array($this->user_rows)){ foreach ($this->user_rows as $row) {?>
+		<?php if (is_array($this->user_rows)) { foreach ($this->user_rows as $row) {?>
 			<tr onmousedown="document.form['m<?php echo $row['user_id']; ?>'].checked = !document.form['m<?php echo $row['user_id']; ?>'].checked; togglerowhighlight(this, 'm<?php echo $row['user_id']; ?>');" 
 			    onkeydown="document.form['m<?php echo $row['user_id']; ?>'].checked = !document.form['m<?php echo $row['user_id']; ?>'].checked; togglerowhighlight(this, 'm<?php echo $row['user_id']; ?>');"
 			    id="rm<?php echo $row['user_id']; ?>">
@@ -174,7 +181,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 <script language="JavaScript" type="text/javascript">
 //<!--
 function CheckAll() {
-	for (var i=0;i<document.form.elements.length;i++)	{
+	for (var i=0;i<document.form.elements.length;i++) {
 		var e = document.form.elements[i];
 		if ((e.name == 'id[]') && (e.type=='checkbox')) {
 			e.checked = document.form.selectall.checked;

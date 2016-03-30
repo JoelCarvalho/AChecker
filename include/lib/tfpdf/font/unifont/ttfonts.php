@@ -140,7 +140,7 @@ var $maxStrLenRead;
 		return array($reshi, $reslo);
 	}
 
-	function calcChecksum($data)  {
+	function calcChecksum($data) {
 		if (strlen($data) % 4) { $data .= str_repeat("\0",(4-(strlen($data) % 4))); }
 		$hi=0x0000;
 		$lo=0x0000;
@@ -325,7 +325,7 @@ var $maxStrLenRead;
 			for ($i=0;$i<strlen($psName);$i++) {
 				$c = $psName{$i};	// 1.02
 				$oc = ord($c);
-				if ($oc>126 || strpos(' [](){}<>/%',$c)!==false)
+				if ($oc>126 || strpos(' []() {}<>/%',$c)!==false)
 					die("psName=".$psName." contains invalid character ".$c." ie U+".ord(c));
 			}
 			$this->name = $psName;

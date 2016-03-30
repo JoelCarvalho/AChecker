@@ -1,34 +1,39 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\UsersDAO;
+use QChecker\Utils\ACheckerMailer;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 
 if (isset($_POST['cancel'])) {
 	$msg->addFeedback('CANCELLED');
-	Header('Location: ../index.php');
+	Header('Location: ../user');
 	exit;
 }
 
 if (isset($_POST['submit'])) {
 	/* password check: password is verified front end by javascript. here is to handle the errors from javascript */
-	if ($_POST['password_error'] <> "")
-	{
+	if ($_POST['password_error'] <> "") {
 		$pwd_errors = explode(",", $_POST['password_error']);
 
-		foreach ($pwd_errors as $pwd_error)
-		{
+		foreach ($pwd_errors as $pwd_error) {
 			if ($pwd_error == "missing_password")
 				$missing_fields[] = _AC('password');
 			else
@@ -38,12 +43,11 @@ if (isset($_POST['submit'])) {
 
 	if (!$msg->containsErrors()) {
 		// insert into the db.
-		$password   = $addslashes($_POST['form_password_hidden']);
+		$password   = addslashes($_POST['form_password_hidden']);
 		
 		$usersDAO = new UsersDAO();
 
-		if (!$usersDAO->setPassword($_GET['id'], $password)) 
-		{
+		if (!$usersDAO->setPassword($_GET['id'], $password)) {
 			require(AC_INCLUDE_PATH.'header.inc.php');
 			$msg->printErrors('DB_NOT_UPDATED');
 			require(AC_INCLUDE_PATH.'footer.inc.php');
@@ -64,8 +68,7 @@ if (isset($_POST['submit'])) {
 		$mail->Subject = $_config['site_name'] . ': ' . _AC('password_changed');
 		$mail->Body    = $tmp_message;
 
-		if(!$mail->Send()) 
-		{
+		if(!$mail->Send()) {
 		   $msg->addError('SENDING_ERROR');
 		}
 		else

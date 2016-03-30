@@ -1,17 +1,24 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
-global $onload, $stripslashes;
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
+
+global $onload;
 $onload = 'document.form.form_password.focus();';
 require(AC_INCLUDE_PATH.'header.inc.php'); 
 
@@ -20,8 +27,7 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 <script language="JavaScript" type="text/javascript" src="jscripts/sha-1factory.js"></script>
 
 <script type="text/javascript">
-function encrypt_password()
-{
+function encrypt_password() {
 	document.form.form_password_hidden.value = hex_sha1(document.form.form_password.value);
 	document.form.form_password.value = "";
 }
@@ -50,7 +56,7 @@ function encrypt_password()
 					<label for="email"><?php echo _AC('email_address'); ?></label>
 				</td>
 				<td align="left">
-					<input id="email" name="email" type="text" size="50" maxlength="50" value="<?php echo $stripslashes(htmlspecialchars($_POST['email'])); ?>" />
+					<input id="email" name="email" type="text" size="50" maxlength="50" value="<?php echo htmlspecialchars($_POST['email']); ?>" />
 				</td>
 			</tr>
 		

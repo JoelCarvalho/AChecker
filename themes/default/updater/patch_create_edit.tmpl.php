@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 require ('include/json.inc.php');
 require (AC_INCLUDE_PATH.'header.inc.php');
@@ -72,11 +79,9 @@ require (AC_INCLUDE_PATH.'header.inc.php');
 		<tbody>
 <?php
 // when edit existing patch
-if (is_array($this->dependent_rows))  
-{
+if (is_array($this->dependent_rows)) {
 	$num_of_dependents = count($this->dependent_rows);
-	foreach ($this->dependent_rows as $row_patch_dependent)
-	{
+	foreach ($this->dependent_rows as $row_patch_dependent) {
 	?>
 			<tr>
 				<td><input id="dependent_patch" name="dependent_patch[]" value="<?php echo $row_patch_dependent['dependent_patch_id']; ?>" type="text" maxlength="100" size="100" style="max-width:100%; display:block" /></td>
@@ -86,8 +91,7 @@ if (is_array($this->dependent_rows))
 }
 
 // when creating new patch
-if ($num_of_dependents == 0)
-{
+if ($num_of_dependents == 0) {
 ?>
 		<tr>
 			<td><input id="dependent_patch" name="dependent_patch[]" type="text" maxlength="100" size="100" style="max-width:100%; display:block" /></td>
@@ -128,8 +132,7 @@ myescape = function(/*string*/ str) {
     return str.replace(/(['"\.*+?^${}()|[\]\/\\])/g, "\\$1").replace(/\n/g, '\\n');
 }
 
-function show_message()
-{
+function show_message() {
 	var messageDIV = document.getElementById("messageDIV"); 
 	var i = document.getElementById("messageIFrame"); 
 	
@@ -177,8 +180,7 @@ function add_file(filedata) {
 			document.form['add_dir[' +num_of_files +']'].value = filedata.location;
 			
 			// set uploaded file
-			if (filedata.uploaded_file != "")
-			{
+			if (filedata.uploaded_file != "") {
 				document.form['add_uploaded_file[' +num_of_files +']'].value = filedata.uploaded_file;
 				var tables = newDiv.getElementsByTagName('TABLE');
 				tables[0].rows[2].style.display='';    // display the row of uploaded file
@@ -212,8 +214,7 @@ function add_file(filedata) {
 			document.form['overwrite_dir[' +num_of_files +']'].value = filedata.location;
 
 			// set uploaded file
-			if (filedata.uploaded_file != "")
-			{
+			if (filedata.uploaded_file != "") {
 				document.form['overwrite_uploaded_file[' +num_of_files +']'].value = filedata.uploaded_file;
 				var tables = newDiv.getElementsByTagName('TABLE');
 				tables[3].rows[2].style.display='';    // display the row of uploaded file

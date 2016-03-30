@@ -47,8 +47,7 @@ class Savant2_Error_pear extends Savant2_Error {
 	*
 	*/
 	
-	function error()
-	{
+	function error() {
 		// throw a PEAR_Error
 		PEAR::throwError($this->text, $this->code, $this->info);
 	}

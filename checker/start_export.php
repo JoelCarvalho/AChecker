@@ -1,20 +1,34 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id:
 
 // Called by ajax request; main file to generate files
 // @ see checker/js/checker.js
- 
+
+use QChecker\ExportRpt\acheckerCSV;
+use QChecker\ExportRpt\acheckerEARL;
+use QChecker\ExportRpt\acheckerHTML;
+use QChecker\ExportRpt\acheckerTFPDF;
+use QChecker\Validator\AccessibilityValidator;
+use QChecker\Validator\CSSValidator;
+use QChecker\Validator\FileExportRptGuideline;
+use QChecker\Validator\FileExportRptLine;
+use QChecker\Validator\HTMLValidator;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 
 // first of all delete too old files from temp folder
@@ -36,7 +50,9 @@ if ($handle = opendir(AC_EXPORT_RPT_DIR)) {
     closedir($handle); 
 }
 
-// get user choise on file format
+$file=$_GET['file'];
+$problem=$_GET['problem'];
+// get user choice on file format
 if (isset($_POST['file']) && isset($_POST['problem'])) {
 	$file = $_POST['file'];
 	$problem = $_POST['problem'];
@@ -76,7 +92,7 @@ $html_error = '';
 
 // validate html
 if ($_SESSION['input_form']['enable_html_validation'] == true) {
-	include(AC_INCLUDE_PATH. "classes/HTMLValidator.class.php");
+	include(AC_INCLUDE_PATH. "classes/Validator/HTMLValidator.class.php");
 
 	if ($input_content_type == 'file' || $input_content_type == 'paste') {
 		if ($file == 'html') {
@@ -110,7 +126,7 @@ $css_error = '';
 
 // validate css
 if ($_SESSION['input_form']['enable_css_validation'] == true) {
-	include(AC_INCLUDE_PATH. "classes/CSSValidator.class.php");
+	include(AC_INCLUDE_PATH. "classes/Validator/CSSValidator.class.php");
 
 	if ($input_content_type == $uri) {
 		$cssValidator = new CSSValidator("uri", $input_content_type, true);
@@ -127,11 +143,11 @@ if ($_SESSION['input_form']['enable_css_validation'] == true) {
 }
 
 if ($problem != 'html' && $problem != 'css') {
-	include_once(AC_INCLUDE_PATH. 'classes/AccessibilityValidator.class.php');
-	include_once(AC_INCLUDE_PATH. 'classes/FileExportRptGuideline.class.php');
-	include_once(AC_INCLUDE_PATH. 'classes/FileExportRptLine.class.php');
+	include_once(AC_INCLUDE_PATH. 'classes/Validator/AccessibilityValidator.class.php');
+	include_once(AC_INCLUDE_PATH. 'classes/Validator/FileExportRptGuideline.class.php');
+	include_once(AC_INCLUDE_PATH. 'classes/Validator/FileExportRptLine.class.php');
 
-	$aValidator = new AccessibilityValidator($validate_content, $_gids, $uri);
+	$aValidator = new AccessibilityValidator($_gids, null, $uri, $_POST['val_context'][0]);
 	$aValidator->validate();
 	$errors = $aValidator->getValidationErrorRpt();
 }
@@ -149,7 +165,7 @@ $error_nr_likely = 0;
 $error_nr_potential = 0;
 
 // create file depending on user choice
-if ($file == 'pdf') {	
+if ($file == 'pdf') {
 	if ($problem != 'html' && $problem != 'css') {
 		if ($mode == 'guideline') $a_rpt = new FileExportRptGuideline($errors, $_gids[0], $user_link_id);
 		else if ($mode == 'line') $a_rpt = new FileExportRptLine($errors, $user_link_id);
@@ -158,7 +174,7 @@ if ($file == 'pdf') {
 		list($error_nr_known, $error_nr_likely, $error_nr_potential) = $a_rpt->getErrorNr();
 	}
 	include_once(AC_INCLUDE_PATH. 'classes/exportRpt/exportTFPDF.class.php');
-	
+
 	$pdf = new acheckerTFPDF($known, $likely, $potential, $html, $css, 
 		$error_nr_known, $error_nr_likely, $error_nr_potential, $error_nr_html, $error_nr_css, $css_error, $html_error);
 	$path = $pdf->getPDF($title, $uri, $problem, $mode, $_gids);

@@ -1,24 +1,30 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelineGroupsDAO;
+use QChecker\DAO\GuidelineSubgroupsDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/ChecksDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/GuidelineGroupsDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/GuidelineSubgroupsDAO.class.php');
 
-if (!isset($_REQUEST['gid']) && !isset($_REQUEST['ggid']) && !isset($_REQUEST['gsgid']) || !isset($_REQUEST['action']))
-{
+if (!isset($_REQUEST['gid']) && !isset($_REQUEST['ggid']) && !isset($_REQUEST['gsgid']) || !isset($_REQUEST['action'])) {
 	include(AC_INCLUDE_PATH.'header.inc.php');
 	$msg->addError('MISSING_GID');
 	include(AC_INCLUDE_PATH.'footer.inc.php');
@@ -28,33 +34,28 @@ if (!isset($_REQUEST['gid']) && !isset($_REQUEST['ggid']) && !isset($_REQUEST['g
 $guidelineGroupsDAO = new GuidelineGroupsDAO();
 $guidelineSubgroupsDAO = new GuidelineSubgroupsDAO();
 
-if (isset($_POST['submit']))
-{
+if (isset($_POST['submit'])) {
 	$name = trim($_POST['name']);	
 	
-	if ($name == '')
-	{
+	if ($name == '') {
 		$msg->addError(array('EMPTY_FIELDS', _AC('name')));
 	}
 	
-	if (!$msg->containsErrors())
-	{
-		if ($_GET['action'] == 'add')
-		{
+	if (!$msg->containsErrors()) {
+		if ($_GET['action'] == 'add') {
 			if (isset($_GET['gid'])) // add group into guideline
-				$guidelineGroupsDAO->Create($_GET['gid'], $name, '', '');
+				$guidelineGroupsDAO->Create($_GET['gid'], $name, trim($_POST['abbr']), '');
 	
 			if (isset($_GET['ggid'])) // add group into guideline
-				$guidelineSubgroupsDAO->Create($_GET['ggid'], $name, '');
+				$guidelineSubgroupsDAO->Create($_GET['ggid'], $name, trim($_POST['abbr']));
 		}
 
-		if ($_GET['action'] == 'edit')
-		{
+		if ($_GET['action'] == 'edit') {
 			if (isset($_GET['ggid'])) // add group into guideline
-				$guidelineGroupsDAO->Update($_GET['ggid'], $name, '', '');
+				$guidelineGroupsDAO->Update($_GET['ggid'], $name, trim($_POST['abbr']), '');
 	
 			if (isset($_GET['gsgid'])) // add group into guideline
-				$guidelineSubgroupsDAO->Update($_GET['gsgid'], $name, '');
+				$guidelineSubgroupsDAO->Update($_GET['gsgid'], $name, trim($_POST['abbr']));
 		}
 
 		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
@@ -70,8 +71,7 @@ self.close();
 
 }
 
-if ($_GET['action'] == 'edit')
-{
+if ($_GET['action'] == 'edit') {
 	if (isset($_GET['ggid']))
 		$row = $guidelineGroupsDAO->getGroupByID($_GET['ggid']);
 

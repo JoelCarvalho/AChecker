@@ -1,16 +1,25 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\PatchesDAO;
+use QChecker\Updater\Patch;
+use QChecker\Updater\PatchListParser;
+use QChecker\Updater\PatchParser;
+use QChecker\Utils\Utility;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 require (AC_INCLUDE_PATH.'vitals.inc.php');
@@ -26,8 +35,7 @@ $patchesDAO = new PatchesDAO();
 /**
  * Generate html of each patch row at main patch page
  */
-function print_patch_row($patch_row, $row_id, $enable_radiotton)
-{
+function print_patch_row($patch_row, $row_id, $enable_radiotton) {
 	global $id, $patch_id;   // current selected patch
 	global $dependent_patches;
 
@@ -58,8 +66,7 @@ function print_patch_row($patch_row, $row_id, $enable_radiotton)
 }
 
 // split a string by given delimiter and return an array
-function get_array_by_delimiter($subject, $delimiter)
-{
+function get_array_by_delimiter($subject, $delimiter) {
 	return preg_split('/'.preg_quote($delimiter).'/', $subject, -1, PREG_SPLIT_NO_EMPTY);
 }
 
@@ -67,8 +74,7 @@ $skipFilesModified = false;
 
 if ($_POST['yes'])  $skipFilesModified = true;
 
-if ($_POST['no'])
-{
+if ($_POST['no']) {
 	unset($_SESSION['remove_permission']);
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
@@ -86,8 +92,7 @@ $update_server = "http://update.atutor.ca";
 $connection_test_file = $update_server . '/index.php';
 $connection = @file_get_contents($connection_test_file);
 
-if (!$connection) 
-{
+if (!$connection) {
 	$infos = array('CANNOT_CONNECT_PATCH_SERVER', $update_server);
 	$msg->addInfo($infos);
 	$server_connected = false;
@@ -96,16 +101,14 @@ else
 	$server_connected = true;
 
 // get patch list if successfully connect to patch server
-if ($server_connected)
-{
-	$patch_folder = $update_server . '/achecker/patch/' . str_replace('.', '_', VERSION) . '/';
+if ($server_connected) {
+	$patch_folder = $update_server . '/achecker/patch/' . str_replace('.', '_', QCHECKER_VERSION) . '/';
 	$patch_list_xml = @file_get_contents($patch_folder . 'patch_list.xml');
 	
-	if ($patch_list_xml) 
-	{
+	if ($patch_list_xml) {
 		$patchListParser = new PatchListParser();
 		$patchListParser->parse($patch_list_xml);
-		$patch_list_array = $patchListParser->getMyParsedArrayForVersion(VERSION);
+		$patch_list_array = $patchListParser->getMyParsedArrayForVersion(QCHECKER_VERSION);
 	}
 }
 // end of get patch list
@@ -113,8 +116,7 @@ if ($server_connected)
 $module_content_folder = AC_TEMP_DIR . "updater/temp";
 if (!is_dir($module_content_folder)) mkdir($module_content_folder);
 
-if ($_POST['install_upload'] && $_POST['uploading'])
-{
+if ($_POST['install_upload'] && $_POST['uploading']) {
 	include_once(AC_INCLUDE_PATH . 'lib/pclzip.lib.php');
 	
 	// clean up module content folder
@@ -128,8 +130,7 @@ if ($_POST['install_upload'] && $_POST['uploading'])
 	} else {
 		$archive = new PclZip($_FILES['patchfile']['tmp_name']);
 
-		if ($archive->extract(PCLZIP_OPT_PATH, $module_content_folder) == 0)
-		{
+		if ($archive->extract(PCLZIP_OPT_PATH, $module_content_folder) == 0) {
 		    Utility::clearDir($module_content_folder);
 		    $msg->addError('CANNOT_UNZIP');
 		}
@@ -137,31 +138,26 @@ if ($_POST['install_upload'] && $_POST['uploading'])
 }
 
 // Installation process
-if ($_POST['install'] || $_POST['install_upload'] && !isset($_POST["not_ignore_version"]))
-{
+if ($_POST['install'] || $_POST['install_upload'] && !isset($_POST["not_ignore_version"])) {
 	
 	if (isset($_POST['id'])) $id=$_POST['id'];
 	else $id = $_REQUEST['id'];
 
-	if ($_POST['install'] && $id == "")
-	{
+	if ($_POST['install'] && $id == "") {
 		$msg->addError('CHOOSE_UNINSTALLED_PATCH');
 	}
 	else
 	{
-		if ($_POST['install'])
-		{
+		if ($_POST['install']) {
 			$patchURL = $patch_folder . $patch_list_array[$id][patch_folder] . "/";
 		}
-		else if ($_POST['install_upload'])
-		{
+		else if ($_POST['install_upload']) {
 			$patchURL = $module_content_folder . "/";
 		}
 			
 		$patch_xml = @file_get_contents($patchURL . 'patch.xml');
 		
-		if ($patch_xml === FALSE) 
-		{
+		if ($patch_xml === FALSE) {
 			$msg->addError('PATCH_XML_NOT_FOUND');
 		}
 		else
@@ -174,10 +170,9 @@ if ($_POST['install'] || $_POST['install_upload'] && !isset($_POST["not_ignore_v
 			
 			$patch_array = $patchParser->getParsedArray();
 
-			if ($_POST["ignore_version"]) $patch_array["applied_version"] = VERSION;
+			if ($_POST["ignore_version"]) $patch_array["applied_version"] = QCHECKER_VERSION;
 			
-			if ($_POST["install_upload"])
-			{
+			if ($_POST["install_upload"]) {
 				$current_patch_list = array('achecker_patch_id' => $patch_array['achecker_patch_id'],
 																		'applied_version' => $patch_array['applied_version'],
 																		'patch_folder' => $patchURL,
@@ -188,8 +183,7 @@ if ($_POST['install'] || $_POST['install_upload'] && !isset($_POST["not_ignore_v
 																		'dependent_patches' => $patch_array['dependent_patches']);
 			}
 
-			if ($_POST["install"])
-			{
+			if ($_POST["install"]) {
 				$current_patch_list = $patch_list_array[$id];
 				$current_patch_list["sql"] = $patch_array["sql"];
 			}
@@ -211,23 +205,18 @@ if ($_POST['install'] || $_POST['install_upload'] && !isset($_POST["not_ignore_v
 if (isSet($_REQUEST['patch_id']))  $patch_id = $_REQUEST['patch_id'];
 elseif ($_POST['patch_id']) $patch_id=$_POST['patch_id'];
 
-if ($patch_id > 0)
-{
+if ($patch_id > 0) {
 	// clicking on button "Done" at displaying remove permission info page
-	if ($_POST['done'])
-	{
+	if ($_POST['done']) {
 		$permission_files = array();
 		
-		if (is_array($_SESSION['remove_permission']))
-		{
-			foreach ($_SESSION['remove_permission'] as $file)
-			{
+		if (is_array($_SESSION['remove_permission'])) {
+			foreach ($_SESSION['remove_permission'] as $file) {
 				if (is_writable($file))  $permission_files[] = $file;
 			}
 		}
 		
-		if (count($permission_files) == 0)
-		{
+		if (count($permission_files) == 0) {
 			$updateInfo = array("remove_permission_files"=>"", "status"=>"Installed");
 		
 			$patchesDAO->UpdateByArray($patch_id, $updateInfo);
@@ -249,12 +238,10 @@ if ($patch_id > 0)
 
 	$row = $patchesDAO->getByID($patch_id);
 	
-	if ($row["remove_permission_files"]<> "")
-	{
+	if ($row["remove_permission_files"]<> "") {
 		$remove_permission_files = $_SESSION['remove_permission'] = get_array_by_delimiter($row["remove_permission_files"], "|");
 
-		if (count($_SESSION['remove_permission']) > 0)
-		{
+		if (count($_SESSION['remove_permission']) > 0) {
 			if ($_POST['done']) $msg->printErrors('REMOVE_WRITE_PERMISSION');
 			else $msg->printInfos('PATCH_INSTALLED_AND_REMOVE_PERMISSION');
 			
@@ -275,16 +262,13 @@ if ($patch_id > 0)
 	}
 
 	// display backup file info after remove permission step
-	if ($row["remove_permission_files"] == "")
-	{
+	if ($row["remove_permission_files"] == "") {
 		$msg->printFeedbacks('UPDATE_INSTALLED_SUCCESSFULLY');
 		
-		if ($row["backup_files"]<> "")
-		{
+		if ($row["backup_files"]<> "") {
 			$backup_files = get_array_by_delimiter($row["backup_files"], "|");
 	
-			if (count($backup_files) > 0)
-			{
+			if (count($backup_files) > 0) {
 				$feedbacks[] = _AC('updater_show_backup_files');
 				
 				foreach($backup_files as $backup_file)
@@ -292,12 +276,10 @@ if ($patch_id > 0)
 			}
 		}
 
-		if ($row["patch_files"]<> "")
-		{
+		if ($row["patch_files"]<> "") {
 			$patch_files = get_array_by_delimiter($row["patch_files"], "|");
 	
-			if (count($patch_files) > 0)
-			{
+			if (count($patch_files) > 0) {
 				$feedbacks[] = _AC('updater_show_update_files');
 				
 				foreach($patch_files as $patch_file)
@@ -316,7 +298,7 @@ if ($patch_id > 0)
 $msg->printAll();
 
 // display installed patches
-$rows = $patchesDAO->getPatchByVersion(VERSION);
+$rows = $patchesDAO->getPatchByVersion(QCHECKER_VERSION);
 
 if (is_array($rows)) $num_of_patches_in_db = count($rows);
 else $num_of_patches_in_db = 0;

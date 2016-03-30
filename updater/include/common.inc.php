@@ -1,15 +1,17 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\DAO\PatchesDAO;
 
 function print_errors( $errors, $notes='' ) {
 	?>
@@ -64,10 +66,9 @@ function print_feedback( $feedback, $notes='' ) {
 /**
  * Check if the patch has been installed
  */
-function is_patch_installed($patch_id)
-{
+function is_patch_installed($patch_id) {
 	$patchesDAO = new PatchesDAO();
-	$rows = $patchesDAO->getInstalledPatchByIDAndVersion($patch_id, VERSION);
+	$rows = $patchesDAO->getInstalledPatchByIDAndVersion($patch_id, QCHECKER_VERSION);
 
 	if (is_array($rows)) return true;
 	else return false;

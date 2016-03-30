@@ -1,17 +1,21 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 
 if (isset($_GET['p'])) {
@@ -22,8 +26,7 @@ if (isset($_GET['p'])) {
 
 require('handbook_header.inc.php'); 
 
-if (isset($_pages[$this_page]['guide'])) 
-{
+if (isset($_pages[$this_page]['guide'])) {
 	echo _AC($_pages[$this_page]['guide']);
 }
 

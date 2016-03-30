@@ -351,8 +351,7 @@ class SMTP
 
             # now send the lines to the server
             while(list(,$line_out) = @each($lines_out)) {
-                if(strlen($line_out) > 0)
-                {
+                if(strlen($line_out) > 0) {
                     if(substr($line_out, 0, 1) == ".") {
                         $line_out = "." . $line_out;
                     }
@@ -471,8 +470,7 @@ class SMTP
         }
 
         // Send extended hello first (RFC 2821)
-        if(!$this->SendHello("EHLO", $host))
-        {
+        if(!$this->SendHello("EHLO", $host)) {
             if(!$this->SendHello("HELO", $host))
                 return false;
         }

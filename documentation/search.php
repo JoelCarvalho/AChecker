@@ -1,17 +1,23 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\LanguageTextDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'handbook_pages.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/LanguageTextDAO.class.php');
@@ -59,38 +65,32 @@ if ($_GET['query']) {
 		$languageTextDAO = new LanguageTextDAO();
 		
 		$final_match_rows = array();
-		foreach ($search_terms as $term)
-		{
+		foreach ($search_terms as $term) {
 			$match_rows = $languageTextDAO->getHelpByMatchingText($term, $_SESSION['lang']);
 
 			if (is_array($match_rows)) $final_match_rows = array_merge($final_match_rows, $match_rows);
 		}
 
-		if (is_array($final_match_rows)) 
-		{
-			foreach ($final_match_rows as $match) 
-			{
+		if (is_array($final_match_rows)) {
+			foreach ($final_match_rows as $match) {
 				if (is_array($result)) 
 					$all_match_terms = array_keys($result);
 				else 
 					$all_match_terms = array(); 
 
-				if (!in_array($match['term'], $all_match_terms))
-				{ 
+				if (!in_array($match['term'], $all_match_terms)) { 
 					$count = 0;
 	
 					$contents = strtolower($match['text']);
 	
-					foreach ($search_terms as $term) 
-					{
+					foreach ($search_terms as $term) {
 						$term = trim($term);
 						if ($term) {
 							$count += substr_count($contents, $term);
 						}
 					}
 	
-					if ($count) 
-					{
+					if ($count) {
 						$results[$match['term']] = $count;
 					}
 				}
@@ -98,15 +98,12 @@ if ($_GET['query']) {
 		}
 
 		// replace term in match array with script name
-		if ($results) 
-		{
+		if ($results) {
 			arsort($results);
 			
 			echo '<ol>';
-			foreach ($results as $term => $count) 
-			{
-				foreach ($_pages as $this_page => $page_def)
-				{
+			foreach ($results as $term => $count) {
+				foreach ($_pages as $this_page => $page_def) {
 					if (strcmp($page_def['guide'], $term) == 0)
 						echo '<li><a href="frame_content.php?p='.$this_page.'" class="leaf" target="body">'._AC($page_def['title_var']).'</a></li>';
 				}

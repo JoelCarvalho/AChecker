@@ -1,28 +1,35 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\Validator\HTMLRpt;
+use QChecker\Validator\HTMLByGuidelineRpt;
+use QChecker\Utils\Utility;
+use QChecker\DAO\GuidelinesDAO;
+use QChecker\DAO\UserLinksDAO;
+use QChecker\DAO\ContextDAO;
 
 if (!defined("AC_INCLUDE_PATH")) die("Error: AC_INCLUDE_PATH is not defined in checker_input_form.php.");
 
 if (!isset($aValidator) && !isset($htmlValidator)) die(_AC("no_instance"));
 
-include_once(AC_INCLUDE_PATH. "classes/HTMLRpt.class.php");
-include_once(AC_INCLUDE_PATH. "classes/HTMLByGuidelineRpt.class.php");
+include_once(AC_INCLUDE_PATH. "classes/Validator/HTMLRpt.class.php");
+include_once(AC_INCLUDE_PATH. "classes/Validator/HTMLByGuidelineRpt.class.php");
 include_once(AC_INCLUDE_PATH. "classes/Utility.class.php");
 include_once(AC_INCLUDE_PATH. "classes/DAO/UserLinksDAO.class.php");
+include_once(AC_INCLUDE_PATH. "classes/DAO/ContextDAO.class.php");
 include_once(AC_INCLUDE_PATH. "classes/DAO/UserDecisionsDAO.class.php");
 
-if (isset($htmlValidator))
-{
+if (isset($htmlValidator)) {
 	$num_of_html_errors = $htmlValidator->getNumOfValidateError();
 
 	$savant->assign('htmlValidator', $htmlValidator);
@@ -30,26 +37,22 @@ if (isset($htmlValidator))
 }
 
 // CSS Validator
-if (isset($cssValidator))
-{
+if (isset($cssValidator)) {
 	$num_of_css_errors = $cssValidator->getNumOfValidateError();
 
 	$savant->assign('cssValidator', $cssValidator);
 	$savant->assign('num_of_css_errors', $num_of_css_errors);
 }
 
-if (isset($aValidator))
-{
+if (isset($aValidator)) {
 	global $_gids;    // array of the guideline_ids that have been validated against. initialized in checker/index.php
 	// find out selected guidelines
 	$guidelinesDAO = new GuidelinesDAO();
 	$guideline_rows = $guidelinesDAO->getGuidelineByIDs($_gids);
 	
 	$guidelines_text = "";
-	if (is_array($guideline_rows))
-	{
-		foreach ($guideline_rows as $id => $row)
-		{
+	if (is_array($guideline_rows)) {
+		foreach ($guideline_rows as $id => $row) {
 			$guidelines_text .= '<a title="'.$row["title"]._AC('link_open_in_new').'" target="_new" href="'.AC_BASE_HREF.'guideline/view_guideline.php?id='.$row["guideline_id"].'">'.$row["title"]. '</a>, ';
 		}
 	}
@@ -58,7 +61,15 @@ if (isset($aValidator))
 	$num_of_total_a_errors = $aValidator->getNumOfValidateError();
 
 	$errors = $aValidator->getValidationErrorRpt();
-	
+
+	$context=QCHECKER_NAME;
+	$uri=$_POST['uri'];
+
+	if (isset($_POST['val_context'][0])){
+		$context=new ContextDAO();
+		$context=$context->getCombinedName($_POST['val_context'][0]);
+	}
+
 	// if it's a LOGIN user validates URI, save into database for user to make decision.
 	// Note that results of validating uploaded files are not saved
 	$user_link_id = '';
@@ -66,13 +77,11 @@ if (isset($aValidator))
 	$from_referer = 'false';
 	
 	// initial request to validate referer URL
-	if (isset($_GET['uri']) && $_GET['uri'] == 'referer')
-		{
+	if (isset($_GET['uri']) && $_GET['uri'] == 'referer') {
 		$from_referer = 'true';
 		
 		// if id (id is user_link_id) is given
-		if (isset($_GET['id']) && intval($_GET['id']) > 0) 
-		{
+		if (isset($_GET['id']) && intval($_GET['id']) > 0) {
 			$user_link_id = $_GET['id'];
 			
 			// same user associated in user_link_id is login, set user_link_id
@@ -80,17 +89,14 @@ if (isset($aValidator))
 			if ($_SESSION['user_id'] > 0) $allow_set_decision = 'true';
 		}
 	}
-	else if (isset($_REQUEST['referer_report']))
-	{
+	else if (isset($_REQUEST['referer_report'])) {
 		$from_referer = 'true';
-		if (isset($_REQUEST['referer_user_link_id'])) 
-		{
+		if (isset($_REQUEST['referer_user_link_id'])) {
 			$user_link_id = $_REQUEST['referer_user_link_id'];
 			if ($_SESSION['user_id'] > 0) $allow_set_decision = 'true';
 		}
 	}
-	else if (isset($_SESSION['user_id']) && $_REQUEST["validate_uri"])
-	{
+	else if (isset($_SESSION['user_id']) && $_REQUEST["validate_uri"]) {
 		// save errors into user_links
 		$userLinksDAO = new UserLinksDAO();
 		$user_link_id = $userLinksDAO->getUserLinkID($_SESSION['user_id'], $_REQUEST['uri'], $_gids);
@@ -105,10 +111,10 @@ if (isset($aValidator))
 	$_SESSION['input_form']['user_link_id'] = $user_link_id;
 	
 	if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) {
-		$a_rpt = new HTMLByGuidelineRpt($errors, $_gids[0], $user_link_id);
+		$a_rpt = new HTMLByGuidelineRpt($aValidator, $_gids[0], $user_link_id);
 		$_SESSION['input_form']['mode'] = 'guideline';
 	} else if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) {
-		$a_rpt = new HtmlRpt($errors, $user_link_id);
+		$a_rpt = new HtmlRpt($aValidator, $user_link_id);
 		$_SESSION['input_form']['mode'] = 'line';
 	}
 	$a_rpt->setAllowSetDecisions($allow_set_decision);
@@ -127,8 +133,7 @@ if (isset($aValidator))
 	$seals = null;
 	if ($num_of_errors == 0 && 
 	    ($num_of_likely_problems == 0 && $num_of_potential_problems == 0 ||
-	     $num_of_likely_problems_no_decision == 0 && $num_of_potential_problems_no_decision == 0))
-	{
+	     $num_of_likely_problems_no_decision == 0 && $num_of_potential_problems_no_decision == 0)) {
 		$utility = new Utility();
 		$seals = $utility->getSeals($guideline_rows);
 	}
@@ -143,6 +148,8 @@ if (isset($aValidator))
 	$savant->assign('aValidator', $aValidator);
 	$savant->assign('guidelines_text', $guidelines_text);
 	$savant->assign('num_of_total_a_errors', $num_of_total_a_errors);
+	$savant->assign('uri', $uri);
+	$savant->assign('combined_name', $context);
 	
 	// vars for displaying seals
 	if (is_array($seals)) {
@@ -152,8 +159,7 @@ if (isset($aValidator))
 	if ($user_link_id <> '') $savant->assign('user_link_id', $user_link_id);
 	
 	// vars for displaying report from referer URI
-	if ($_REQUEST['uri'] == 'referer')
-	{
+	if ($_REQUEST['uri'] == 'referer') {
 		$savant->assign('referer_report', 1);
 		if (intval($user_link_id) > 0) $savant->assign('referer_user_link_id', $user_link_id);
 	}

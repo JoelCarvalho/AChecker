@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 global $onload;
 $onload = "initial();";
@@ -102,7 +109,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 	
 	<div id="div_add_privs">
 	<?php 
-	if (!is_array($this->privs_to_add_rows)){ 
+	if (!is_array($this->privs_to_add_rows)) { 
 		echo _AC('none_found');
 	} 
 	else {?>
@@ -141,8 +148,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 <script type="text/JavaScript">
 //<!--
 
-function initial()
-{
+function initial() {
 	// hide guideline div
 	document.getElementById("div_add_privs").style.display = 'none';
 
@@ -151,7 +157,7 @@ function initial()
 }
 
 function CheckAll(element_name, selectall_checkbox_name) {
-	for (var i=0;i<document.input_form.elements.length;i++)	{
+	for (var i=0;i<document.input_form.elements.length;i++) {
 		var e = document.input_form.elements[i];
 		if ((e.name == element_name) && (e.type=='checkbox')) {
 			e.checked = document.input_form[selectall_checkbox_name].checked;

@@ -48,8 +48,7 @@ class Savant2_Plugin {
 	* 
 	*/
 	
-	function Savant2_Plugin($conf = array())
-	{
+	function Savant2_Plugin($conf = array()) {
 		settype($conf, 'array');
 		foreach ($conf as $key => $val) {
 			$this->$key = $val;
@@ -67,8 +66,7 @@ class Savant2_Plugin {
 	*
 	*/
 	
-	function plugin()
-	{
+	function plugin() {
 	}
 }
 ?>

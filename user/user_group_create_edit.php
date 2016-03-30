@@ -1,16 +1,23 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\PrivilegesDAO;
+use QChecker\DAO\UserGroupPrivilegeDAO;
+use QChecker\DAO\UserGroupsDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -25,23 +32,19 @@ if (isset($_GET["id"])) $id = intval($_GET["id"]);
 $userGroupsDAO = new UserGroupsDAO();
 
 // handle submits
-if (isset($_POST['cancel'])) 
-{
+if (isset($_POST['cancel'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: user_group.php');
 	exit;
 } 
-else if (isset($_POST['save']))
-{
+else if (isset($_POST['save'])) {
 	$title = trim($_POST['title']);	
 	
-	if ($title == '')
-	{
+	if ($title == '') {
 		$msg->addError(array('EMPTY_FIELDS', _AC('title')));
 	}
 	
-	if (!$msg->containsErrors())
-	{
+	if (!$msg->containsErrors()) {
 		if (isset($id))  // edit existing user group
 		{
 			$userGroupsDAO->update($id,
@@ -54,11 +57,9 @@ else if (isset($_POST['save']))
 			                       trim($_POST['description']));
 		}
 			                       
-		if (!$msg->containsErrors())
-		{
+		if (!$msg->containsErrors()) {
 			// add checks
-			if (is_array($_POST['add_privileges_id'])) 
-			{
+			if (is_array($_POST['add_privileges_id'])) {
 				$userGroupPrivilegeDAO = new UserGroupPrivilegeDAO();
 
 				foreach ($_POST['add_privileges_id'] as $add_priv_id)
@@ -71,20 +72,17 @@ else if (isset($_POST['save']))
 		}
 	}
 }
-else if (isset($_POST['remove']))
-{
+else if (isset($_POST['remove'])) {
 	$userGroupPrivilegeDAO = new UserGroupPrivilegeDAO();
 	
-	if (is_array($_POST['del_privileges_id']))
-	{
+	if (is_array($_POST['del_privileges_id'])) {
 		foreach ($_POST['del_privileges_id'] as $del_priv_id)
 			$userGroupPrivilegeDAO->Delete($id, $del_priv_id);
 	}
 }
 
 // interface display
-if (!isset($id))
-{
+if (!isset($id)) {
 	// create user group
 	$privilegesDAO = new PrivilegesDAO();
 	
@@ -98,8 +96,7 @@ else
 
 	// get privs that are not in user group
 	$privs = array();
-	if (is_array($privs_rows))
-	{
+	if (is_array($privs_rows)) {
 		foreach($privs_rows as $priv_row)
 			$privs[] .= $priv_row['privilege_id'];
 	}

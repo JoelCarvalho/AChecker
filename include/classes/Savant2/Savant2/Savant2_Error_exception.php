@@ -45,8 +45,7 @@ class Savant2_Error_exception extends Savant2_Error {
 	* 
 	*/
 	
-	function error()
-	{
+	function error() {
 		throw new Savant2_Exception($this->text, $this->code);
 	}
 }

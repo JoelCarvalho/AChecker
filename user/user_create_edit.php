@@ -1,17 +1,25 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\UserGroupsDAO;
+use QChecker\DAO\UsersDAO;
+use QChecker\Utils\ACheckerMailer;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/UserGroupsDAO.class.php');
@@ -25,12 +33,10 @@ if (isset($_POST['cancel'])) {
 	$usersDAO = new UsersDAO();
 	
 	/* password check: password is verified front end by javascript. here is to handle the errors from javascript */
-	if ($_POST['password_error'] <> "")
-	{
+	if ($_POST['password_error'] <> "") {
 		$pwd_errors = explode(",", $_POST['password_error']);
 
-		foreach ($pwd_errors as $pwd_error)
-		{
+		foreach ($pwd_errors as $pwd_error) {
 			if ($pwd_error == "missing_password")
 				$missing_fields[] = _AC('password');
 			else
@@ -49,8 +55,7 @@ if (isset($_POST['cancel'])) {
 			              $_POST['last_name'],
 			              $_POST['status']);
 			
-			if (is_int($user_id) && $user_id > 0)
-			{
+			if (is_int($user_id) && $user_id > 0) {
 				if (defined('AC_EMAIL_CONFIRMATION') && AC_EMAIL_CONFIRMATION) {
 					$msg->addFeedback('REG_THANKS_CONFIRM');
 		
@@ -85,9 +90,7 @@ if (isset($_POST['cancel'])) {
 			                  $_POST['email'],
 			                  $_POST['first_name'],
 			                  $_POST['last_name'],
-			                  $_POST['status']))
-			
-			{
+			                  $_POST['status'])) {
 				$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 				header('Location: index.php');
 				exit;

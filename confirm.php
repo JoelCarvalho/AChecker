@@ -1,19 +1,26 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\DAO\UsersDAO;
+use QChecker\Utils\ACheckerMailer;
 
 $_user_location = 'public';
 
+/*
+* @ignore
+*/
 define('AC_INCLUDE_PATH', 'include/');
+
 require(AC_INCLUDE_PATH.'vitals.inc.php');
 require_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 
@@ -23,20 +30,17 @@ if (isset($_POST['cancel'])) {
 	exit;
 }
 
-if (isset($_GET['e'], $_GET['id'], $_GET['m'])) 
-{
+if (isset($_GET['e'], $_GET['id'], $_GET['m'])) {
 	$id = intval($_GET['id']);
 	$m  = $_GET['m'];
-	$e  = $addslashes($_GET['e']);
+	$e  = addslashes($_GET['e']);
 
 	$usersDAO = new UsersDAO();
 	
-	if ($row = $usersDAO->getUserByID($id)) 
-	{
+	if ($row = $usersDAO->getUserByID($id)) {
 		$code = substr(md5($_GET['e'] . $row['creation_date'] . $id), 0, 10);
 
-		if ($code == $m) 
-		{
+		if ($code == $m) {
 			$usersDAO->setEmail($id, $e);
 			$msg->addFeedback('CONFIRM_GOOD');
 
@@ -53,20 +57,17 @@ if (isset($_GET['e'], $_GET['id'], $_GET['m']))
 		$msg->addError('CONFIRM_BAD');
 	}
 }
-else if (isset($_GET['id'], $_GET['m'])) 
-{
+else if (isset($_GET['id'], $_GET['m'])) {
 	$id = intval($_GET['id']);
 	$m  = $_GET['m'];
 
 	$usersDAO = new UsersDAO();
 	$row = $usersDAO->getUserByID($id);
 	
-	if ($row['status'] == AC_STATUS_UNCONFIRMED) 
-	{
+	if ($row['status'] == AC_STATUS_UNCONFIRMED) {
 		$code = substr(md5($row['email'] . $row['creation_date'] . $id), 0, 10);
 
-		if ($code == $m) 
-		{
+		if ($code == $m) {
 			$usersDAO->setStatus($id, AC_STATUS_ENABLED);
 
 			$msg->addFeedback('CONFIRM_GOOD');
@@ -84,15 +85,13 @@ else if (isset($_GET['id'], $_GET['m']))
 	}
 } 
 else if (isset($_POST['submit'])) {
-	$_POST['email'] = $addslashes($_POST['email']);
+	$_POST['email'] = addslashes($_POST['email']);
 
 	$usersDAO = new UsersDAO();
 	$row = $usersDAO->getUserByEmail($_POST['email']);
 
-	if ($row) 
-	{
-		if ($row['status'] == AC_STATUS_UNCONFIRMED) 
-		{
+	if ($row) {
+		if ($row['status'] == AC_STATUS_UNCONFIRMED) {
 			$code = substr(md5($row['email'] . $row['creation_date']. $row['user_id']), 0, 10);
 			
 			$confirmation_link = $_base_href . 'confirm.php?id='.$row['user_id'].SEP.'m='.$code;

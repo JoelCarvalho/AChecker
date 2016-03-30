@@ -1,8 +1,9 @@
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
@@ -392,21 +393,37 @@ AChecker.output = AChecker.output || {};
     var makeDecision = function (btn_make_decision) {
         var ajaxPostStr = "";
 
+        // WEBPAGE ONLY
         $('input[class="AC_childCheckBox"]').each(function () {
-            if (this.checked) {
-                ajaxPostStr += $(this).attr('name') + "=" + "P" + "&";
-            } else {
-                ajaxPostStr += $(this).attr('name') + "=" + "N" + "&";
-            }
+            ajaxPostStr += $(this).attr('name') + "=";
+            if (this.checked) ajaxPostStr += "P";
+            else ajaxPostStr += "N";
+            ajaxPostStr += "&";
         });
 
-        ajaxPostStr += "uri" + "=" + $.URLEncode($('input[name="uri"]').attr('value')) + "&" + 
+        // API ONLY
+        $('input[class="AC_childCheckBoxAPI"]').each(function () {
+            if (this.checked)
+                ajaxPostStr += $(this).attr('name') + "=" + $(this).val() + "&";
+        });
+
+        ajaxPostStr += "uri" + "=" + $.URLEncode($('input[name="uri"]').attr('value')) + "&" +
             "output" + "=" + $('input[name="output"]').attr('value') + "&" +
             "jsessionid" + "=" + $('input[name="jsessionid"]').attr('value');
-    
+
+        var server=$('input[name="server"]').attr('value');
+        server+='/checker/save_decisions.php';
+        server=server.replace('undefined/','');
+
+        // BEGIN Debug todo: Debug
+        console.log('server = '+server);
+        console.log('page   = '+$('input[name="uri"]').attr('value'));
+        console.log(ajaxPostStr);
+        // END Debug
+
         $.ajax({
             type: "POST",
-            url: "checker/save_decisions.php",
+            url: server,
             data: ajaxPostStr,
 
             success: function (data) {
@@ -453,6 +470,7 @@ AChecker.output = AChecker.output || {};
             error: function (xhr, errorType, exception) {
                 // display error message
                 displayErrorMsg(btn_make_decision, $(xhr.responseText).text());
+                console.log($(xhr.responseText).text());
             }
         });
     };

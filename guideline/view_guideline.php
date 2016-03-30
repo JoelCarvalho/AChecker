@@ -1,16 +1,21 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelinesDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -21,8 +26,7 @@ $gid = intval($_GET["id"]);
 $guidelinesDAO = new GuidelinesDAO();
 $rows = $guidelinesDAO->getGuidelineByIDs($gid);
 
-if (!$rows)
-{
+if (!$rows) {
 	global $msg;
 	
 	$msg->addError('GUIDELINE_NOT_FOUND');

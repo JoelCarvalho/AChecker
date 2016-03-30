@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 include(AC_INCLUDE_PATH.'header.inc.php');
 ?>
@@ -37,13 +44,11 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 	</tr>
 	</tfoot>
 	<tbody>
-		<?php foreach ($this->user_group_rows as $row) 
-			{
+		<?php foreach ($this->user_group_rows as $row) {
 			// get privileges
 			$privileges = $this->privilegesDAO->getUserGroupPrivileges($row['user_group_id']);
 			
-			if (is_array($privileges))
-			{
+			if (is_array($privileges)) {
 				$priv_str = '<ul>';
 				foreach ($privileges as $priv)	$priv_str .= '<li>'. $priv['privilege_desc'].'</li>';
 				$priv_str .= '</ul>';
@@ -72,7 +77,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 <script language="JavaScript" type="text/javascript">
 //<!--
 function CheckAll() {
-	for (var i=0;i<document.form.elements.length;i++)	{
+	for (var i=0;i<document.form.elements.length;i++) {
 		var e = document.form.elements[i];
 		if ((e.name == 'id[]') && (e.type=='checkbox')) {
 			e.checked = document.form.selectall.checked;

@@ -1,84 +1,78 @@
-<?php
+<?php namespace QChecker\DAO;
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use \mysqli;
 
 /**
-* Root data access object
-* Each table has a DAO class, all inherits from this class
-* @access	public
-* @author	Cindy Qi Li
-* @package	DAO
-*/
+ * Root Data Access Object
+ * Each table has a DAO class, all inherits from this class
+ * @package     DAO
+ * @author      Cindy Qi Li
+ * @author      Joel Carvalho
+ * @note        Mysql calls have been updated for Mysqli:
+ *              mysql extension was deprecated in PHP 5.5.0, and it was removed in PHP 7.0.0.
+ * @version     1.6.1 30/08/2015
+ */
+class DAO{
+    protected $db;
 
-class DAO {
+    function __construct() {
+        global $db; // global database connection
+        if (!isset($this->db) && isset($db))
+            $this->db=$db;
+        if (!isset($this->db)) {
+            $this->db = new mysqli(DB_HOST.':'.DB_PORT, DB_USER, DB_PASSWORD);
+            error_log('[QCHECKER] [DB_INFO] Connect '.DB_HOST.':'.DB_PORT);
+            if ($this->db->connect_errno>0)
+                die('Unable to connect to db.');
+            if (!$this->db->select_db(DB_NAME))
+                die('DB connection established, but database "'.DB_NAME.'" cannot be selected.');
+            error_log('[QCHECKER] [DB_INFO] '.$this->db->stat());
+            error_log('[QCHECKER] [DB_INFO] '.$this->db->get_client_info());
+            $db=$this->db;
+        }
+    }
 
-	// private
-	private $db;     // global database connection
-	
-	function DAO()
-	{
-		if (!isset($this->db))
-		{
-			$this->db = @mysql_connect(DB_HOST . ':' . DB_PORT, DB_USER, DB_PASSWORD);
-			if (!$this->db) {
-				die('Unable to connect to db.');
-				/* AC_ERROR_NO_DB_CONNECT 
-				require_once(AC_INCLUDE_PATH . 'classes/ErrorHandler/ErrorHandler.class.php');
-				$err = new ErrorHandler();
-				trigger_error('VITAL#Unable to connect to db.', E_USER_ERROR);
-				exit;
-				*/
-			}
-			if (!@mysql_select_db(DB_NAME, $this->db)) {
-				die('DB connection established, but database "'.DB_NAME.'" cannot be selected.');
-				/*
-				require_once(AC_INCLUDE_PATH . 'classes/ErrorHandler/ErrorHandler.class.php');
-				$err = new ErrorHandler();
-				trigger_error('VITAL#DB connection established, but database "'.DB_NAME.'" cannot be selected.',
-								E_USER_ERROR);
-				exit;
-				*/
-			}
-		}
-	}
-	
-	/**
-	* Execute SQL
-	* @access  protected
-	* @param   $sql : SQL statment to be executed
-	* @return  $rows: for 'select' sql, return retrived rows, 
-	*          true:  for non-select sql
-	*          false: if fail
-	* @author  Cindy Qi Li
-	*/
-	function execute($sql)
-	{
-		$sql = trim($sql);
-		$result = mysql_query($sql, $this->db) or die($sql . "<br />". mysql_error());
+    /**
+     * Execute SQL Statement
+     * @access      public
+     * @param       $sql SQL statement to be executed
+     * @return      mixed return retrieved rows, true for non-select sql and false if fail
+     * @author      Cindy Qi Li
+     * @author      Joel Carvalho
+     * @version     1.6.1 30/08/2015
+     */
+    public function execute($sql) {
+        $sql = trim($sql);
+        $result = $this->db->query($sql) or die($sql . "<br />" . $this->db->error);
 
-		// Deal with "select" statement: return false if no row is returned, otherwise, return an array
-		if ($result !== true && $result !== false) {
-			$rows = false;
-			
-			while ($row = mysql_fetch_assoc($result)){
-				if (!$rows) $rows = array();
-				
-			    $rows[] = $row;
-			}
-			mysql_free_result($result);
-			return $rows;
-		}
-		return true;
-	}
+        // Deal with "select" statement: return false if no row is returned, otherwise, return an array
+        if ($result !== true && $result !== false) {
+            $rows = false;
 
+            while ($row = $result->fetch_assoc()) {
+                if (!$rows) $rows = array();
+
+                $rows[] = $row;
+            }
+            $result->free_result();
+            return $rows;
+        }
+        return true;
+    }
+
+    public function getDB(){
+        return $this->db;
+    }
 }
 ?>

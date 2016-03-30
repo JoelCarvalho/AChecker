@@ -1,0 +1,39 @@
+ul {font-family: Arial; margin-bottom: 0px; margin-top: 0px; margin-right: 0px;}
+li.msg_err, li.msg_info { font-family: Arial; list-style: none;}
+span.msg{font-family: Arial; line-height: 150%;}
+code.input { margin-bottom: 2ex; background-color: #F8F8F8; line-height: 130%;}
+span.err_type{padding: .1em .5em; font-size: smaller;}
+.err_type img{width:18px;height:18px;margin-top:-4px}
+.margintopnav{height: 90px;}
+#known_problems_section>ul>li:hover,
+#likely_problems_section>ul>li:hover,
+#potential_problems_section>ul>li:hover{cursor:hand; background-color: #fafafa}
+#known_problems_section>h4,
+#likely_problems_section>h4,
+#potential_problems_section>h4{cursor:hand;}
+.review-qtinfo{color:grey; font-size: medium;}
+.error-line{width:98%;margin-left: 0px;}
+.error-more{display:none;}
+.error-info{padding-bottom:2px;}
+.extra-repair-info{}
+.extra-info{padding-top:5px;}
+#main-menu{z-index:100; position: fixed; background-color: #EEEEEE; top: 0px;margin-left:-15px;}
+#AC_btn_make_decision_{margin-top:30px;}
+.table-decision {margin-top:20px; font-size: smaller;}
+.table-decision .question{font-size: small; font-weight: 700; padding-bottom:5px;}
+.table-decision td input {margin:0px;}
+.table-decision td label {margin-bottom:2px;}
+.code-report{height:30%;position:fixed;}
+#code-editor{position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
+.code-editor-small{pointer-events: none; width:100%; overflow: hidden;}
+.main-menu-options .sort-options{margin-top:0px; outline-width: 3px;}
+.ace_active-line{background-color:#555 !important;}
+.main-menu-search input:focus, .main-menu-search input:hover, .main-menu-options .sort-options:focus{color:white;}
+.extra-info img{margin-bottom: 5px;}
+.ace_search_field{color:black;}
+.ace_searchbtn:hover{background-color:darkgray; background-image: none;}
+.ace_searchbtn:last-child{color:black;}
+.check_abbr{font-weight: 700;}
+.main-menu-options .sort-options, .main-menu-search input {border-radius: 6px; height: 36px;}
+.render{height:70%;position:fixed;top: 30%;padding:0;}
+.render iframe{height:100%;}

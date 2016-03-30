@@ -1,16 +1,21 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\UsersDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -20,14 +25,12 @@ $usersDAO = new UsersDAO();
 
 $ids = explode(',', $_REQUEST['id']);
 
-if (isset($_POST['submit_no'])) 
-{
+if (isset($_POST['submit_no'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
 	exit;
 } 
-else if (isset($_POST['submit_yes']))
-{
+else if (isset($_POST['submit_yes'])) {
 	$usersDAO->Delete($ids);
 
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
@@ -39,8 +42,7 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 
 unset($hidden_vars);
 
-foreach($ids as $id) 
-{
+foreach($ids as $id) {
 	$names[] = $usersDAO->getUserName($id);
 }
 

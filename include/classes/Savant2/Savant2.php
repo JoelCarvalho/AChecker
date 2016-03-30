@@ -306,8 +306,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function Savant2($conf = array())
-	{
+	function Savant2($conf = array()) {
 		// set the default template search dirs
 		if (isset($conf['template_path'])) {
 			// user-defined dirs
@@ -401,8 +400,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function setCompiler(&$compiler)
-	{
+	function setCompiler(&$compiler) {
 		if (! $compiler) {
 			// nullify any current compiler
 			$this->_compiler = null;
@@ -430,8 +428,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function setCall($method = 'plugin')
-	{
+	function setCall($method = 'plugin') {
 		$this->_call = $method;
 	}
 	
@@ -449,8 +446,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function setError($error)
-	{
+	function setError($error) {
 		if (! $error) {
 			$this->_error = null;
 		} else {
@@ -471,8 +467,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setRestrict($flag = false)
-	{
+	function setRestrict($flag = false) {
 		if ($flag) {
 			$this->_restrict = true;
 		} else {
@@ -493,8 +488,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setExtract($flag = true)
-	{
+	function setExtract($flag = true) {
 		if ($flag) {
 			$this->_extract = true;
 		} else {
@@ -515,8 +509,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setReference($flag = false)
-	{
+	function setReference($flag = false) {
 		$this->_reference = $flag;
 	}
 	
@@ -533,8 +526,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setTemplate($template)
-	{
+	function setTemplate($template) {
 		$this->_template = $template;
 	}
 	
@@ -598,8 +590,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setEscape()
-	{
+	function setEscape() {
 		$this->_escape = func_get_args();
 	}
 	
@@ -626,8 +617,7 @@ class Savant2 {
 	*
 	*/
 	
-	function addEscape()
-	{
+	function addEscape() {
 		$args = func_get_args();
 		$this->_escape = array_merge($this->_escape, $args);
 	}
@@ -643,8 +633,7 @@ class Savant2 {
 	*
 	*/
 	
-	function getEscape()
-	{
+	function getEscape() {
 		return $this->_escape;
 	}
 	
@@ -678,8 +667,7 @@ class Savant2 {
 	*
 	*/
 	
-	function escape($value)
-	{
+	function escape($value) {
 		// were custom callbacks passed?
 		if (func_num_args() == 1) {
 		
@@ -737,8 +725,7 @@ class Savant2 {
 	*
 	*/
 	
-	function eprint($value)
-	{
+	function eprint($value) {
 		$args = func_get_args();
 		echo call_user_func_array(
 			array($this, 'escape'),
@@ -759,8 +746,7 @@ class Savant2 {
 	*
 	*/
 	
-	function _($value)
-	{
+	function _($value) {
 		$args = func_get_args();
 		return call_user_func_array(
 			array($this, 'eprint'),
@@ -793,8 +779,7 @@ class Savant2 {
 	*
 	*/
 	
-	function setPath($type, $new)
-	{
+	function setPath($type, $new) {
 		// clear out the prior search dirs
 		$this->_path[$type] = array();
 		
@@ -838,8 +823,7 @@ class Savant2 {
 	*
 	*/
 	
-	function addPath($type, $dir)
-	{
+	function addPath($type, $dir) {
 		// no surrounding spaces allowed!
 		$dir = trim($dir);
 		
@@ -867,8 +851,7 @@ class Savant2 {
 	*
 	*/
 	
-	function getPath($type = null)
-	{
+	function getPath($type = null) {
 		if (! $type) {
 			return $this->_path;
 		} else {
@@ -891,8 +874,7 @@ class Savant2 {
 	*
 	*/
 	
-	function findFile($type, $file)
-	{
+	function findFile($type, $file) {
 		// get the set of paths
 		$set = $this->getPath($type);
 		
@@ -995,8 +977,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function assign()
-	{
+	function assign() {
 		// this method is overloaded.
 		$arg = func_get_args();
 		
@@ -1065,8 +1046,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function assignRef($key, &$val)
-	{
+	function assignRef($key, &$val) {
 		if (is_string($key) && substr($key, 0, 1) != '_') {
 			$this->$key = $val;
 		} else {
@@ -1092,8 +1072,7 @@ class Savant2 {
 	*
 	*/
 	
-	function clear($var = null)
-	{
+	function clear($var = null) {
 		if (is_null($var)) {
 			// clear all variables
 			$var = array_keys(get_object_vars($this));
@@ -1131,8 +1110,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function getVars($key = null)
-	{
+	function getVars($key = null) {
 		if (is_null($key)) {
 			$key = array_keys(get_object_vars($this));
 		}
@@ -1188,8 +1166,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function loadTemplate($tpl = null, $setScript = false)
-	{
+	function loadTemplate($tpl = null, $setScript = false) {
 		// set to default template if none specified.
 		if (is_null($tpl)) {
 			$tpl = $this->_template;
@@ -1258,8 +1235,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function findTemplate($tpl = null)
-	{
+	function findTemplate($tpl = null) {
 		return $this->loadTemplate($tpl, false);
 	}
 	
@@ -1277,8 +1253,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function fetch($_tpl = null)
-	{
+	function fetch($_tpl = null) {
 		// clear prior output
 		$this->_output = null;
 		
@@ -1349,8 +1324,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function display($tpl = null)
-	{
+	function display($tpl = null) {
 		$result = $this->fetch($tpl);
 		if ($this->isError($result)) {
 			return $result;
@@ -1388,8 +1362,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function loadPlugin($name, $conf = array(), $savantRef = null)
-	{
+	function loadPlugin($name, $conf = array(), $savantRef = null) {
 		// if no $savantRef is provided, use the default.
 		if (is_null($savantRef)) {
 			$savantRef = $this->_reference;
@@ -1444,8 +1417,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function unloadPlugin($name = null)
-	{
+	function unloadPlugin($name = null) {
 		if (is_null($name)) {
 			$this->_resource['plugin'] = array();
 		} else {
@@ -1477,8 +1449,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function splugin($name)
-	{
+	function splugin($name) {
 		// attempt to load the plugin
 		$result = $this->loadPlugin($name);
 		if ($this->isError($result)) {
@@ -1511,8 +1482,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function plugin($name)
-	{
+	function plugin($name) {
 		$args = func_get_args();
 		
 		$result = call_user_func_array(
@@ -1549,8 +1519,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function __call($func, $args)
-	{
+	function __call($func, $args) {
 		// add the plugin name to the args
 		array_unshift($args, $func);
 		
@@ -1590,8 +1559,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function loadFilter($name, $conf = array(), $savantRef = null)
-	{
+	function loadFilter($name, $conf = array(), $savantRef = null) {
 		// if no $savantRef is provided, use the default.
 		if (is_null($savantRef)) {
 			$savantRef = $this->_reference;
@@ -1646,8 +1614,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function unloadFilter($name = null)
-	{
+	function unloadFilter($name = null) {
 		if (is_null($name)) {
 			$this->_resource['filter'] = array();
 		} else {
@@ -1675,8 +1642,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function applyFilters($text = null)
-	{
+	function applyFilters($text = null) {
 		// set to output text if no text specified
 		if (is_null($text)) {
 			$text = $this->_output;
@@ -1717,8 +1683,7 @@ class Savant2 {
 	* 
 	*/
 	
-	function &error($code, $info = array())
-	{
+	function &error($code, $info = array()) {
 		// the error config array
 		$conf = array(
 			'code' => $code,
@@ -1778,8 +1743,7 @@ class Savant2 {
 	*
 	*/
 	
-	function isError(&$obj)
-	{
+	function isError(&$obj) {
 		if (is_object($obj)) {
 			if (is_a($obj, 'Savant2_Error') ||
 				is_subclass_of($obj, 'Savant2_Error')) {

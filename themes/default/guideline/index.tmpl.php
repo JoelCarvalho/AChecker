@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="<?php echo $this->formName; ?>">
@@ -21,13 +28,14 @@
 <thead>
 	<tr>
 		<th scope="col">&nbsp;</th>
+		<th scope="col"><?php echo _AC('abbr');?></th>
 		<th scope="col"><?php echo _AC('title');?></th>
 		<th scope="col"><?php echo _AC('description');?></th>
 		<?php if ($this->showStatus) {?>
 		<th scope="col"><?php echo _AC('status');?></th>
 		<?php }?>
 		<?php if ($this->isAdmin) {?>
-		<th scope="col"><?php echo _AC('open_to_public');?></th>
+		<th scope="col"><?php echo _AC('public');?></th>
 		<?php }?>
 	</tr>
 </thead>
@@ -49,6 +57,7 @@
 	    id="r_<?php echo $row["guideline_id"]; ?>">
 		<td><input type="radio" name="id" value="<?php echo $row["guideline_id"]; ?>" id="m<?php echo $row['guideline_id']; ?>" 
 		           onmouseup="this.checked=!this.checked" onkeyup="this.checked=!this.checked" /></td>
+		<td><?php echo htmlspecialchars($row["abbr"]); ?></td>
 		<td><label for="m<?php echo $row["guideline_id"]; ?>"><?php echo htmlspecialchars($row["title"]); ?></label></td>
 		<td><?php echo htmlspecialchars(_AC($row['long_name'])); ?></td>
 		<?php if ($this->showStatus) {?>

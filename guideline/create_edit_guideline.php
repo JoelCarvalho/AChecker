@@ -1,16 +1,26 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelineGroupsDAO;
+use QChecker\DAO\GuidelinesDAO;
+use QChecker\DAO\GuidelineSubgroupsDAO;
+use QChecker\DAO\SubgroupChecksDAO;
+use QChecker\DAO\UsersDAO;
+use QChecker\DAO\ChecksDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -32,15 +42,13 @@ $guidelineSubgroupsDAO = new GuidelineSubgroupsDAO();
 $subgroupChecksDAO = new SubgroupChecksDAO();
 
 // handle submits
-if (isset($_POST['cancel'])) 
-{
+if (isset($_POST['cancel'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
 	exit;
-} 
+}
 // check on isset($_POST['title']) is to handle javascript submit request for unsaved changes
-else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_POST['javascript_submit'])
-{
+else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_POST['javascript_submit']) {
 	if (isset($gid))  // edit existing guideline
 	{
 		$guidelinesDAO->update($gid,
@@ -69,49 +77,40 @@ else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_
 		if (intval($gid) == 0) unset($gid);
 	}
 		                       
-	if (!$msg->containsErrors())
-	{
+	if (!$msg->containsErrors()) {
 		// add checks
 		if (is_array($_POST['add_checks_id'])) $guidelinesDAO->addChecks($gid, $_POST['add_checks_id']);
 		
 		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	}
 	
-	if (isset($_POST['save_and_close']))
-	{
+	if (isset($_POST['save_and_close'])) {
 		header('Location: index.php');
 		exit;
 	}
-	else if (isset($gid))
-	{
+	else if (isset($gid)) {
 		header('Location: create_edit_guideline.php?id='.$gid);
 		exit;
 	}
 }
-else if (isset($_POST['remove']))
-{
-	foreach ($_POST as $name => $value)
-	{
+else if (isset($_POST['remove'])) {
+	foreach ($_POST as $name => $value) {
 		// the check ids need to be removed are in an array
-		if (substr($name, 0, 13) == 'del_checks_id' && is_array($value))
-		{
+		if (substr($name, 0, 13) == 'del_checks_id' && is_array($value)) {
 			$value_prefix = substr($name, 14);
 			$action_on = explode('_', $value_prefix);
 			$action_on_element = $action_on[0];
 			$action_on_id = $action_on[1];
 			
-			if ($action_on_element == 'g')
-			{
+			if ($action_on_element == 'g') {
 				foreach ($value as $del_check_id)
 					$subgroupChecksDAO->deleteChecksByTypeAndID('guideline', $action_on_id, substr($del_check_id, strlen($value_prefix)+1));
 			}
-			if ($action_on_element == 'gg')
-			{
+			if ($action_on_element == 'gg') {
 				foreach ($value as $del_check_id)
 					$subgroupChecksDAO->deleteChecksByTypeAndID('group', $action_on_id, substr($del_check_id, strlen($value_prefix)+1));
 			}
-					if ($action_on_element == 'gsg')
-			{
+					if ($action_on_element == 'gsg') {
 				foreach ($value as $del_check_id)
 					$subgroupChecksDAO->deleteChecksByTypeAndID('subgroup', $action_on_id, substr($del_check_id, strlen($value_prefix)+1));
 			}
@@ -120,19 +119,19 @@ else if (isset($_POST['remove']))
 }
 
 // remove groups and subgroups
-if ($_GET['action'] == 'remove')
-{
+if ($_GET['action'] == 'remove') {
+
 	if (isset($_GET['gsg']))
 		$guidelineSubgroupsDAO->Delete($_GET['gsg']);
 	if (isset($_GET['gg']))
 		$guidelineGroupsDAO->Delete($_GET['gg']);
+
 	header('Location: create_edit_guideline.php?id='.$gid);
 	exit;
 }
 
 // interface display
-if (!isset($gid))
-{
+if (!isset($gid)) {
 	// create guideline
 	$checksDAO = new ChecksDAO();
 	
@@ -157,7 +156,7 @@ else
 	$savant->assign('checksDAO', $checksDAO);
 }
 
-if (isset($_current_user)) $savant->assign('is_admin', $_current_user->isAdmin());
+if (isset($_current_user)) $savant->assign('is_admin', $_current_user->isAdmin() || $_current_user->isEditor());
 
 $savant->display('guideline/create_edit_guideline.tmpl.php');
 ?>

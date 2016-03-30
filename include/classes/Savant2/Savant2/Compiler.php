@@ -46,8 +46,7 @@ class Savant2_Compiler {
 	* 
 	*/
 	
-	function Savant2_Compiler($conf = array())
-	{
+	function Savant2_Compiler($conf = array()) {
 		settype($conf, 'array');
 		foreach ($conf as $key => $val) {
 			$this->$key = $val;
@@ -65,8 +64,7 @@ class Savant2_Compiler {
 	*
 	*/
 	
-	function compile($tpl)
-	{
+	function compile($tpl) {
 	}
 }
 ?>

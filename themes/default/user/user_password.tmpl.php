@@ -1,15 +1,22 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 global $onload;
 $onload = 'document.form.password.focus();';
@@ -20,14 +27,12 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 <script language="JavaScript" src="jscripts/sha-1factory.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-function encrypt_password()
-{
+function encrypt_password() {
 	document.form.password_error.value = "";
 
 	err = verify_password(document.form.password.value, document.form.password2.value);
 	
-	if (err.length > 0)
-	{
+	if (err.length > 0) {
 		document.form.password_error.value = err;
 	}
 	else
@@ -71,7 +76,7 @@ function encrypt_password()
 				<td colspan="2">
 					<p class="submit_button">
 						<input type="submit" name="submit" value="<?php echo _AC('submit'); ?>" onclick="encrypt_password()" />
-						<input type="submit" name="cancel" value=" <?php echo _AC('cancel'); ?> " />
+						<input type="submit" name="cancel" value="<?php echo _AC('cancel'); ?>" />
 					</p>
 				</td>
 			</tr>

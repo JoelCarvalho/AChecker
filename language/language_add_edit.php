@@ -1,16 +1,23 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\LangCodesDAO;
+use QChecker\DAO\LanguagesDAO;
+use QChecker\Language\LanguageUtility;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -18,8 +25,7 @@ include_once(AC_INCLUDE_PATH.'classes/DAO/LanguagesDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/LangCodesDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/Language/LanguageUtility.class.php');
 
-if (isset($_GET["id"])) 
-{
+if (isset($_GET["id"])) {
 	$pieces = explode('_', $_GET['id'], 2);
 	$lang_code = $pieces[0];
 	$charset = $pieces[1];
@@ -29,23 +35,20 @@ $languagesDAO = new LanguagesDAO();
 $langCodesDAO = new LangCodesDAO();
 
 // handle submits
-if (isset($_POST['cancel'])) 
-{
+if (isset($_POST['cancel'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
 	exit;
 } 
-else if (isset($_POST['save']))
-{
+else if (isset($_POST['save'])) {
 	if (isset($_GET["id"]))  // edit existing guideline
 	{
-		if ($languagesDAO->Update($lang_code, 
+		if ($languagesDAO->Update($lang_code,
 		                      $charset,
 		                      '',
 		                      trim($_POST['native_name']),
 		                      trim($_POST['english_name']),
-		                      $_POST['status']))
-		{
+		                      $_POST['status'])) {
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			header('Location: index.php');
 			exit;
@@ -63,8 +66,7 @@ else if (isset($_POST['save']))
 		                      '',
 		                      trim($_POST['native_name']),
 		                      trim($_POST['english_name']),
-		                      $_POST['status']))
-		{
+		                      $_POST['status'])) {
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			header('Location: index.php');
 			exit;
@@ -73,8 +75,7 @@ else if (isset($_POST['save']))
 }
 
 // interface display
-if (isset($lang_code) && isset($charset))
-{
+if (isset($lang_code) && isset($charset)) {
 	// edit existing guideline
 	$row = $languagesDAO->getByLangCodeAndCharset($lang_code, $charset);
 	$row['lang_code'] = LanguageUtility::getParentCode($row['language_code']);

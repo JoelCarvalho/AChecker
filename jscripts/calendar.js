@@ -243,11 +243,9 @@
 
     var scwLanguage;
 
-    function scwSetDefaultLanguage()
-        {try
+    function scwSetDefaultLanguage() {try
             {scwSetLanguage();}
-         catch (exception)
-            {// English
+         catch (exception) {// English
              scwToday               = 'Today:';
              scwDrag                = 'click here to drag';
              scwArrMonthNames       = ['Jan','Feb','Mar','Apr','May','Jun',
@@ -647,21 +645,17 @@
     // Add a method to format a date into the required pattern
 
     Date.prototype.scwFormat =
-        function(scwFormat)
-            {var charCount = 0,
+        function(scwFormat) {var charCount = 0,
                  codeChar  = '',
                  result    = '';
 
-             for (var i=0;i<=scwFormat.length;i++)
-                {if (i<scwFormat.length && scwFormat.charAt(i)==codeChar)
-                        {// If we haven't hit the end of the string and
+             for (var i=0;i<=scwFormat.length;i++) {if (i<scwFormat.length && scwFormat.charAt(i)==codeChar) {// If we haven't hit the end of the string and
                          // the format string character is the same as
                          // the previous one, just clock up one to the
                          // length of the current element definition
                          charCount++;
                         }
-                 else   {switch (codeChar)
-                            {case 'y': case 'Y':
+                 else   {switch (codeChar) {case 'y': case 'Y':
                                 result += (this.getFullYear()%Math.
                                             pow(10,charCount)).toString().
                                             scwPadLeft(charCount);
@@ -685,8 +679,7 @@
                                 while (charCount-- > 0) {result += codeChar;}
                             }
 
-                         if (i<scwFormat.length)
-                            {// Store the character we have just worked on
+                         if (i<scwFormat.length) {// Store the character we have just worked on
                              codeChar  = scwFormat.charAt(i);
                              charCount = 1;
                             }
@@ -698,8 +691,7 @@
     // Add a method to left pad zeroes
 
     String.prototype.scwPadLeft =
-        function(padToLength)
-            {var result = '';
+        function(padToLength) {var result = '';
              for (var i=0;i<(padToLength - this.length);i++) {result += '0';}
              return (result + this);
             };
@@ -709,13 +701,12 @@
     // arguments.
 
     Function.prototype.runsAfterSCW =
-        function()  {var func = this,
+        function() {var func = this,
                          args = new Array(arguments.length);
 
                      for (var i=0;i<args.length;++i) {args[i] = arguments[i];}
 
-                     return function()
-                        {// concat/join the two argument arrays
+                     return function() {// concat/join the two argument arrays
                          for (var i=0;i<arguments.length;++i) {args[args.length] = arguments[i];}
                          return (args.shift()==scwTriggerEle)?func.apply(this, args):null;
                         };
@@ -723,7 +714,7 @@
 
     // Set up some shortcuts
 
-    function scwID(id)  {return document.getElementById(id);};
+    function scwID(id) {return document.getElementById(id);};
 
     // Use a global variable for the return value from the next action
     // IE fails to pass the function through if the target element is in
@@ -755,13 +746,12 @@
 // ****************************************************************************
 
     function showCal(scwEle,scwSource) {scwShow(scwEle,scwSource);};
-    function scwShow(scwEle,scwSource)
-        {if (!scwSource) {scwSource = window.event;}
+    function scwShow(scwEle,scwSource) {if (!scwSource) {scwSource = window.event;}
 
          if (scwSource.tagName) // Second parameter isn't an event it's an element
             {var scwSourceEle = scwSource;
 
-             if (scwID('scwIE'))  {window.event.cancelBubble = true;}
+             if (scwID('scwIE')) {window.event.cancelBubble = true;}
              else {scwSourceEle.parentNode.addEventListener('click',scwStopPropagation,false);}
             }
          else   // Second parameter is an event
@@ -782,11 +772,8 @@
 
          scwParmActiveToday = true;
 
-         for (var i=0;i<7;i++)
-            {scwPassEnabledDay[(i+7-scwWeekStart)%7] = true;
-             for (var j=2;j<arguments.length;j++)
-                {if (arguments[j]==i)
-                    {scwPassEnabledDay[(i+7-scwWeekStart)%7] = false;
+         for (var i=0;i<7;i++) {scwPassEnabledDay[(i+7-scwWeekStart)%7] = true;
+             for (var j=2;j<arguments.length;j++) {if (arguments[j]==i) {scwPassEnabledDay[(i+7-scwWeekStart)%7] = false;
                      if (scwDateNow.getDay()==i) {scwParmActiveToday = false;}
                     }
                 }
@@ -804,13 +791,9 @@
          var scwDateValue = '';
 
          if (scwEle.value) {scwDateValue = scwEle.value.replace(/^\s+/,'').replace(/\s+$/,'');}
-         else   {if (typeof scwEle.value == 'undefined')
-                    {var scwChildNodes = scwEle.childNodes;
-                     for (var i=0;i<scwChildNodes.length;i++)
-                        {if (scwChildNodes[i].nodeType == 3)
-                            {scwDateValue = scwChildNodes[i].nodeValue.replace(/^\s+/,'').replace(/\s+$/,'');
-                             if (scwDateValue.length > 0)
-                                {scwTriggerEle.scwTextNode = scwChildNodes[i];
+         else   {if (typeof scwEle.value == 'undefined') {var scwChildNodes = scwEle.childNodes;
+                     for (var i=0;i<scwChildNodes.length;i++) {if (scwChildNodes[i].nodeType == 3) {scwDateValue = scwChildNodes[i].nodeValue.replace(/^\s+/,'').replace(/\s+$/,'');
+                             if (scwDateValue.length > 0) {scwTriggerEle.scwTextNode = scwChildNodes[i];
                                  scwTriggerEle.scwLength   = scwChildNodes[i].nodeValue.length;
                                  break;
                                 }
@@ -826,33 +809,26 @@
          scwID('scwDragText').innerHTML = scwDrag;
 
          scwID('scwMonths').options.length = 0;
-         for (var i=0;i<scwArrMonthNames.length;i++)
-            {scwID('scwMonths').options[i] = new Option(scwArrMonthNames[i],scwArrMonthNames[i]);}
+         for (var i=0;i<scwArrMonthNames.length;i++) {scwID('scwMonths').options[i] = new Option(scwArrMonthNames[i],scwArrMonthNames[i]);}
 
          scwID('scwYears').options.length = 0;
-         for (var i=0;i<scwDropDownYears;i++)
-            {scwID('scwYears').options[i] =  new Option((scwBaseYear+i),(scwBaseYear+i));}
+         for (var i=0;i<scwDropDownYears;i++) {scwID('scwYears').options[i] =  new Option((scwBaseYear+i),(scwBaseYear+i));}
 
-         for (var i=0;i<scwArrWeekInits.length;i++)
-            {scwID('scwWeekInit' + i).innerHTML = scwArrWeekInits[(i+scwWeekStart)%scwArrWeekInits.length];}
+         for (var i=0;i<scwArrWeekInits.length;i++) {scwID('scwWeekInit' + i).innerHTML = scwArrWeekInits[(i+scwWeekStart)%scwArrWeekInits.length];}
 
-         if (scwID('scwFoot'))
-            {scwID('scwFoot').innerHTML = scwToday + ' ' + scwDateNow.scwFormat(scwDateDisplayFormat);}
+         if (scwID('scwFoot')) {scwID('scwFoot').innerHTML = scwToday + ' ' + scwDateNow.scwFormat(scwDateDisplayFormat);}
 
-         if (scwDateValue.length==0)
-            {// If no value is entered and today is within the range,
+         if (scwDateValue.length==0) {// If no value is entered and today is within the range,
              // use today's date, otherwise use the middle of the valid range.
 
              scwBlnFullInputDate=false;
 
              if ((new Date(scwBaseYear+scwDropDownYears,0,0))<scwSeedDate ||
                  (new Date(scwBaseYear,0,1))                 >scwSeedDate
-                )
-                {scwSeedDate = new Date(scwBaseYear + Math.floor(scwDropDownYears / 2), 5, 1);}
+                ) {scwSeedDate = new Date(scwBaseYear + Math.floor(scwDropDownYears / 2), 5, 1);}
             }
          else
-            {function scwInputFormat()
-                {var scwArrSeed = new Array(),
+            {function scwInputFormat() {var scwArrSeed = new Array(),
                      scwArrInput = scwDateValue.split(new RegExp('[\\'+scwArrDelimiters.join('\\')+']+','g'));
 
                  // "Escape" all the user defined date delimiters above -
@@ -864,9 +840,8 @@
                  // still appear in the output string if in the output
                  // format.
 
-                 if (scwArrInput[0]!=null)
-                    {if (scwArrInput[0].length==0)                      {scwArrInput.splice(0,1);}
-                     if (scwArrInput[scwArrInput.length-1].length==0)   {scwArrInput.splice(scwArrInput.length-1,1);}
+                 if (scwArrInput[0]!=null) {if (scwArrInput[0].length==0) {scwArrInput.splice(0,1);}
+                     if (scwArrInput[scwArrInput.length-1].length==0) {scwArrInput.splice(scwArrInput.length-1,1);}
                     }
 
                  scwBlnFullInputDate = false;
@@ -879,33 +854,27 @@
                  // Prepare the sequence of date input elements
                  var result = new Array();
 
-                 for (var i=0;i<template.length;i++)
-                    {if (scwDateOutputFormat.search(template[i])>-1)
-                        {result[scwDateOutputFormat.search(template[i])] = template[i];}
+                 for (var i=0;i<template.length;i++) {if (scwDateOutputFormat.search(template[i])>-1) {result[scwDateOutputFormat.search(template[i])] = template[i];}
                     }
 
                  var scwDateSequence = result.join('');
 
                  // Separate the elements of the date input
-                 switch (scwArrInput.length)
-                    {case 1:
+                 switch (scwArrInput.length) {case 1:
                         {if (scwDateOutputFormat.indexOf('Y')>-1 &&
-                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('Y'))
-                            {scwArrSeed[0] = parseInt(scwArrInput[0].substring(scwDateOutputFormat.indexOf('Y'),
+                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('Y')) {scwArrSeed[0] = parseInt(scwArrInput[0].substring(scwDateOutputFormat.indexOf('Y'),
                                                                                scwDateOutputFormat.lastIndexOf('Y')+1),10);
                             }
                          else   {scwArrSeed[0] = 0;}
 
                          if (scwDateOutputFormat.indexOf('M')>-1 &&
-                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('M'))
-                            {scwArrSeed[1] = scwArrInput[0].substring(scwDateOutputFormat.indexOf('M'),
+                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('M')) {scwArrSeed[1] = scwArrInput[0].substring(scwDateOutputFormat.indexOf('M'),
                                                                       scwDateOutputFormat.lastIndexOf('M')+1);
                             }
                          else   {scwArrSeed[1] = '6';}
 
                          if (scwDateOutputFormat.indexOf('D')>-1 &&
-                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('D'))
-                            {scwArrSeed[2] = parseInt(scwArrInput[0].substring(scwDateOutputFormat.indexOf('D'),
+                             scwArrInput[0].length>scwDateOutputFormat.lastIndexOf('D')) {scwArrSeed[2] = parseInt(scwArrInput[0].substring(scwDateOutputFormat.indexOf('D'),
                                                                                scwDateOutputFormat.lastIndexOf('D')+1),10);
                             }
                          else   {scwArrSeed[2] = 1;}
@@ -970,9 +939,7 @@
                  if (scwExpValYear.exec(scwArrSeed[0])  == null ||
                      scwExpValMonth.exec(scwArrSeed[1]) == null ||
                      scwExpValDay.exec(scwArrSeed[2])   == null
-                    )
-                    {if (scwShowInvalidDateMsg)
-                        {alert(scwInvalidDateMsg  +
+                    ) {if (scwShowInvalidDateMsg) {alert(scwInvalidDateMsg  +
                                scwInvalidAlert[0] + scwDateValue +
                                scwInvalidAlert[1]);}
                      scwBlnFullInputDate = false;
@@ -1003,8 +970,7 @@
 
              // Check whether the month is in digits or an abbreviation
 
-             if (scwArrSeedDate[1].search(/\d+/)!=0)
-                {month = scwArrMonthNames.join('|').toUpperCase().
+             if (scwArrSeedDate[1].search(/\d+/)!=0) {month = scwArrMonthNames.join('|').toUpperCase().
                             search(scwArrSeedDate[1].substr(0,3).
                                                     toUpperCase());
                  scwArrSeedDate[1] = Math.floor(month/4)+1;
@@ -1015,8 +981,7 @@
 
          // Test that we have arrived at a valid date
 
-         if (isNaN(scwSeedDate))
-            {if (scwShowInvalidDateMsg) {alert(scwInvalidDateMsg + scwInvalidAlert[0] + scwDateValue + scwInvalidAlert[1]);}
+         if (isNaN(scwSeedDate)) {if (scwShowInvalidDateMsg) {alert(scwInvalidDateMsg + scwInvalidAlert[0] + scwDateValue + scwInvalidAlert[1]);}
              scwSeedDate = new Date(scwBaseYear + Math.floor(scwDropDownYears/2),5,1);
              scwBlnFullInputDate=false;
             }
@@ -1024,14 +989,12 @@
             {// Test that the date is within range,
              // if not then set date to a sensible date in range.
 
-             if ((new Date(scwBaseYear,0,1)) > scwSeedDate)
-                {if (scwBlnStrict && scwShowOutOfRangeMsg) {alert(scwOutOfRangeMsg);}
+             if ((new Date(scwBaseYear,0,1)) > scwSeedDate) {if (scwBlnStrict && scwShowOutOfRangeMsg) {alert(scwOutOfRangeMsg);}
                  scwSeedDate = new Date(scwBaseYear,0,1);
                  scwBlnFullInputDate=false;
                 }
              else
-                {if ((new Date(scwBaseYear+scwDropDownYears,0,0))<scwSeedDate)
-                    {if (scwBlnStrict && scwShowOutOfRangeMsg) {alert(scwOutOfRangeMsg);}
+                {if ((new Date(scwBaseYear+scwDropDownYears,0,0))<scwSeedDate) {if (scwBlnStrict && scwShowOutOfRangeMsg) {alert(scwOutOfRangeMsg);}
                      scwSeedDate = new Date(scwBaseYear + Math.floor(scwDropDownYears)-1,11,1);
                      scwBlnFullInputDate=false;
                     }
@@ -1041,8 +1004,7 @@
                            (scwSeedDate.getMonth()+1) != scwArrSeedDate[1] ||
                            scwSeedDate.getFullYear()  != scwArrSeedDate[0]
                           )
-                        )
-                        {if (scwShowDoesNotExistMsg) alert(scwDoesNotExistMsg);
+                        ) {if (scwShowDoesNotExistMsg) alert(scwDoesNotExistMsg);
                          scwSeedDate = new Date(scwSeedDate.getFullYear(),scwSeedDate.getMonth()-1,1);
                          scwBlnFullInputDate=false;
                         }
@@ -1053,21 +1015,13 @@
          // Test the disabled dates for validity
          // Give error message if not valid.
 
-         for (var i=0;i<scwDisabledDates.length;i++)
-            {if (!((typeof scwDisabledDates[i] == 'object') && (scwDisabledDates[i].constructor == Date)))
-                {if ((typeof scwDisabledDates[i] == 'object') && (scwDisabledDates[i].constructor == Array))
-                    {var scwPass = true;
+         for (var i=0;i<scwDisabledDates.length;i++) {if (!((typeof scwDisabledDates[i] == 'object') && (scwDisabledDates[i].constructor == Date))) {if ((typeof scwDisabledDates[i] == 'object') && (scwDisabledDates[i].constructor == Array)) {var scwPass = true;
 
-                     if (scwDisabledDates[i].length !=2)
-                        {if (scwShowRangeDisablingError)
-                            {alert(scwRangeDisablingError[0] + scwDisabledDates[i] + scwRangeDisablingError[1]);}
+                     if (scwDisabledDates[i].length !=2) {if (scwShowRangeDisablingError) {alert(scwRangeDisablingError[0] + scwDisabledDates[i] + scwRangeDisablingError[1]);}
                          scwPass = false;
                         }
                      else
-                        {for (var j=0;j<scwDisabledDates[i].length;j++)
-                            {if (!((typeof scwDisabledDates[i][j] == 'object') && (scwDisabledDates[i][j].constructor == Date)))
-                                {if (scwShowRangeDisablingError)
-                                    {alert(  scwDateDisablingError[0] + scwDisabledDates[i][j] + scwDateDisablingError[1]);}
+                        {for (var j=0;j<scwDisabledDates[i].length;j++) {if (!((typeof scwDisabledDates[i][j] == 'object') && (scwDisabledDates[i][j].constructor == Date))) {if (scwShowRangeDisablingError) {alert(  scwDateDisablingError[0] + scwDisabledDates[i][j] + scwDateDisablingError[1]);}
                                  scwPass = false;
                                 }
                             }
@@ -1109,9 +1063,7 @@
          var offsetTop =parseInt(scwEle.offsetTop ,10) + parseInt(scwEle.offsetHeight,10),
              offsetLeft=parseInt(scwEle.offsetLeft,10);
 
-         if (!window.opera)
-             {while (scwEle.tagName!='BODY' && scwEle.tagName!='HTML')
-                 {offsetTop -=parseInt(scwEle.scrollTop, 10);
+         if (!window.opera) {while (scwEle.tagName!='BODY' && scwEle.tagName!='HTML') {offsetTop -=parseInt(scwEle.scrollTop, 10);
                   offsetLeft-=parseInt(scwEle.scrollLeft,10);
                   scwEle=scwEle.parentNode;
                  }
@@ -1137,29 +1089,23 @@
          scwID('scw').style.visibility='inherit';
         };
 
-    function scwHide()
-        {scwID('scw').style.visibility='hidden';
+    function scwHide() {scwID('scw').style.visibility='hidden';
          scwID('scwIframe').style.visibility='hidden';
-         if (typeof scwNextAction!='undefined' && scwNextAction!=null)
-             {scwNextActionReturn = scwNextAction();
+         if (typeof scwNextAction!='undefined' && scwNextAction!=null) {scwNextActionReturn = scwNextAction();
               // Explicit null set to prevent closure causing memory leak
               scwNextAction = null;
              }
         };
 
-    function scwCancel(scwEvt)
-        {if (scwClickToHide) {scwHide();}
+    function scwCancel(scwEvt) {if (scwClickToHide) {scwHide();}
          scwStopPropagation(scwEvt);
         };
 
-    function scwStopPropagation(scwEvt)
-        {if (scwEvt.stopPropagation)
-                {scwEvt.stopPropagation();}     // Capture phase
+    function scwStopPropagation(scwEvt) {if (scwEvt.stopPropagation) {scwEvt.stopPropagation();}     // Capture phase
          else   {scwEvt.cancelBubble = true;}   // Bubbling phase
         };
 
-    function scwBeginDrag(event)
-        {var elementToDrag = scwID('scw');
+    function scwBeginDrag(event) {var elementToDrag = scwID('scw');
 
          var deltaX    = event.clientX,
              deltaY    = event.clientY,
@@ -1172,8 +1118,7 @@
          while (offsetEle.tagName!='BODY' &&
                 offsetEle.tagName!='HTML');
 
-         if (document.addEventListener)
-                {document.addEventListener('mousemove',moveHandler,true);        // Capture phase
+         if (document.addEventListener) {document.addEventListener('mousemove',moveHandler,true);        // Capture phase
                  document.addEventListener('mouseup',  upHandler,  true);        // Capture phase
                 }
          else   {elementToDrag.attachEvent('onmousemove',moveHandler); // Bubbling phase
@@ -1183,8 +1128,7 @@
 
          scwStopPropagation(event);
 
-         function moveHandler(scwEvt)
-            {if (!scwEvt) scwEvt = window.event;
+         function moveHandler(scwEvt) {if (!scwEvt) scwEvt = window.event;
 
              elementToDrag.style.left = (scwEvt.clientX - deltaX) + 'px';
              elementToDrag.style.top  = (scwEvt.clientY - deltaY) + 'px';
@@ -1195,11 +1139,9 @@
              scwStopPropagation(scwEvt);
             };
 
-         function upHandler(scwEvt)
-            {if (!scwEvt) scwEvt = window.event;
+         function upHandler(scwEvt) {if (!scwEvt) scwEvt = window.event;
 
-             if (document.removeEventListener)
-                    {document.removeEventListener('mousemove',moveHandler,true);     // Capture phase
+             if (document.removeEventListener) {document.removeEventListener('mousemove',moveHandler,true);     // Capture phase
                      document.removeEventListener('mouseup',  upHandler,  true);     // Capture phase
                     }
              else   {elementToDrag.detachEvent('onmouseup',  upHandler);   // Bubbling phase
@@ -1211,8 +1153,7 @@
             };
         };
 
-    function scwShowMonth(scwBias)
-        {// Set the selectable Month and Year
+    function scwShowMonth(scwBias) {// Set the selectable Month and Year
          // May be called: from the left and right arrows
          //                  (shift month -1 and +1 respectively)
          //                from the month selection list
@@ -1233,8 +1174,7 @@
          scwSelYears  = scwID('scwYears');
          scwSelMonths = scwID('scwMonths');
 
-         if (scwSelYears.options.selectedIndex>-1)
-            {scwMonthSum=12*(scwSelYears.options.selectedIndex)+scwBias;
+         if (scwSelYears.options.selectedIndex>-1) {scwMonthSum=12*(scwSelYears.options.selectedIndex)+scwBias;
              if (scwSelMonths.options.selectedIndex>-1) {scwMonthSum+=scwSelMonths.options.selectedIndex;}
             }
          else
@@ -1247,16 +1187,14 @@
 
          // Opera has a bug with setting the selected index.
          // It requires the following work-around to force SELECTs to display correctly.
-         if (window.opera)
-            {scwID('scwMonths').style.display = 'inherit';
+         if (window.opera) {scwID('scwMonths').style.display = 'inherit';
              scwID('scwYears' ).style.display = 'inherit';
            }
 
          // Set the drop down boxes.
          scwTemp = (12*parseInt((scwShowDate.getFullYear()-scwBaseYear),10)) + parseInt(scwShowDate.getMonth(),10);
 
-         if (scwTemp > -1 && scwTemp < (12*scwDropDownYears))
-            {scwSelYears.options.selectedIndex=Math.floor(scwMonthSum/12);
+         if (scwTemp > -1 && scwTemp < (12*scwDropDownYears)) {scwSelYears.options.selectedIndex=Math.floor(scwMonthSum/12);
              scwSelMonths.options.selectedIndex=(scwMonthSum%12);
 
              scwCurMonth = scwShowDate.getMonth();
@@ -1272,18 +1210,14 @@
 
              scwStartDate = new Date(scwShowDate);
 
-             if (scwID('scwFoot'))
-                {var scwFoot = scwID('scwFoot');
+             if (scwID('scwFoot')) {var scwFoot = scwID('scwFoot');
 
                  function scwFootOutput() {scwSetOutput(scwDateNow);};
 
-                 if (scwDisabledDates.length==0)
-                    {if (scwActiveToday && scwParmActiveToday)
-                        {scwFoot.onclick     = scwFootOutput;
+                 if (scwDisabledDates.length==0) {if (scwActiveToday && scwParmActiveToday) {scwFoot.onclick     = scwFootOutput;
                          scwFoot.className   = 'scwFoot';
 
-                         if (scwID('scwIE'))
-                            {scwFoot.onmouseover  = scwChangeClass;
+                         if (scwID('scwIE')) {scwFoot.onmouseover  = scwChangeClass;
                              scwFoot.onmouseout   = scwChangeClass;
                             }
 
@@ -1292,19 +1226,16 @@
                         {scwFoot.onclick     = null;
                          scwFoot.className   = 'scwFootDisabled';
 
-                         if (scwID('scwIE'))
-                            {scwFoot.onmouseover  = null;
+                         if (scwID('scwIE')) {scwFoot.onmouseover  = null;
                              scwFoot.onmouseout   = null;
                             }
 
-                         if (document.addEventListener)
-                                {scwFoot.addEventListener('click',scwStopPropagation,false);}
+                         if (document.addEventListener) {scwFoot.addEventListener('click',scwStopPropagation,false);}
                          else   {scwFoot.attachEvent('onclick',scwStopPropagation);}
                         }
                     }
                  else
-                    {for (var k=0;k<scwDisabledDates.length;k++)
-                        {if (!scwActiveToday || !scwParmActiveToday ||
+                    {for (var k=0;k<scwDisabledDates.length;k++) {if (!scwActiveToday || !scwParmActiveToday ||
                              ((typeof scwDisabledDates[k] == 'object')                   &&
                                  (((scwDisabledDates[k].constructor == Date)             &&
                                    scwDateNow.valueOf() == scwDisabledDates[k].valueOf()
@@ -1315,17 +1246,14 @@
                                   )
                                  )
                              )
-                            )
-                            {scwFoot.onclick     = null;
+                            ) {scwFoot.onclick     = null;
                              scwFoot.className   = 'scwFootDisabled';
 
-                             if (scwID('scwIE'))
-                                {scwFoot.onmouseover  = null;
+                             if (scwID('scwIE')) {scwFoot.onmouseover  = null;
                                  scwFoot.onmouseout   = null;
                                 }
 
-                             if (document.addEventListener)
-                                    {scwFoot.addEventListener('click',scwStopPropagation,false);}
+                             if (document.addEventListener) {scwFoot.addEventListener('click',scwStopPropagation,false);}
                              else   {scwFoot.attachEvent('onclick',scwStopPropagation);}
                              break;
                             }
@@ -1333,8 +1261,7 @@
                             {scwFoot.onclick=scwFootOutput;
                              scwFoot.className='scwFoot';
 
-                             if (scwID('scwIE'))
-                                {scwFoot.onmouseover  = scwChangeClass;
+                             if (scwID('scwIE')) {scwFoot.onmouseover  = scwChangeClass;
                                  scwFoot.onmouseout   = scwChangeClass;
                                 }
                             }
@@ -1342,15 +1269,12 @@
                     }
                 }
 
-             function scwSetOutput(scwOutputDate)
-                {if (typeof scwTargetEle.value == 'undefined')
-                      {scwTriggerEle.scwTextNode.replaceData(0,scwTriggerEle.scwLength,scwOutputDate.scwFormat(scwDateOutputFormat));}
+             function scwSetOutput(scwOutputDate) {if (typeof scwTargetEle.value == 'undefined') {scwTriggerEle.scwTextNode.replaceData(0,scwTriggerEle.scwLength,scwOutputDate.scwFormat(scwDateOutputFormat));}
                  else {scwTargetEle.value = scwOutputDate.scwFormat(scwDateOutputFormat);}
                  scwHide();
                 };
 
-             function scwCellOutput(scwEvt)
-                {var scwEle = scwEventTrigger(scwEvt),
+             function scwCellOutput(scwEvt) {var scwEle = scwEventTrigger(scwEvt),
                      scwOutputDate = new Date(scwStartDate);
 
                  if (scwEle.nodeType==3) scwEle=scwEle.parentNode;
@@ -1360,13 +1284,11 @@
                  scwSetOutput(scwOutputDate);
                 };
 
-             function scwChangeClass(scwEvt)
-                {var scwEle = scwEventTrigger(scwEvt);
+             function scwChangeClass(scwEvt) {var scwEle = scwEventTrigger(scwEvt);
 
                  if (scwEle.nodeType==3) {scwEle=scwEle.parentNode;}
 
-                 switch (scwEle.className)
-                    {case 'scwCells':
+                 switch (scwEle.className) {case 'scwCells':
                         scwEle.className = 'scwCellsHover';
                         break;
                      case 'scwCellsHover':
@@ -1400,13 +1322,11 @@
                  return true;
                 }
 
-             function scwEventTrigger(scwEvt)
-                {if (!scwEvt) {scwEvt = event;}
+             function scwEventTrigger(scwEvt) {if (!scwEvt) {scwEvt = event;}
                  return scwEvt.target||scwEvt.srcElement;
                 };
 
-             function scwWeekNumber(scwInDate)
-                {// The base day in the week of the input date
+             function scwWeekNumber(scwInDate) {// The base day in the week of the input date
                  var scwInDateWeekBase = new Date(scwInDate);
 
                  scwInDateWeekBase.setDate(scwInDateWeekBase.getDate()
@@ -1423,16 +1343,14 @@
                                             + scwWeekNumberBaseDay
                                         );
 
-                 if (scwFirstBaseDay < new Date(scwInDateWeekBase.getFullYear(),0,1))
-                    {scwFirstBaseDay.setDate(scwFirstBaseDay.getDate()+7);}
+                 if (scwFirstBaseDay < new Date(scwInDateWeekBase.getFullYear(),0,1)) {scwFirstBaseDay.setDate(scwFirstBaseDay.getDate()+7);}
 
                  // Start of Week 01
                  var scwStartWeekOne = new Date(scwFirstBaseDay
                                                 - scwWeekNumberBaseDay
                                                 + scwInDate.getDay());
 
-                 if (scwStartWeekOne > scwFirstBaseDay)
-                    {scwStartWeekOne.setDate(scwStartWeekOne.getDate()-7);}
+                 if (scwStartWeekOne > scwFirstBaseDay) {scwStartWeekOne.setDate(scwStartWeekOne.getDate()-7);}
 
                  // Subtract the date of the current week from the date of the
                  // first week of the year to get the number of weeks in
@@ -1456,11 +1374,8 @@
 
              var scwCells = scwID('scwCells');
 
-             for (i=0;i<scwCells.childNodes.length;i++)
-                {var scwRows = scwCells.childNodes[i];
-                 if (scwRows.nodeType==1 && scwRows.tagName=='TR')
-                    {if (scwWeekNumberDisplay)
-                        {//Calculate the week number using scwShowDate
+             for (i=0;i<scwCells.childNodes.length;i++) {var scwRows = scwCells.childNodes[i];
+                 if (scwRows.nodeType==1 && scwRows.tagName=='TR') {if (scwWeekNumberDisplay) {//Calculate the week number using scwShowDate
                          scwTmpEl = scwRows.childNodes[0];
                          scwTmpEl.innerHTML = scwWeekNumber(scwShowDate);
                          scwTmpEl.style.borderColor =
@@ -1474,10 +1389,8 @@
                      else
                         {scwRows.childNodes[0].style.display='none';}
 
-                     for (j=1;j<scwRows.childNodes.length;j++)
-                        {var scwCols = scwRows.childNodes[j];
-                         if (scwCols.nodeType==1 && scwCols.tagName=='TD')
-                            {scwRows.childNodes[j].innerHTML=
+                     for (j=1;j<scwRows.childNodes.length;j++) {var scwCols = scwRows.childNodes[j];
+                         if (scwCols.nodeType==1 && scwCols.tagName=='TD') {scwRows.childNodes[j].innerHTML=
                                 scwShowDate.getDate();
                              var scwCell=scwRows.childNodes[j],
                                  scwDisabled =
@@ -1520,30 +1433,25 @@
                                     )
                                 )?'hidden':'inherit';
 
-                             for (var k=0;k<scwDisabledDates.length;k++)
-                                {if ((typeof scwDisabledDates[k]=='object') &&
+                             for (var k=0;k<scwDisabledDates.length;k++) {if ((typeof scwDisabledDates[k]=='object') &&
                                      (scwDisabledDates[k].constructor == Date) &&
                                      scwCompareDateValue == scwDisabledDates[k].valueOf()
-                                    )
-                                    {scwDisabled = true;}
+                                    ) {scwDisabled = true;}
                                  else
                                     {if ((typeof scwDisabledDates[k]=='object') &&
                                          (scwDisabledDates[k].constructor == Array) &&
                                          scwCompareDateValue >= scwDisabledDates[k][0].valueOf() &&
                                          scwCompareDateValue <= scwDisabledDates[k][1].valueOf()
-                                        )
-                                        {scwDisabled = true;}
+                                        ) {scwDisabled = true;}
                                     }
                                 }
 
                              if (scwDisabled ||
                                  !scwEnabledDay[j-1+(7*((i*scwCells.childNodes.length)/6))] ||
                                  !scwPassEnabledDay[(j-1+(7*(i*scwCells.childNodes.length/6)))%7]
-                                )
-                                {scwRows.childNodes[j].onclick = null;
+                                ) {scwRows.childNodes[j].onclick = null;
 
-                                 if (scwID('scwIE'))
-                                    {scwRows.childNodes[j].onmouseover  = null;
+                                 if (scwID('scwIE')) {scwRows.childNodes[j].onmouseover  = null;
                                      scwRows.childNodes[j].onmouseout   = null;
                                     }
 
@@ -1570,8 +1478,7 @@
                              else
                                 {scwRows.childNodes[j].onclick=scwCellOutput;
 
-                                 if (scwID('scwIE'))
-                                    {scwRows.childNodes[j].onmouseover  = scwChangeClass;
+                                 if (scwID('scwIE')) {scwRows.childNodes[j].onmouseover  = scwChangeClass;
                                      scwRows.childNodes[j].onmouseout   = scwChangeClass;
                                     }
 
@@ -1610,8 +1517,7 @@
          // the visibility to be reset to prevent garbage in the calendar
          // when the displayed month is changed.
 
-         if (window.opera)
-            {scwID('scwMonths').style.display = 'inline';
+         if (window.opera) {scwID('scwMonths').style.display = 'inline';
              scwID('scwYears' ).style.display = 'inline';
              scwID('scw').style.visibility='hidden';
              scwID('scw').style.visibility='inherit';
@@ -1669,8 +1575,7 @@
                 "<thead>" +
                   "<tr><td class='scwWeekNumberHead' id='scwWeek_' ></td>");
 
-    for (i=0;i<7;i++)
-        {document.write(
+    for (i=0;i<7;i++) {document.write(
                       "<td class='scwWeek' id='scwWeekInit" + i + "'></td>");
         }
 
@@ -1679,12 +1584,10 @@
                 "<tbody id='scwCells' " +
                         "onClick='scwStopPropagation(event);'>");
 
-    for (i=0;i<6;i++)
-        {document.write(
+    for (i=0;i<6;i++) {document.write(
                     "<tr>" +
                       "<td class='scwWeekNo' id='scwWeek_" + i + "'></td>");
-         for (j=0;j<7;j++)
-            {document.write(
+         for (j=0;j<7;j++) {document.write(
                         "<td class='scwCells' id='scwCell_" + (j+(i*7)) +
                         "'></td>");
             }
@@ -1697,8 +1600,7 @@
                 "</tbody>");
 
     if ((new Date(scwBaseYear + scwDropDownYears, 0, 0)) > scwDateNow &&
-        (new Date(scwBaseYear, 0, 0))                    < scwDateNow)
-        {document.write(
+        (new Date(scwBaseYear, 0, 0))                    < scwDateNow) {document.write(
                   "<tfoot class='scwFoot'>" +
                     "<tr class='scwFoot'>" +
                       "<td class='scwFoot' id='scwFoot' colspan='8'>" +
@@ -1713,8 +1615,7 @@
           "</tr>" +
         "</table>");
 
-    if (document.addEventListener)
-            {scwID('scw'         ).addEventListener('click',scwCancel,false);
+    if (document.addEventListener) {scwID('scw'         ).addEventListener('click',scwCancel,false);
              scwID('scwHeadLeft' ).addEventListener('click',scwStopPropagation,false);
              scwID('scwMonths'   ).addEventListener('click',scwStopPropagation,false);
              scwID('scwMonths'   ).addEventListener('change',scwStopPropagation,false);
@@ -1738,8 +1639,7 @@
 // Start of document level event definition
 // ****************************************
 
-    if (document.addEventListener)
-            {document.addEventListener('click',scwHide, false);}
+    if (document.addEventListener) {document.addEventListener('click',scwHide, false);}
     else    {document.attachEvent('onclick',scwHide);}
 
 // ****************************************

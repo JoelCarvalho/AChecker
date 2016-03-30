@@ -76,8 +76,7 @@ class Savant2_Plugin_cycle extends Savant2_Plugin {
 	* 
 	*/
 	
-	function plugin($cycle, $iteration, $repeat = 1)
-	{
+	function plugin($cycle, $iteration, $repeat = 1) {
 		// get the proper value set as an array
 		if (is_string($cycle) && isset($this->values[$cycle])) {
 			$values = (array) $this->values[$cycle];

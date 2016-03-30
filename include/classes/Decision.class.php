@@ -1,158 +1,148 @@
-<?php
+<?php namespace QChecker\Utils;
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
-/**
- * Decision
- * make or reverse user decisons
- * @access	public
- * @author	Cindy Qi Li
- * @package	Decision
- */
+use QChecker\DAO\UserDecisionsDAO;
+use QChecker\DAO\UserLinksDAO;
+use QChecker\Validator\HTMLRpt;
 
 if (!defined("AC_INCLUDE_PATH")) die("Error: AC_INCLUDE_PATH is not defined.");
 
-require_once(AC_INCLUDE_PATH. 'classes/DAO/UserLinksDAO.class.php');
-require_once(AC_INCLUDE_PATH. 'classes/DAO/UserDecisionsDAO.class.php');
-require_once(AC_INCLUDE_PATH. 'classes/HTMLRpt.class.php');
+require_once(AC_INCLUDE_PATH . 'classes/DAO/UserLinksDAO.class.php');
+require_once(AC_INCLUDE_PATH . 'classes/DAO/UserDecisionsDAO.class.php');
+require_once(AC_INCLUDE_PATH . 'classes/Validator/HTMLRpt.class.php');
 
+/**
+ * Decision.class.php
+ * make or reverse user decisions
+ * @access    public
+ * @author    Cindy Qi Li
+ * @author    Joel Carvalho
+ * @version   1.6.1 21/08/2015
+ * @package   Decision
+ */
 class Decision {
 
-	// all private
-	var $userID;
-	var $URI;                              // URI to make/reverse decisions on
-	var $output;                           // output format: html or rest
-	var $sessionID;                        // session ID sent by our server in question list form
+    // all private
+    var $userID;
+    var $URI;                              // URI to make/reverse decisions on
+    var $output;                           // output format: html or rest
+    var $sessionID;                        // session ID sent by our server in question list form
 
-	var $userLinkID;                       // generated in validateFields()
-	var $userLinksDAO;
-	var $userDecisionsDAO;
+    var $userLinkID;                       // generated in validateFields()
+    var $userLinksDAO;
+    var $userDecisionsDAO;
 
-	var $errors;                           // error msg array
+    var $errors;                           // error msg array
 
-	/**
-	 * Constructor
-	 * doing nothing
-	 * @access  public
-	 * @param   None
-	 * @author  Cindy Qi Li
-	 */
-	function Decision($userID, $URI, $output, $sessionID)
-	{
-		global $msg;
+    /**
+     * Constructor
+     * doing nothing
+     * @access  public
+     * @param   None
+     * @author  Cindy Qi Li
+     */
+    function __construct($userID, $URI, $output, $sessionID){
+        $this->userID = $userID;
+        $this->URI = urldecode($URI);
+        $this->output = $output;
+        $this->sessionID = $sessionID;
 
-		$this->userID = $userID;
-		$this->URI = urldecode($URI);
-		$this->output = $output;
-		$this->sessionID = $sessionID;
+        $this->userLinksDAO = new UserLinksDAO();
+        $this->userDecisionsDAO = new UserDecisionsDAO();
 
-		$this->userLinksDAO = new UserLinksDAO();
-		$this->userDecisionsDAO = new UserDecisionsDAO();
+        if (!$this->validateFields()) return false;
+    }
 
-		if (!$this->validateFields()) return false;
-	}
+    /**
+     * Make decisions
+     * @access  public
+     * @param   $decisions : decisions array
+     * @return  true/false
+     * @author  Cindy Qi Li
+     */
+    public function makeDecisions($decisions){
+        if (!is_array($decisions)) return false;
 
-	/**
-	 * Make decisions
-	 * @access  public
-	 * @param   $decisions: decisions array
-	 * @return  true/false
-	 * @author  Cindy Qi Li
-	 */
-	public function makeDecisions($decisions)
-	{
-		if (!is_array($decisions)) return false;
+        foreach ($decisions as $sequenceID => $decision) {
+            list($line_num, $col_num, $check_id) = explode("_", $sequenceID);
 
-		foreach ($decisions as $sequenceID => $decision) {
-			list($line_num, $col_num, $check_id) = explode("_", $sequenceID);
-			
-			$line_num = intval($line_num);
-			$col_num = intval($col_num);
-			$check_id = intval($check_id);
-			
-			$this->userDecisionsDAO->setDecision($this->userLinkID, $line_num, $col_num, $check_id, $decision);
-		}
-	}
+            $line_num = intval($line_num);
+            $col_num = intval($col_num);
+            $check_id = intval($check_id);
 
-	/**
-	 * check if error happens
-	 * @access  public
-	 * @param   none
-	 * @return  true: has error; false: no error
-	 * @author  Cindy Qi Li
-	 */
-	public function hasError()
-	{
-		return (count($this->errors) > 0);
-	}
+            $this->userDecisionsDAO->setDecision($this->userLinkID, $this->URI, $line_num, $col_num, $check_id, $decision);
+        }
+    }
 
-	/**
-	 * return error report
-	 * @access  public
-	 * @param   none
-	 * @return  error report
-	 * @author  Cindy Qi Li
-	 */
-	public function getErrorRpt()
-	{
-		if ($this->output <> 'rest')
-		{
-			$errorRpt = HTMLRpt::generateErrorRpt($this->errors);
-		}
-		return $errorRpt;
-	}
+    /**
+     * check if error happens
+     * @access  public
+     * @param   none
+     * @return  true: has error; false: no error
+     * @author  Cindy Qi Li
+     */
+    public function hasError(){
+        return (count($this->errors) > 0);
+    }
 
-	/**
-	 * Validate fields
-	 * @access  private
-	 * @param   none
-	 * @return  true/false; if false, save errors into array $this->errors
-	 * @author  Cindy Qi Li
-	 */
-	private function validateFields()
-	{
-		if ($this->sessionID == '')
-		{
-			$this->errors[] = 'AC_ERROR_EMPTY_SESSIONID';
-		}
-		if ($this->userID == '')
-		{
-			$this->errors[] = 'AC_ERROR_EMPTY_USER';
-		}
-		if ($this->URI == '')
-		{
-			$this->errors[] = 'AC_ERROR_EMPTY_URI';
-		}
-		if ($this->output <> 'html' && $this->output <> 'rest')
-		{
-			$this->errors[] = 'AC_ERROR_INVALID_FORMAT';
-		}
+    /**
+     * return error report
+     * @access  public
+     * @param   none
+     * @return  error report
+     * @author  Cindy Qi Li
+     */
+    public function getErrorRpt(){
+        if ($this->output <> 'rest')
+            $errorRpt = HTMLRpt::generateErrorRpt($this->errors);
+        return $errorRpt;
+    }
 
-		if (count($this->errors) > 0) return false;
+    /**
+     * Validate fields
+     * @access  private
+     * @param   none
+     * @return  true/false; if false, save errors into array $this->errors
+     * @author  Cindy Qi Li
+     */
+    private function validateFields(){
+        if ($this->sessionID == '') {
+            $this->errors[] = 'AC_ERROR_EMPTY_SESSIONID';
+        }
+        if ($this->userID == '') {
+            $this->errors[] = 'AC_ERROR_EMPTY_USER';
+        }
+        if ($this->URI == '') {
+            $this->errors[] = 'AC_ERROR_EMPTY_URI';
+        }
+        if ($this->output <> 'html' && $this->output <> 'rest') {
+            $this->errors[] = 'AC_ERROR_INVALID_FORMAT';
+        }
 
-		$rows = $this->userLinksDAO->getByUserIDAndURIAndSession($this->userID, $this->URI, $this->sessionID);
+        if (count($this->errors) > 0) return false;
 
-		if (!is_array($rows))
-		{
-			$this->errors[] = 'AC_ERROR_INVALID_SESSION';
-			return false;
-		}
-		else
-		{
-			$this->userLinkID = $rows[0]['user_link_id'];
-		}
+        $rows = $this->userLinksDAO->getByUserIDAndURIAndSession($this->userID, $this->URI, $this->sessionID);
 
-		return true;
-	}
+        if (!is_array($rows)) {
+            $this->errors[] = 'AC_ERROR_INVALID_SESSION';
+            return false;
+        } else {
+            $this->userLinkID = $rows[0]['user_link_id'];
+        }
+
+        return true;
+    }
 
 }
+
 ?>

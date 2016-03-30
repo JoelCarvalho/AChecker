@@ -1,23 +1,28 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
 
 /**
  * constants, some more constants are loaded from table 'config' @ include/vitals.inc.php
  **/
+/* Framework Version                                                    */
+define('QCHECKER_VERSION',  '1.6.4');
 
-define('VERSION',	'1.4');
+// QChecker VARS
+define('QCHECKER_NAME',		'QChecker '.'v'.QCHECKER_VERSION);
+define('QCHECKER_CSS', 		QCHECKER_SERVER.'/themes/default');
+define('QCHECKER_JS', 		QCHECKER_SERVER.'/jscripts');
 
 // language constants
 define('DEFAULT_LANGUAGE_CODE', 'eng');
@@ -25,26 +30,12 @@ define('DEFAULT_CHARSET', 'utf-8');
 define('AC_LANGUAGE_LOCALE_SEP', '-');
 //$_config['default_language'] = DEFAULT_LANGUAGE_CODE;
 
-// check confidence
-define('KNOWN', 0);
-define('LIKELY', 1);
-define('POTENTIAL', 2);
-
-function get_confidence_by_code($confidence_code)
-{
-	if ($confidence_code == KNOWN)
-		 return _AC('known');
-	else if ($confidence_code == LIKELY)
-		 return _AC('likely');
-	else if ($confidence_code == POTENTIAL)
-		 return _AC('potential');
-	else
-		return '';
-}
 
 /* User group type */
 define('AC_USER_GROUP_ADMIN', 1);
 define('AC_USER_GROUP_USER', 2);
+define('AC_USER_GROUP_EDITOR', 3);
+
 
 /* User status */
 define('AC_STATUS_DISABLED', 0);
@@ -52,8 +43,7 @@ define('AC_STATUS_ENABLED', 1);
 define('AC_STATUS_DEFAULT', 2);
 define('AC_STATUS_UNCONFIRMED', 3);
 
-function get_status_by_code($status_code)
-{
+function get_status_by_code($status_code) {
 	if ($status_code == AC_STATUS_DISABLED)
 		 return _AC('disabled');
 	else if ($status_code == AC_STATUS_ENABLED)
@@ -69,6 +59,22 @@ function get_status_by_code($status_code)
 /* User status */
 define('AC_CHECK_EXAMPLE_FAIL', 0);
 define('AC_CHECK_EXAMPLE_PASS', 1);
+
+// check confidence
+define('KNOWN', 0);
+define('LIKELY', 1);
+define('POTENTIAL', 2);
+
+function get_confidence_by_code($confidence_code) {
+	if ($confidence_code == KNOWN)
+		return _AC('known');
+	else if ($confidence_code == LIKELY)
+		return _AC('likely');
+	else if ($confidence_code == POTENTIAL)
+		return _AC('potential');
+	else
+		return '';
+}
 
 /* language text prefix. Note that all prefixes must be unique */
 // table "checks"

@@ -1,21 +1,26 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\Updater\PatchCreator;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 require_once (AC_INCLUDE_PATH.'vitals.inc.php');
 
-if ($_POST['create'] || $_POST['save'])
-{
+if ($_POST['create'] || $_POST['save']) {
 	if (isset($_REQUEST["myown_patch_id"])) $patch_id = $_REQUEST["myown_patch_id"];
 	else $patch_id = 0;
 	
@@ -27,10 +32,8 @@ if ($_POST['create'] || $_POST['save'])
 		$missing_fields[] = _AC("achecker_version_to_apply");
 
 	// only check missing upload file when creating a update. don't check when save
-	if (is_array($_POST['rb_action']) && $_POST['create'])
-	{
-		foreach ($_POST['rb_action'] as $i=>$action)
-		{
+	if (is_array($_POST['rb_action']) && $_POST['create']) {
+		foreach ($_POST['rb_action'] as $i=>$action) {
 			// must upload a file if action is add or overwrite
 			if ($action == "add" && $_FILES['add_upload_file']['name'][$i] == "" && $_POST['add_uploaded_file'] == "")
 				$missing_fields[] = _AC("upload_file") . " for ". _AC("file_name") . " <strong>" . $_POST['add_filename'][$i] . "</strong>";
@@ -41,8 +44,7 @@ if ($_POST['create'] || $_POST['save'])
 	}
 	// end of checking missing fields
 
-	if ($missing_fields) 
-	{
+	if ($missing_fields) {
 		$missing_fields = implode(', ', $missing_fields);
 		$msg->addError(array('EMPTY_FIELDS', $missing_fields));
 	}
@@ -51,16 +53,14 @@ if ($_POST['create'] || $_POST['save'])
 		$msg->addError('LOGIN_CHARS');
 
 	// main process
-	if (!$msg->containsErrors()) 
-	{
+	if (!$msg->containsErrors()) {
 		$patch_info = array("achecker_patch_id"=>$_POST["achecker_patch_id"],
 	                      "achecker_version_to_apply"=>$_POST["achecker_version_to_apply"],
 	                      "description"=>$_POST["description"],
 	                      "sql_statement"=>$_POST["sql_statement"]);
 
 		// remove empty dependent patches
-		if (is_array($_POST["dependent_patch"]))
-		{
+		if (is_array($_POST["dependent_patch"])) {
 			foreach ($_POST["dependent_patch"] as $dependent_patch)
 				if (trim($dependent_patch) <> "")
 					$dependent_patches[] = $dependent_patch;
@@ -69,12 +69,9 @@ if ($_POST['create'] || $_POST['save'])
 		if (is_array($dependent_patches))
 			$patch_info["dependent_patches"] = $dependent_patches;
 			
-		if (is_array($_POST['rb_action']))
-		{
-			foreach ($_POST['rb_action'] as $i=>$action)
-			{
-				if ($action == "add" && $_POST['add_filename'][$i] <> "")
-				{
+		if (is_array($_POST['rb_action'])) {
+			foreach ($_POST['rb_action'] as $i=>$action) {
+				if ($action == "add" && $_POST['add_filename'][$i] <> "") {
 					if ($_FILES['add_upload_file']['tmp_name'][$i] <> "")
 						$upload_file = $_FILES['add_upload_file']['tmp_name'][$i];
 					else
@@ -98,8 +95,7 @@ if ($_POST['create'] || $_POST['save'])
 					                             "file_name"=>$_POST['delete_filename'][$i],
 				                               "directory"=>$_POST['delete_dir'][$i]);
 	
-				if ($action == "overwrite" && $_POST['overwrite_filename'][$i] <> "")
-				{
+				if ($action == "overwrite" && $_POST['overwrite_filename'][$i] <> "") {
 					if ($_FILES['overwrite_upload_file']['tmp_name'][$i] <> "")
 						$upload_file = $_FILES['overwrite_upload_file']['tmp_name'][$i];
 					else
@@ -119,8 +115,7 @@ if ($_POST['create'] || $_POST['save'])
 		
 		if ($_POST['create'])
 			$patch_creator->create_patch();
-		else if ($_POST['save'])
-		{
+		else if ($_POST['save']) {
 			$patch_creator->saveInfo();
 			header('Location: myown_patches.php');
 		}

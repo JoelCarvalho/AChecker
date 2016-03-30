@@ -1,17 +1,21 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include(AC_INCLUDE_PATH.'handbook_pages.inc.php');
 
@@ -23,22 +27,17 @@ if (isset($_GET['p'])) {
 	$this_page = 'index.php';
 } 
 
-function print_handbook($handbook_pages)
-{
+function print_handbook($handbook_pages) {
 	global $_pages;
 	
-	foreach ($handbook_pages as $page_key => $page_value) 
-	{
-		if (is_array($page_value)) 
-		{
-			if (isset($_pages[$page_key]))
-			{
+	foreach ($handbook_pages as $page_key => $page_value) {
+		if (is_array($page_value)) {
+			if (isset($_pages[$page_key])) {
 				echo _AC($_pages[$page_key]['guide'])."<br /><br />";
 				print_handbook($page_value);
 			}
 		} 
-		else if (isset($_pages[$page_value]))
-		{
+		else if (isset($_pages[$page_value])) {
 			echo _AC($_pages[$page_value]['guide'])."<br /><br />";
 		}
 	}

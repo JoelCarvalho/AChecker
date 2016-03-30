@@ -45,8 +45,7 @@ class Savant2_Error_stack extends Savant2_Error {
 	* 
 	*/
 	
-	function error()
-	{
+	function error() {
 		// push an error onto the stack
 		PEAR_ErrorStack::staticPush(
 			'Savant2',       // package name

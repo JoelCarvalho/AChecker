@@ -1,6 +1,12 @@
 <?php
+
+/*
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../');
+
 require (AC_INCLUDE_PATH.'vitals.inc.php');
+
 session_start();
 
 include 'securimage.php';

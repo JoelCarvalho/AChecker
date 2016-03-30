@@ -1,17 +1,19 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
 /* constants to map privileges.privilege_id, used to load constant pages */
+use QChecker\DAO\PrivilegesDAO;
+
 define('AC_PRIV_CHECKER', 1);
 define('AC_PRIV_USER_MANAGEMENT', 2);
 define('AC_PRIV_GUIDELINE_MANAGEMENT', 3);
@@ -28,8 +30,7 @@ define('AC_NAV_TOP', 'AC_NAV_TOP');        // top tab menus
 include_once('classes/DAO/PrivilegesDAO.class.php');
 $priviledgesDAO = new PrivilegesDAO();
 
-if (isset($_SESSION['user_id']) && $_SESSION['user_id'] <> 0)
-{
+if (isset($_SESSION['user_id']) && $_SESSION['user_id'] <> 0) {
 	$rows = $priviledgesDAO->getUserPrivileges($_SESSION['user_id']);
 }
 else
@@ -74,9 +75,8 @@ $_pages['checker/suggestion.php']['title_var'] = 'details';
 $_pages['documentation/web_service_api.php']['title_var'] = 'web_service_api';
 
 // 1. checker pages
-if (in_array(AC_PRIV_CHECKER, $privs))
-{
-	$_pages['checker/index.php']['title_var'] = 'web_accessibility_checker';
+if (in_array(AC_PRIV_CHECKER, $privs)) {
+	$_pages['checker/index.php']['title_var'] = 'web_quality_checker';
 	$_pages['checker/index.php']['parent']    = AC_NAV_PUBLIC;
 	$_pages['checker/index.php']['guide']    = 'AC_HELP_INDEX';
 	
@@ -85,8 +85,7 @@ if (in_array(AC_PRIV_CHECKER, $privs))
 }
 
 // 2. user pages
-if (in_array(AC_PRIV_USER_MANAGEMENT, $privs))
-{
+if (in_array(AC_PRIV_USER_MANAGEMENT, $privs)) {
 	$_pages['user/index.php']['title_var'] = 'users';
 	$_pages['user/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['user/index.php']['children']  = array_merge(array('user/user_create_edit.php',
@@ -120,8 +119,7 @@ if (in_array(AC_PRIV_USER_MANAGEMENT, $privs))
 }
 
 // 3. guideline pages
-if (in_array(AC_PRIV_GUIDELINE_MANAGEMENT, $privs))
-{
+if (in_array(AC_PRIV_GUIDELINE_MANAGEMENT, $privs)) {
 	$_pages['guideline/index.php']['title_var'] = 'guidelines';
 	$_pages['guideline/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['guideline/index.php']['children']  = array_merge(array('guideline/create_edit_guideline.php'), 
@@ -149,8 +147,7 @@ if (in_array(AC_PRIV_GUIDELINE_MANAGEMENT, $privs))
 }
 
 // 3. check pages
-if (in_array(AC_PRIV_CHECK_MANAGEMENT, $privs))
-{
+if (in_array(AC_PRIV_CHECK_MANAGEMENT, $privs)) {
 	$_pages['check/index.php']['title_var'] = 'checks';
 	$_pages['check/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['check/index.php']['children']  = array_merge(array('check/check_create_edit.php'), 
@@ -174,8 +171,7 @@ if (in_array(AC_PRIV_CHECK_MANAGEMENT, $privs))
 }
 
 // 5. language pages
-if (in_array(AC_PRIV_LANGUAGE_MANAGEMENT, $privs))
-{
+if (in_array(AC_PRIV_LANGUAGE_MANAGEMENT, $privs)) {
 	$_pages['language/index.php']['title_var'] = 'language';
 	$_pages['language/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['language/index.php']['children']  = array_merge(array('language/language_add_edit.php'), 
@@ -194,16 +190,14 @@ if (in_array(AC_PRIV_LANGUAGE_MANAGEMENT, $privs))
 }
 
 // 6. translation
-if (in_array(AC_PRIV_TRANSLATION, $privs))
-{
+if (in_array(AC_PRIV_TRANSLATION, $privs)) {
 	$_pages['translation/index.php']['title_var'] = 'translation';
 	$_pages['translation/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['translation/index.php']['guide']    = 'AC_HELP_TRANSLATION';
 }
 
 // 7. profile pages
-if (in_array(AC_PRIV_PROFILE, $privs))
-{
+if (in_array(AC_PRIV_PROFILE, $privs)) {
 	$_pages['profile/index.php']['title_var'] = 'profile';
 	$_pages['profile/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['profile/index.php']['guide']    = 'AC_HELP_PROFILE';
@@ -221,8 +215,7 @@ if (in_array(AC_PRIV_PROFILE, $privs))
 }
 
 // 8. updater pages
-if (in_array(AC_PRIV_UPDATER, $privs))
-{
+if (in_array(AC_PRIV_UPDATER, $privs)) {
 	$_pages['updater/index.php']['title_var'] = 'updater';
 	$_pages['updater/index.php']['parent']    = AC_NAV_TOP;
 	$_pages['updater/index.php']['guide']    = 'AC_HELP_UPDATER';

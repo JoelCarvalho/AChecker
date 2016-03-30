@@ -1,15 +1,18 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\DAO\LanguageTextDAO;
+use QChecker\Language\Language;
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
 require(AC_INCLUDE_PATH . 'classes/DAO/LanguageTextDAO.class.php');
@@ -34,7 +37,7 @@ require(AC_INCLUDE_PATH . 'classes/DAO/LanguageTextDAO.class.php');
 * @author	Joel Kronenberg
 */
 function _AC() {
-	global $_cache_template, $lang_et, $_rel_url, $stripslashes;
+	global $_cache_template, $lang_et, $_rel_url;
 	static $_template;
 
 	$args = func_get_args();
@@ -51,21 +54,20 @@ function _AC() {
 		 * @author Jacek Materna
 		 */
 
-		// Check for specific language prefix, extendible as needed
+		// Check for specific language prefix, extensible as needed
 		// 0002767:  a substring+in_array test should be faster than a preg_match test.
 		// replaced the preg_match with a test of the substring.
 		$sub_arg = substr($args[0], 0, 7); // 7 is the shortest type of msg (AC_INFO)
 		if (in_array($sub_arg, array('AC_ERRO','AC_INFO','AC_WARN','AC_FEED','AC_CONF'))) {
-			global $_base_path, $addslashes;
+			global $_base_path;
 
-			$args[0] = $addslashes($args[0]);
+			$args[0] = addslashes($args[0]);
 					
 			/* get $_msgs_new from the DB */
 			$rows = $languageTextDAO->getMsgByTermAndLang($args[0], $_SESSION['lang']);
 			$msgs = '';
 					
-			if (is_array($rows)) 
-			{
+			if (is_array($rows)) {
 				$row = $rows[0];
 				// do not cache key as a digit (no contstant(), use string)
 				$msgs = str_replace('SITE_URL/', $_base_path, $row['text']);
@@ -87,22 +89,20 @@ function _AC() {
 			/* get $_template from the DB */
 			$rows = $languageTextDAO->getAllTemplateByLang($_SESSION['lang']);
 			
-			if (is_array($rows))
-			{
-				foreach ($rows as $id => $row) 
-				{
+			if (is_array($rows)) {
+				foreach ($rows as $id => $row) {
 					//Do not overwrite the variable that existed in the cache_template already.
 					//The edited terms (_c_template) will always be at the top of the resultset
 					//0003279
-					if (isset($_cache_template[$row['term']])){
+					if (isset($_cache_template[$row['term']])) {
 						continue;
 					}
 	
 					// saves us from doing an ORDER BY
 					if ($row['language_code'] == $_SESSION['lang']) {
-						$_cache_template[$row['term']] = $stripslashes($row['text']);
+						$_cache_template[$row['term']] = $row['text'];
 					} else if (!isset($_cache_template[$row['term']])) {
-						$_cache_template[$row['term']] = $stripslashes($row['text']);
+						$_cache_template[$row['term']] = $row['text'];
 					}
 				}
 			}
@@ -134,16 +134,15 @@ function _AC() {
 	if (empty($outString)) {
 
 		$rows = $languageTextDAO->getByTermAndLang($format, $_SESSION['lang']);
-		if (is_array($rows) && isset($rows[0]))
-		{
+		if (is_array($rows) && isset($rows[0])) {
 			$row = $rows[0];
-			$_template[$row['term']] = $stripslashes($row['text']);
+			$_template[$row['term']] = $row['text'];
 			$outString = $_template[$row['term']];
 		}
 
-		if (empty($outString)) {
+		// todo: Comment to hide missing text
+		if (empty($outString))
 			return ('[ '.$format.' ]');
-		}
 	}
 
 	return $outString;
@@ -565,12 +564,12 @@ function highlight_code($code, $html) {
 }
 
 /* contributed by Thomas M. Duffey <tduffey at homeboyz.com> */
-function fix_quotes($text){
+function fix_quotes($text) {
 	return str_replace('\\"', '"', $text);
 }
 
 function embed_media($text) {
-	if (preg_match("/\[media(\|[0-9]+\|[0-9]+)?\]*/", $text)==0){
+	if (preg_match('/\[media(\|[0-9]+\|[0-9]+)?\]*/', $text)==0) {
 		return $text;
 	}
 
@@ -586,55 +585,53 @@ function embed_media($text) {
 	*/
 	
 	// youtube videos
-	preg_match_all("#\[media[0-9a-z\|]*\]http://([a-z0-9\.]*)?youtube.com/watch\?v=([a-z0-9_-]+)\[/media\]#i",$text,$media_matches[1],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]http://([a-z0-9\.]*)?youtube.com/watch\?v=([a-z0-9_-]+)\[/media\]#i',$text,$media_matches[1],PREG_SET_ORDER);
 	$media_replace[1] = '<object width="##WIDTH##" height="##HEIGHT##"><param name="movie" value="http://##MEDIA1##youtube.com/v/##MEDIA2##"></param><embed src="http://##MEDIA1##youtube.com/v/##MEDIA2##" type="application/x-shockwave-flash" width="##WIDTH##" height="##HEIGHT##"></embed></object>';
 		
 	// .mpg
-	preg_match_all("#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).mpg\[/media\]#i",$text,$media_matches[2],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).mpg\[/media\]#i',$text,$media_matches[2],PREG_SET_ORDER);
 	$media_replace[2] = "<object data=\"##MEDIA1##.mpg\" type=\"video/mpeg\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.mpg\"><param name=\"autoplay\" value=\"false\"><param name=\"autoStart\" value=\"0\"><a href=\"##MEDIA1##.mpg\">##MEDIA1##.mpg</a></object>";
 	
 	// .avi
-	preg_match_all("#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).avi\[/media\]#i",$text,$media_matches[3],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).avi\[/media\]#i',$text,$media_matches[3],PREG_SET_ORDER);
 	$media_replace[3] = "<object data=\"##MEDIA1##.avi\" type=\"video/x-msvideo\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.avi\"><param name=\"autoplay\" value=\"false\"><param name=\"autoStart\" value=\"0\"><a href=\"##MEDIA1##.avi\">##MEDIA1##.avi</a></object>";
 	
 	// .wmv
-	preg_match_all("#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).wmv\[/media\]#i",$text,$media_matches[4],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).wmv\[/media\]#i',$text,$media_matches[4],PREG_SET_ORDER);
 	$media_replace[4] = "<object data=\"##MEDIA1##.wmv\" type=\"video/x-ms-wmv\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.wmv\"><param name=\"autoplay\" value=\"false\"><param name=\"autoStart\" value=\"0\"><a href=\"##MEDIA1##.wmv\">##MEDIA1##.wmv</a></object>";
 	
 	// .mov
-	preg_match_all("#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).mov\[/media\]#i",$text,$media_matches[5],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).mov\[/media\]#i',$text,$media_matches[5],PREG_SET_ORDER);
 	$media_replace[5] = "<object classid=\"clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B\" codebase=\"http://www.apple.com/qtactivex/qtplugin.cab\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.mov\"><param name=\"controller\" value=\"true\"><param name=\"autoplay\" value=\"false\"><!--[if gte IE 7]> <!--><object type=\"video/quicktime\" data=\"##MEDIA1##.mov\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"controller\" value=\"true\"><param name=\"autoplay\" value=\"false\"><a href=\"##MEDIA1##.mov\">##MEDIA1##.mov</a></object><!--<![endif]--><!--[if lt IE 7]><a href=\"##MEDIA1##.mov\">##MEDIA1##.mov</a><![endif]--></object>";
 	
 	// .swf
-	preg_match_all("#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).swf\[/media\]#i",$text,$media_matches[6],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\]([.\w\d]+[^\s\"]+).swf\[/media\]#i',$text,$media_matches[6],PREG_SET_ORDER);
 	$media_replace[6] = "<object type=\"application/x-shockwave-flash\" data=\"##MEDIA1##.swf\" width=\"##WIDTH##\" height=\"##HEIGHT##\">  <param name=\"movie\" value=\"##MEDIA1##.swf\"><param name=\"loop\" value=\"false\"><a href=\"##MEDIA1##.swf\">##MEDIA1##.swf</a></object>";
 	
 	// .mp3
-	preg_match_all("#\[media[0-9a-z\|]*\](.+[^\s\"]+).mp3\[/media\]#i",$text,$media_matches[7],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\](.+[^\s\"]+).mp3\[/media\]#i',$text,$media_matches[7],PREG_SET_ORDER);
 	$media_replace[7] = "<object type=\"audio/mpeg\" data=\"##MEDIA1##.mp3\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.mp3\"><param name=\"autoplay\" value=\"false\"><param name=\"autoStart\" value=\"0\"><a href=\"##MEDIA1##.mp3\">##MEDIA1##.mp3</a></object>";
 	
 	// .wav
-	preg_match_all("#\[media[0-9a-z\|]*\](.+[^\s\"]+).wav\[/media\]#i",$text,$media_matches[8],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\](.+[^\s\"]+).wav\[/media\]#i',$text,$media_matches[8],PREG_SET_ORDER);
 	$media_replace[8] ="<object type=\"audio/x-wav\" data=\"##MEDIA1##.wav\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.wav\"><param name=\"autoplay\" value=\"false\"><param name=\"autoStart\" value=\"0\"><a href=\"##MEDIA1##.wav\">##MEDIA1##.wav</a></object>";
 	
 	// .ogg
-	preg_match_all("#\[media[0-9a-z\|]*\](.+[^\s\"]+).ogg\[/media\]#i",$text,$media_matches[9],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\](.+[^\s\"]+).ogg\[/media\]#i',$text,$media_matches[9],PREG_SET_ORDER);
 	$media_replace[9] ="<object type=\"application/ogg\" data=\"##MEDIA1##.ogg\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.ogg\"><a href=\"##MEDIA1##.ogg\">##MEDIA1##.ogg</a></object>";
 	
 	// .mid
-	preg_match_all("#\[media[0-9a-z\|]*\](.+[^\s\"]+).mid\[/media\]#i",$text,$media_matches[10],PREG_SET_ORDER);
+	preg_match_all('#\[media[0-9a-z\|]*\](.+[^\s\"]+).mid\[/media\]#i',$text,$media_matches[10],PREG_SET_ORDER);
 	$media_replace[10] ="<object type=\"application/x-midi\" data=\"##MEDIA1##.mid\" width=\"##WIDTH##\" height=\"##HEIGHT##\"><param name=\"src\" value=\"##MEDIA1##.mid\"><a href=\"##MEDIA1##.mid\">##MEDIA1##.mid</a></object>";
 	
-	$text = preg_replace("#\[media[0-9a-z\|]*\](.+[^\s\"]+).mid\[/media\]#i", "<object type=\"application/x-midi\" data=\"\\1.mid\" width=\"".$width."\" height=\"".$height."\"><param name=\"src\" value=\"\\1.mid\"><a href=\"\\1.mid\">\\1.mid</a></object>", $text);
+	$text = preg_replace('#\[media[0-9a-z\|]*\](.+[^\s\"]+).mid\[/media\]#i', "<object type=\"application/x-midi\" data=\"\\1.mid\" width=\"".$width."\" height=\"".$height."\"><param name=\"src\" value=\"\\1.mid\"><a href=\"\\1.mid\">\\1.mid</a></object>", $text);
 
 	// Executing the replace
-	for ($i=1;$i<=count($media_replace);$i++){
-		foreach($media_matches[$i] as $media)
-		{
+	for ($i=1;$i<=count($media_replace);$i++) {
+		foreach($media_matches[$i] as $media) {
 			
 			//find width and height for each matched media
-			if (preg_match("/\[media\|([0-9]*)\|([0-9]*)\]*/", $media[0], $matches)) 
-			{
+			if (preg_match('/\[media\|([0-9]*)\|([0-9]*)\]*/', $media[0], $matches)) {
 				$width = $matches[1];
 				$height = $matches[2];
 			}
@@ -714,7 +711,7 @@ function highlight($input, $var) {//$input is the string, $var is the text to be
 		if (strpos('<strong class="highlight">', $var) !== false) {
 			return $input;
 		}
-		while($i<strlen($input)){
+		while($i<strlen($input)) {
 			if((($i + strlen($var)) <= strlen($input)) && (strcasecmp($var, substr($input, $i, strlen($var))) == 0)) {
 				$xtemp .= '<strong class="highlight">' . substr($input, $i , strlen($var)) . '</strong>';
 				$i += strlen($var);
@@ -821,12 +818,12 @@ function getTranslatedCodeStr($codes) {
 
 			/* get $_msgs_new from the DB */
 			$sql	= 'SELECT * FROM '.TABLE_PREFIX.'language_text WHERE variable="_msgs" AND (language_code="'.$_SESSION['lang'].'" OR language_code="'.$parent.'")';
-			$result	= @mysql_query($sql, $db);
+			$result	= @$db->query($sql);
 			$i = 1;
-			while ($row = @mysql_fetch_assoc($result)) {
+			while ($row = @$result->fetch_assoc()) {
 				// do not cache key as a digit (no contstant(), use string)
 				$_cache_msgs_new[$row['term']] = str_replace('SITE_URL/', $_base_path, $row['text']);
-				if (AC_DEVEL) {
+				if (defined('AC_DEVEL') && AC_DEVEL) {
 					$_cache_msgs_new[$row['term']] .= ' <small><small>('.$row['term'].')</small></small>';
 				}
 			}
@@ -854,9 +851,9 @@ function getTranslatedCodeStr($codes) {
 			/* the language for this msg is missing: */
 		
 			$sql	= 'SELECT * FROM '.TABLE_PREFIX.'language_text WHERE variable="_msgs"';
-			$result	= @mysql_query($sql, $db);
+			$result	= @$db->query($sql);
 			$i = 1;
-			while ($row = @mysql_fetch_assoc($result)) {
+			while ($row = @$result->fetch_assoc()) {
 				if (($row['term']) === $codes) {
 					$message = '['.$row['term'].']';
 					break;

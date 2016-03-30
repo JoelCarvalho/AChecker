@@ -1,17 +1,28 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelinesDAO;
+use QChecker\DAO\TestPassDAO;
+use QChecker\DAO\UsersDAO;
+use QChecker\DAO\CheckPrerequisitesDAO;
+use QChecker\DAO\CheckExamplesDAO;
+use QChecker\DAO\ChecksDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/ChecksDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/CheckPrerequisitesDAO.class.php');
@@ -27,19 +38,17 @@ $guidelinesDAO = new GuidelinesDAO();
 $checkExamplesDAO = new CheckExamplesDAO();
 
 // handle submit
-if (isset($_POST['cancel'])) 
-{
+if (isset($_POST['cancel'])) {
 	header('Location: index.php');
 	exit;
 } 
 // check on isset($_POST['html_tag']) is to handle javascript submit request for unsaved changes
-else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_POST['javascript_submit']) 
-{
+else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_POST['javascript_submit']) {
 	$checksDAO = new ChecksDAO();
 	
 	if (!isset($check_id))  // create new user
 	{
-		$check_id = $checksDAO->Create($_SESSION['user_id'],
+		$check_id = $checksDAO->Create($_POST['abbr'], $_SESSION['user_id'],
                   $_POST['html_tag'],$_POST['confidence'],$_POST['note'],
 		          $_POST['name'],$_POST['err'],$_POST['description'],$_POST['search_str'],
 		          $_POST['long_description'],$_POST['rationale'],$_POST['how_to_repair'],
@@ -49,7 +58,7 @@ else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_
 	}
 	else  // edit existing check
 	{
-		$checksDAO->Update($check_id, $_SESSION['user_id'],
+		$checksDAO->Update($check_id, $_POST['abbr'], $_SESSION['user_id'],
                   $_POST['html_tag'],$_POST['confidence'],$_POST['note'],
 		          $_POST['name'],$_POST['err'],$_POST['description'],$_POST['search_str'],
 		          $_POST['long_description'],$_POST['rationale'],$_POST['how_to_repair'],
@@ -58,8 +67,7 @@ else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_
 		          $_POST['test_failed_result'],$_POST['open_to_public']);
 	}
 	
-	if (!$msg->containsErrors())
-	{
+	if (!$msg->containsErrors()) {
 		// re-create check examples
 		$checkExamplesDAO->DeleteByCheckID($check_id);
 		
@@ -76,8 +84,7 @@ else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_
 			
 		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 		
-		if (isset($_POST['save_and_close']))
-		{
+		if (isset($_POST['save_and_close'])) {
 			header('Location: index.php');
 		}
 		else
@@ -87,18 +94,14 @@ else if (isset($_POST['save_no_close']) || isset($_POST['save_and_close']) || $_
 		exit;
 	}
 }
-else if (isset($_POST['remove_pre']))
-{
-	if (is_array($_POST['del_pre_checks_id']))
-	{
+else if (isset($_POST['remove_pre'])) {
+	if (is_array($_POST['del_pre_checks_id'])) {
 		foreach ($_POST['del_pre_checks_id'] as $del_check_id)
 			$checkPrerequisitesDAO->Delete($check_id, $del_check_id);
 	}
 }
-else if (isset($_POST['remove_next']))
-{
-	if (is_array($_POST['del_next_checks_id']))
-	{
+else if (isset($_POST['remove_next'])) {
+	if (is_array($_POST['del_next_checks_id'])) {
 		foreach ($_POST['del_next_checks_id'] as $del_check_id)
 			$testPassDAO->Delete($check_id, $del_check_id);
 	}
@@ -112,8 +115,7 @@ if (isset($check_id)) // edit existing user
 {
 	$check_row = $checksDAO->getCheckByID($check_id);
 	
-	if (!$check_row)
-	{ // invalid check id
+	if (!$check_row) { // invalid check id
 		$msg->addError('INVALID_CHECK_ID');
 		require(AC_INCLUDE_PATH.'header.inc.php');
 		$msg->printAll();

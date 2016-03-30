@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 include(AC_INCLUDE_PATH.'header.inc.php');
 
@@ -19,19 +26,19 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 <div class="center-input-form">
 	<form name="filter_form" method="get" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
 	<fieldset class="group_form"><legend class="group_form"><?php echo _AC("filter"); ?></legend>
-<?php if (isset($_GET['list'])){?>
+<?php if (isset($_GET['list'])) {?>
 	<input type="hidden" name="list" value="<?php echo $_GET['list']; ?>" />
 <?php }?>
-<?php if (isset($_GET['cid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['cid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="cid" value="<?php echo $_GET['cid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['gid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['gid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="gid" value="<?php echo $_GET['gid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['ggid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['ggid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="ggid" value="<?php echo $_GET['ggid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['gsgid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['gsgid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="gsgid" value="<?php echo $_GET['gsgid']; ?>" />
 <?php }?>
 		<table class="filter">
@@ -63,7 +70,7 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 			</td>
 		</tr>
 
-		<?php if (!isset($_GET['list'])){ 
+		<?php if (!isset($_GET['list'])) { 
 			// when this page is to list available checks to insert into check_prerequsites and pass_next,
 			// open_to_public needs to be always 1, so don't show this option
 		?>
@@ -97,19 +104,19 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 <input type="hidden" name="html_tag" value="<?php echo htmlspecialchars($_GET['html_tag']); ?>" />
 <input type="hidden" name="confidence" value="<?php echo $_GET['confidence']; ?>" />
 <input type="hidden" name="open_to_public" value="<?php echo $_GET['open_to_public']; ?>" />
-<?php if (isset($_GET['list'])){?>
+<?php if (isset($_GET['list'])) {?>
 <input type="hidden" name="list" value="<?php echo $_GET['list']; ?>" />
 <?php }?>
-<?php if (isset($_GET['cid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['cid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 <input type="hidden" name="cid" value="<?php echo $_GET['cid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['gid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['gid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="gid" value="<?php echo $_GET['gid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['ggid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['ggid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="ggid" value="<?php echo $_GET['ggid']; ?>" />
 <?php }?>
-<?php if (isset($_GET['gsgid'])){ // perserve the check ID that the prerequisite / next checks are added in ?>
+<?php if (isset($_GET['gsgid'])) { // perserve the check ID that the prerequisite / next checks are added in ?>
 	<input type="hidden" name="gsgid" value="<?php echo $_GET['gsgid']; ?>" />
 <?php }?>
 
@@ -135,10 +142,14 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 		<col span="<?php echo 5 + $this->col_counts; ?>" />
 		<col class="sort" />
 		<col span="4" />
-	<?php elseif($this->col == 'check_id'): ?>
-		<col span="<?php echo 5 + $this->col_counts; ?>" />
+	<?php elseif($this->col == 'abbr'): ?>
+		<col span="<?php echo 6 + $this->col_counts; ?>" />
 		<col class="sort" />
-		<col span="5" />
+		<col span="6" />
+	<?php elseif($this->col == 'check_id'): ?>
+		<col span="<?php echo 7 + $this->col_counts; ?>" />
+		<col class="sort" />
+		<col span="7" />
 	<?php endif; ?>
 </colgroup>
 <thead>
@@ -149,11 +160,13 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 	<?php if ($this->row_button_type == 'checkbox') {?>
 	<th scope="col"><input type="checkbox" value="<?php echo _AC('select_all'); ?>" id="all" title="<?php echo _AC('select_all'); ?>" name="selectall" onclick="CheckAll();" /></th>
 	<?php }?>
-	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=html_tag<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('html_tag');      ?></a></th>
+	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=abbr<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('abbr'); ?></a></th>
+	<th scope="col" width="100px"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=html_tag<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('html_tag');      ?></a></th>
 	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=confidence<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('error_type'); ?></a></th>
-	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=description<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('description');   ?></a></th>
-	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=open_to_public<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('open_to_public'); ?></a></th>
-	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=check_id<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('check_id'); ?></a></th>
+	<th scope="col" width="500px"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=description<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('description');   ?></a></th>
+	<th scope="col" width="50px"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=open_to_public<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('public'); ?></a></th>
+	<th scope="col"><a href="check/index.php?<?php echo $this->orders[$this->order]; ?>=check_id<?php echo htmlspecialchars(SEP).$this->page_string; ?>"><?php echo _AC('id'); ?></a></th>
+	<th scope="col" width="70px"><?php echo _AC('actions'); ?></th>
 </tr>
 
 </thead>
@@ -171,7 +184,7 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 </tfoot>
 
 <tbody>
-	<?php if (is_array($this->check_rows)){ foreach ($this->check_rows as $row) {?>
+	<?php if (is_array($this->check_rows)) { foreach ($this->check_rows as $row) {?>
 		<?php if ($this->row_button_type == 'radio') {?>
 		<tr onmousedown="document.form['m<?php echo $row["check_id"]; ?>'].checked = true; rowselect(this);" 
 		    onkeydown="document.form['m<?php echo $row["check_id"]; ?>'].checked = true; rowselect(this);"
@@ -186,11 +199,23 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 			<td><input type="checkbox" name="id[]" value="<?php echo $row['check_id']; ?>" id="m<?php echo $row['check_id']; ?>" 
 			           onmouseup="this.checked=!this.checked" onkeyup="this.checked=!this.checked" /></td>
 		<?php }?>
+			<td><?php echo $row['abbr']; ?></td>
 			<td><?php echo htmlspecialchars($row['html_tag']); ?></td>
 			<td><?php echo get_confidence_by_code($row['confidence']); ?></td>
 			<td><label for="m<?php echo $row['check_id']; ?>"><?php echo htmlspecialchars(_AC($row['name'])); ?></label></td>
 			<td><?php if ($row['open_to_public']) echo _AC('yes'); else echo _AC('no'); ?></td>
 			<td><?php echo $row['check_id']; ?></td>
+		<td>
+			<a title="<?php echo _AC("info");?>" style="cursor: pointer" onclick="AChecker.popup('<?php echo AC_BASE_HREF; ?>checker/suggestion.php?id=<?php echo $row['check_id']; ?>'); return false;">
+				<img alt="<?php echo _AC("info");?>" src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/guide2.png" />
+			</a>
+			<a title="<?php echo _AC("edit");?>" style="cursor: pointer" onclick="AChecker.popup('<?php echo AC_BASE_HREF; ?>check/check_create_edit.php?id=<?php echo $row['check_id']; ?>'); return false;">
+				<img alt="<?php echo _AC("edit");?>" src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/edit.png" />
+			</a>
+			<a title="<?php echo _AC("edit_function");?>" style="cursor: pointer" onclick="AChecker.popup('<?php echo AC_BASE_HREF; ?>check/check_function_edit.php?id=<?php echo $row['check_id']; ?>'); return false;">
+				<img alt="<?php echo _AC("edit_function");?>" src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/check.png" />
+			</a>
+		</td>
 		</tr>
 	<?php }} ?>
 <?php else: ?>
@@ -207,7 +232,7 @@ if (isset($this->javascript_run_now)) echo $this->javascript_run_now;
 <script language="JavaScript" type="text/javascript">
 //<!--
 function CheckAll() {
-	for (var i=0;i<document.form.elements.length;i++)	{
+	for (var i=0;i<document.form.elements.length;i++) {
 		var e = document.form.elements[i];
 		if ((e.name == 'id[]') && (e.type=='checkbox')) {
 			e.checked = document.form.selectall.checked;

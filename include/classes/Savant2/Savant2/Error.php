@@ -91,8 +91,7 @@ class Savant2_Error {
 	*
 	*/
 	
-	function Savant2_Error($conf = array())
-	{
+	function Savant2_Error($conf = array()) {
 		// set public properties
 		foreach ($conf as $key => $val) {
 			$this->$key = $val;
@@ -118,8 +117,7 @@ class Savant2_Error {
 	*
 	*/
 	
-	function error()
-	{
+	function error() {
 	}
 }
 ?>

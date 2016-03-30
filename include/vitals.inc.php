@@ -1,20 +1,36 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
+/* Copyright (c) 2015 - 2015                                            */
+/* PT Innovation And University of Beira Interior                       */
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\DAO\ConfigDAO;
+use QChecker\DAO\ThemesDAO;
+use QChecker\DAO\UsersDAO;
+use QChecker\Language\LanguageManager;
+use QChecker\Utils\Message;
+use QChecker\Utils\User;
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
+global $skipPHPUnit;
 
+// Development flag = 1 (0 for release mode, without debug)
 define('AC_DEVEL', 1);
-define('AC_ERROR_REPORTING', E_ALL ^  E_NOTICE); // default is E_ALL ^ E_NOTICE, use E_ALL or E_ALL + E_STRICT for developing
+
+// WebCrawler prefix
+define("WC", "wc_");
+
+// Default: E_ALL ^ E_NOTICE, use E_ALL or E_ALL + E_STRICT for development
+define('AC_ERROR_REPORTING', E_ALL ^ E_NOTICE);
 
 // Emulate register_globals off. src: http://php.net/manual/en/faq.misc.php#faq.misc.registerglobals
 function unregister_GLOBALS() {
@@ -64,15 +80,17 @@ if (!defined('AC_INSTALL') || !AC_INSTALL) {
 /*** end system config block ****/
 
 /***** 1. database connection *****/
-//if (!defined('AC_REDIRECT_LOADED')){
-//	require_once(AC_INCLUDE_PATH.'lib/mysql_connect.inc.php');
+//if (!defined('AC_REDIRECT_LOADED')) {
+//	require_once(AC_INCLUDE_PATH.'lib/mysqli_connect.inc.php');
 //}
 /***** end database connection ****/
 
 /*** 2. constants ***/
 require_once(AC_INCLUDE_PATH.'constants.inc.php');
 
+
 /*** 3. initilize session ***/
+if (!isset($skipPHPUnit)){
 	@set_time_limit(0);
 	@ini_set('session.gc_maxlifetime', '36000'); /* 10 hours */
 	@session_cache_limiter('private, must-revalidate');
@@ -86,24 +104,8 @@ require_once(AC_INCLUDE_PATH.'constants.inc.php');
 	$str = ob_get_contents();
 	ob_end_clean();
 	unregister_GLOBALS();
-
+}
 /***** end session initilization block ****/
-
-function my_add_null_slashes( $string ) {
-    return mysql_real_escape_string(stripslashes($string));
-}
-
-function my_null_slashes($string) {
-	return $string;
-}
-
-if ( get_magic_quotes_gpc() == 1 ) {
-	$addslashes   = 'my_add_null_slashes';
-	$stripslashes = 'stripslashes';
-} else {
-	$addslashes   = 'mysql_real_escape_string';
-	$stripslashes = 'my_null_slashes';
-}
 
 require(AC_INCLUDE_PATH.'phpCache/phpCache.inc.php'); // cache library
 require(AC_INCLUDE_PATH.'classes/DAO/ThemesDAO.class.php');
@@ -112,8 +114,7 @@ require(AC_INCLUDE_PATH.'classes/DAO/ConfigDAO.class.php');
 /***** 4. load $_config from table 'config' *****/
 $configDAO = new ConfigDAO();
 $rows = $configDAO->getAll();
-foreach ($rows as $id => $row)
-{
+foreach ($rows as $id => $row) {
 	$_config[$row['name']] = $row['value'];
 }
 
@@ -153,10 +154,8 @@ define('SITE_NAME',                 $_config['site_name']);
 	// set default template paths:
 	$savant = new Savant2();
 
-	if (isset($_SESSION['prefs']['PREF_THEME']) && file_exists(AC_INCLUDE_PATH . '../themes/' . $_SESSION['prefs']['PREF_THEME']) && isset($_SESSION['valid_user']) && $_SESSION['valid_user']) 
-	{
-		if (!is_dir(AC_INCLUDE_PATH . '../themes/' . $_SESSION['prefs']['PREF_THEME']))
-		{
+	if (isset($_SESSION['prefs']['PREF_THEME']) && file_exists(AC_INCLUDE_PATH . '../themes/' . $_SESSION['prefs']['PREF_THEME']) && isset($_SESSION['valid_user']) && $_SESSION['valid_user']) {
+		if (!is_dir(AC_INCLUDE_PATH . '../themes/' . $_SESSION['prefs']['PREF_THEME'])) {
 			$_SESSION['prefs']['PREF_THEME'] = 'default';
 		} 
 		else 
@@ -165,8 +164,7 @@ define('SITE_NAME',                 $_config['site_name']);
 			$themesDAO = new ThemesDAO();
 			$row = $themesDAO->getByID($_SESSION['prefs']['PREF_THEME']);
 
-			if ($row['status'] == 0) 
-			{
+			if ($row['status'] == 0) {
 				// get default
 				$_SESSION['prefs']['PREF_THEME'] = get_default_theme();
 			}
@@ -187,8 +185,7 @@ define('SITE_NAME',                 $_config['site_name']);
 
 /***** 8. initialize user instance *****/
 // used as global var
-if (isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0)
-{
+if (isset($_SESSION['user_id']) && $_SESSION['user_id'] > 0) {
 	// check if $_SESSION['user_id'] is valid
 	include_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 	$usersDAO = new UsersDAO();
@@ -294,7 +291,7 @@ for ($i=0; $i<$num_bits; $i++) {
 
 	if (($_my_uri == '') && ($bits[$i] != '')) {
 		$_my_uri .= '?';
-	} else if ($bits[$i] != ''){
+	} else if ($bits[$i] != '') {
 		$_my_uri .= SEP;
 	}
 	$_my_uri .= $bits[$i];

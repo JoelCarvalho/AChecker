@@ -1,16 +1,19 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -26,16 +29,13 @@ if ((!empty($_GET['version']) && !preg_match('/^[0-9.]+$/', $_GET['version'])) |
 	exit;
 }
 
-if (isset($_POST['submit_no'])) 
-{
+if (isset($_POST['submit_no'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
 	exit;
 } 
-else if (isset($_POST['submit_yes']))
-{
-	if ($languageManager->import_from_path($_POST['path'], true))
-	{
+else if (isset($_POST['submit_yes'])) {
+	if ($languageManager->import_from_path($_POST['path'], true)) {
 		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 		header('Location: index.php');
 		exit;
@@ -47,7 +47,7 @@ $hidden_vars['path'] = $_GET['path'];
 
 require(AC_INCLUDE_PATH.'header.inc.php');
 
-$msg->addConfirm(array('IMPORT_LANG', $_GET['version'], VERSION), $hidden_vars);
+$msg->addConfirm(array('IMPORT_LANG', $_GET['version'], QCHECKER_VERSION), $hidden_vars);
 $msg->printConfirm();
 
 require(AC_INCLUDE_PATH.'footer.inc.php');

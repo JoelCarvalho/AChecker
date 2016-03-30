@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 global $onload;
 $onload = "initial();";
@@ -33,6 +40,11 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 			<th align="left"><div class="required" title="<?php echo _AC('required_field'); ?>">*</div><label for="name"><?php echo _AC('name'); ?></label></th>
 			<td><textarea cols="80" rows="3" name="name" id="name"><?php if (isset($_POST['name'])) echo htmlspecialchars($_POST['name']); else echo htmlspecialchars(_AC($this->row['name'])); ?></textarea></td>
 		</tr>
+
+		<tr>
+			<th align="left"><div class="required" title="<?php echo _AC('required_field'); ?>">*</div><label for="abbr"><?php echo _AC('abbr'); ?></label></th>
+			<td><input type="text" cols="80" name="abbr" id="abbr" value="<?php if (isset($_POST['abbr'])) echo $_POST['abbr']; else echo $this->row['abbr']; ?>"/></td>
+		</tr>
 	</table>
 
 	<div class="row">
@@ -46,8 +58,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 <script type="text/JavaScript">
 //<!--
 
-function initial()
-{
+function initial() {
 	// set cursor focus
 	document.input_form.name.focus();
 }

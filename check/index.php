@@ -1,17 +1,29 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelineGroupsDAO;
+use QChecker\DAO\GuidelinesDAO;
+use QChecker\DAO\GuidelineSubgroupsDAO;
+use QChecker\DAO\TestPassDAO;
+use QChecker\DAO\DAO;
+use QChecker\DAO\ChecksDAO;
+use QChecker\DAO\CheckPrerequisitesDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include(AC_INCLUDE_PATH.'classes/DAO/ChecksDAO.class.php');
 include(AC_INCLUDE_PATH.'classes/DAO/GuidelinesDAO.class.php');
@@ -32,8 +44,7 @@ $checkPrerequisitesDAO = new CheckPrerequisitesDAO();
 $testPassDAO = new TestPassDAO();
 
 // handle submit
-if ((isset($_GET['edit']) || isset($_GET['edit_function'])|| isset($_GET['delete']) || isset($_GET['add'])) && !isset($_GET['id']) ) 
-{
+if ((isset($_GET['edit']) || isset($_GET['edit_function'])|| isset($_GET['delete']) || isset($_GET['add'])) && !isset($_GET['id']) ) {
 	$msg->addError('SELECT_ONE_ITEM');
 } else if (isset($_GET['edit'], $_GET['id'])) {
 	header('Location: check_create_edit.php?id='.$_GET['id']);
@@ -45,20 +56,17 @@ if ((isset($_GET['edit']) || isset($_GET['edit_function'])|| isset($_GET['delete
 	header('Location: check_delete.php?id='.$_GET['id']);
 	exit;
 } else if (isset($_GET['add'], $_GET['id']) ) {
-	if (is_array($_GET['id']))
-	{
+	if (is_array($_GET['id'])) {
 		if ($_GET['list'] == 'pre') // called by "check_create_edit.php", add pre-requisite checks
 		{
-			foreach ($_GET['id'] as $pre_check_id)
-			{
+			foreach ($_GET['id'] as $pre_check_id) {
 				$checkPrerequisitesDAO->Create($_GET['cid'], $pre_check_id);
 			}
 		}
 
 		if ($_GET['list'] == 'next') // called by "check_create_edit.php", add next checks
 		{
-			foreach ($_GET['id'] as $next_check_id)
-			{
+			foreach ($_GET['id'] as $next_check_id) {
 				$testPassDAO->Create($_GET['cid'], $next_check_id);
 			}
 		}
@@ -99,7 +107,7 @@ if ($_GET['reset_filter']) {
 
 $page_string = '';
 $orders = array('asc' => 'desc', 'desc' => 'asc');
-$cols   = array('html_tag' => 1, 'public_field' => 1, 'confidence' => 1, 'description' => 1, 'open_to_public' => 1, 'check_id' => 1);
+$cols   = array('html_tag' => 1, 'public_field' => 1, 'confidence' => 1, 'description' => 1, 'open_to_public' => 1, 'abbr' => 1, 'check_id' => 1);
 
 if (isset($_GET['asc'])) {
 	$order = 'asc';
@@ -128,8 +136,7 @@ if (isset($_GET['confidence']) && $_GET['confidence'] <> -1) {
 	$_GET['confidence'] = intval($_GET['confidence']);
 	$page_string .= htmlspecialchars(SEP).'confidence='.intval($_GET['confidence']);
 
-	if ($_GET['confidence'] <> -1) 
-	{
+	if ($_GET['confidence'] <> -1) {
 		if ($condition <> '') $condition .= ' AND';
 		$condition .= ' confidence = ' . intval($_GET['confidence']);
 	}
@@ -139,8 +146,7 @@ if (isset($_GET['open_to_public']) && $_GET['open_to_public'] <> -1) {
 	$_GET['open_to_public'] = intval($_GET['open_to_public']);
 	$page_string .= htmlspecialchars(SEP).'open_to_public='.intval($_GET['open_to_public']);
 
-	if ($_GET['open_to_public'] <> -1)
-	{
+	if ($_GET['open_to_public'] <> -1) {
 		if ($condition <> '') $condition .= ' AND';
 		$condition .= ' open_to_public = ' . intval($_GET['open_to_public']);
 	}
@@ -158,8 +164,7 @@ if (isset($_GET['list'])) {
 // Called by "create/edit checks": add pre-requisite checks, add next checks, 
 //           "create/edit guidelined", add checks into guideline or group. 
 // only list the checks that are not in the pre-requisite checks, or next checks, or guideline, or group
-if (isset($_GET['list']))
-{
+if (isset($_GET['list'])) {
 	if ($_GET['list'] == 'pre') // called by "check_create_edit.php", add pre-requisite checks
 	{
 		$existing_rows = $checkPrerequisitesDAO->getPreChecksByCheckID($_GET['cid']);
@@ -182,8 +187,7 @@ if (isset($_GET['list']))
 	}
 	// get checks that are open to public and not in guideline
 	unset($str_existing_checks);
-	if (is_array($existing_rows))
-	{
+	if (is_array($existing_rows)) {
 		foreach($existing_rows as $existing_row)
 			$str_existing_checks .= $existing_row['check_id'] .',';
 		$str_existing_checks = substr($str_existing_checks, 0, -1);
@@ -237,8 +241,7 @@ $savant->assign('orders', $orders);
 $savant->assign('order', $order);
 $savant->assign('col', $col);
 
-if (isset($_GET['list']))
-{
+if (isset($_GET['list'])) {
 	$savant->assign('row_button_type', 'checkbox');
 	$savant->assign('buttons', array('add'));
 }

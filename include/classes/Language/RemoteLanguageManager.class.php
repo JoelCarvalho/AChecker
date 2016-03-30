@@ -1,76 +1,79 @@
-<?php
+<?php namespace QChecker\Language;
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+require_once(AT_INCLUDE_PATH . 'classes/Language/LanguageParser.class.php');
+require_once(AT_INCLUDE_PATH . 'classes/Language/LanguagesParser.class.php');
 
 /**
-* RemoteLanguageManager
-* Class for managing available languages as Language Objects.
-* @access	public
-* @author	Joel Kronenberg
-* @see		Language.class.php
-* @package	Language
-*/
+ * RemoteLanguageManager
+ * Class for managing available languages as Language Objects.
+ * @access    public
+ * @author    Joel Kronenberg
+ * @see        Language.class.php
+ * @package    Language
+ */
+class RemoteLanguageManager extends LanguageManager
+{
 
-require_once(AT_INCLUDE_PATH.'classes/Language/LanguageParser.class.php');
-require_once(AT_INCLUDE_PATH.'classes/Language/LanguagesParser.class.php');
+    function __construct()
+    {
+        $version = str_replace('.', '_', QCHECKER_VERSION);
+        $language_xml = @file_get_contents('http://update.atutor.ca/languages/' . $version . '/languages.xml');
+        if ($language_xml === FALSE) {
+            // fix for bug #2896
+            $language_xml = @file_get_contents('http://update.atutor.ca/languages/1_5_3/languages.xml');
+        }
+        if ($language_xml !== FALSE) {
 
-class RemoteLanguageManager extends LanguageManager {
+            $languageParser = new LanguagesParser();
+            $languageParser->parse($language_xml);
 
-	function RemoteLanguageManager() {
-		$version = str_replace('.','_',VERSION);
-		$language_xml = @file_get_contents('http://update.atutor.ca/languages/'.$version.'/languages.xml');
-		if ($language_xml === FALSE) {
-			// fix for bug #2896
-			$language_xml = @file_get_contents('http://update.atutor.ca/languages/1_5_3/languages.xml');
-		}
-		if ($language_xml !== FALSE) {
+            $this->numLanguages = $languageParser->getNumLanguages();
 
-			$languageParser = new LanguagesParser();
-			$languageParser->parse($language_xml);
+            for ($i = 0; $i < $this->numLanguages; $i++) {
+                $thisLanguage = new Language($languageParser->getLanguage($i));
 
-			$this->numLanguages = $languageParser->getNumLanguages();
+                $this->availableLanguages[$thisLanguage->getCode()][$thisLanguage->getCharacterSet()] = $thisLanguage;
+            }
+        } else {
+            $this->numLanguages = 0;
+            $this->availableLanguages = array();
+        }
+    }
 
-			for ($i = 0; $i < $this->numLanguages; $i++) {
-				$thisLanguage = new Language($languageParser->getLanguage($i));
+    // public
+    function fetchLanguage($language_code, $filename)
+    {
+        $version = str_replace('.', '_', QCHECKER_VERSION);
 
-				$this->availableLanguages[$thisLanguage->getCode()][$thisLanguage->getCharacterSet()] = $thisLanguage;
-			}
-		} else {
-			$this->numLanguages = 0;
-			$this->availableLanguages = array();
-		}
-	}
+        $language_pack = @file_get_contents('http://update.atutor.ca/languages/' . $version . '/atutor_' . $version . '_' . $language_code . '.zip');
 
-	// public
-	function fetchLanguage($language_code, $filename) {
-		$version = str_replace('.','_',VERSION);
+        if ($language_pack) {
+            $fp = fopen($filename, 'wb+');
+            fwrite($fp, $language_pack, strlen($language_pack));
 
-		$language_pack = @file_get_contents('http://update.atutor.ca/languages/' . $version . '/atutor_' . $version . '_' . $language_code . '.zip');
+            return TRUE;
+        }
+        return FALSE;
+    }
 
-		if ($language_pack) {
-			$fp = fopen($filename, 'wb+');
-			fwrite($fp, $language_pack, strlen($language_pack));
-
-			return TRUE;
-		}
-		return FALSE;
-	}
-
-	function import($language_code) {
-		$filename = tempnam(AC_TEMP_DIR . 'import', $language_code);
-		if ($this->fetchLanguage($language_code, $filename)) {
-			parent::import($filename);
-		}
-	}
+    function import($language_code)
+    {
+        $filename = tempnam(AC_TEMP_DIR . 'import', $language_code);
+        if ($this->fetchLanguage($language_code, $filename)) {
+            parent::import($filename);
+        }
+    }
 }
 
 ?>

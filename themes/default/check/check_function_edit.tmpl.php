@@ -1,15 +1,22 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 /*
  * Called by "check/index.php" and "check/pre_next_checks_edit.php
@@ -48,6 +55,11 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 		</tr>
 
 		<tr>
+			<th align="left"><?php echo _AC('abbr'); ?>:</th>
+			<td align="left"><?php echo $this->check_row['abbr']; ?></td>
+		</tr>
+
+		<tr>
 			<th align="left" colspan="2"><label for="func"><?php echo _AC('function'); ?></label>:</th>
 		</tr>
 		
@@ -69,8 +81,7 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 
 <script type="text/JavaScript">
 //<!--
-function initial()
-{
+function initial() {
 	// set cursor focus
 	document.input_form.func.focus();
 }

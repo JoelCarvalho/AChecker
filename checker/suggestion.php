@@ -1,16 +1,26 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\GuidelineGroupsDAO;
+use QChecker\DAO\GuidelinesDAO;
+use QChecker\DAO\GuidelineSubgroupsDAO;
+use QChecker\DAO\CheckExamplesDAO;
+use QChecker\DAO\ChecksDAO;
+use QChecker\Utils\Utility;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -30,8 +40,7 @@ $check_id = intval($_GET["id"]);
 $checksDAO = new ChecksDAO();
 $row = $checksDAO->getCheckByID($check_id);
 
-if (!$row)
-{ // invalid check id
+if (!$row) { // invalid check id
 	$msg->addError('INVALID_CHECK_ID');
 	$msg->printAll();
 	require(AC_INCLUDE_PATH.'footer.inc.php');
@@ -49,7 +58,10 @@ $guidelineGroupsDAO = new GuidelineGroupsDAO();
 $guidelineSubgroupsDAO = new GuidelineSubgroupsDAO();
 ?>
 <div class="output-form">
-	
+
+<h2><?php echo _AC("abbr"); ?></h2>
+<span class="msg"><?php echo $row["abbr"]; ?></span>
+
 <h2><?php echo _AC("html_tag"); ?></h2>
 <span class="msg"><?php echo $row["html_tag"]; ?></span>
 
@@ -66,13 +78,13 @@ $guidelineSubgroupsDAO = new GuidelineSubgroupsDAO();
 			$groups = $guidelineGroupsDAO->getGroupByCheckIDAndGuidelineID($check_id, $guideline['guideline_id']);
 			if (is_array($groups) && $groups[0]['name'] <> '') {
 ?>
-			<span><img src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/arrow.gif" alt="<?php echo _AC("guideline_group");?>" /><?php echo _AC($groups[0]['name']); ?></span><br/>
+			<span><img src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/arrow.png" alt="<?php echo _AC("guideline_group");?>" /><?php echo _AC($groups[0]['name']); ?></span><br/>
 <?php 
 			}
 			$subgroups = $guidelineSubgroupsDAO->getSubgroupByCheckIDAndGuidelineID($check_id, $guideline['guideline_id']);
 			if (is_array($subgroups) && $subgroups[0]['name'] <> '') {
 ?>
-			<span class="padding_left"><img src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/arrow.gif" alt="<?php echo _AC("guideline_subgroup");?>" /><?php echo _AC($subgroups[0]['name']); ?></span>
+			<span class="padding_left"><img src="themes/<?php echo $_SESSION['prefs']['PREF_THEME']; ?>/images/arrow.png" alt="<?php echo _AC("guideline_subgroup");?>" /><?php echo _AC($subgroups[0]['name']); ?></span>
 <?php 		}?>
 		</li>
 <?php } // end of foreach?>
@@ -86,8 +98,7 @@ $guidelineSubgroupsDAO = new GuidelineSubgroupsDAO();
 <span class="msg"><?php echo _AC($row["err"]); ?></span>
 
 <?php
-if ($row["description"] <> "")
-{
+if ($row["description"] <> "") {
 ?>
 
 <h2><?php echo _AC("short_desc"); ?></h2>
@@ -98,8 +109,7 @@ if ($row["description"] <> "")
 ?>
 
 <?php
-if ($row["long_description"] <> "")
-{
+if ($row["long_description"] <> "") {
 ?>
 
 <h2><?php echo _AC("long_desc"); ?></h2>
@@ -110,8 +120,7 @@ if ($row["long_description"] <> "")
 ?>
 
 <?php
-if ($row["rationale"] <> "")
-{
+if ($row["rationale"] <> "") {
 ?>
 
 <h2><?php echo _AC("rationale"); ?></h2>
@@ -122,8 +131,7 @@ if ($row["rationale"] <> "")
 ?>
 
 <?php
-if ($row["how_to_repair"] <> "")
-{
+if ($row["how_to_repair"] <> "") {
 ?>
 
 <h2><?php echo _AC("how_to_repair"); ?></h2>
@@ -134,8 +142,7 @@ if ($row["how_to_repair"] <> "")
 ?>
 
 <?php
-if ($row["repair_example"] <> "")
-{
+if ($row["repair_example"] <> "") {
 ?>
 
 <h2><?php echo _AC("repair_example"); ?></h2>
@@ -146,8 +153,7 @@ if ($row["repair_example"] <> "")
 ?>
 
 <?php
-if ($row["question"] <> "")
-{
+if ($row["question"] <> "") {
 ?>
 
 <h2><?php echo _AC("how_to_determine"); ?></h2>
@@ -169,8 +175,7 @@ if ($row["question"] <> "")
 <?php
 }
 
-if ($row["test_procedure"] <> "")
-{
+if ($row["test_procedure"] <> "") {
 ?>
 
 <h2><?php echo _AC("steps_to_check"); ?></h2>
@@ -179,8 +184,7 @@ if ($row["test_procedure"] <> "")
 <?php
 }
 
-if ($row["test_expected_result"] <> "")
-{
+if ($row["test_expected_result"] <> "") {
 ?>
 
 	<h3><?php echo _AC("expected_result"); ?></h3>
@@ -188,8 +192,7 @@ if ($row["test_expected_result"] <> "")
 <?php
 }
 
-if ($row["test_failed_result"] <> "")
-{
+if ($row["test_failed_result"] <> "") {
 ?>
 
 	<h3><?php echo _AC("failed_result"); ?></h3>

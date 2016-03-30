@@ -1,15 +1,22 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 /*
  * Called by "check/index.php" and "check/pre_next_checks_edit.php
@@ -23,8 +30,7 @@
 global $onload;
 $onload = "initial();";
 
-if (!isset($this->check_row))
-{
+if (!isset($this->check_row)) {
 	$onload .= "AChecker.disableDiv('div_pre_next_checks', 'check_input_form');";
 }
 
@@ -41,6 +47,7 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 	<input type="hidden" name="html_tag_orig" value="<?php echo htmlspecialchars($this->check_row['html_tag']); ?>" />
 	<input type="hidden" name="confidence_orig" value="<?php echo $this->check_row['confidence']; ?>" />
 	<input type="hidden" name="open_to_public_orig" value="<?php echo $this->check_row['open_to_public']; ?>" />
+	<input type="hidden" name="abbr_orig" value="<?php echo $this->check_row['abbr']; ?>" />
 	<input type="hidden" name="name_orig" value="<?php echo htmlspecialchars(_AC($this->check_row['name'])); ?>" />
 	<input type="hidden" name="err_orig" value="<?php echo htmlspecialchars(_AC($this->check_row['err'])); ?>" />
 	<input type="hidden" name="description_orig" value="<?php echo htmlspecialchars(_AC($this->check_row["description"])); ?>" />
@@ -99,6 +106,11 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 				<input type="radio" name="open_to_public" id="open_to_publicN" value="0" <?php if ((isset($_POST['open_to_public']) && $_POST['open_to_public']==0) || (!isset($_POST['open_to_public']) && $this->check_row['open_to_public']==0)) echo 'checked="checked"'; ?> /><label for="open_to_publicN"><?php echo _AC('no'); ?></label> 
 				<input type="radio" name="open_to_public" id="open_to_publicY" value="1" <?php if ((isset($_POST['open_to_public']) && $_POST['open_to_public']==1) || (!isset($_POST['open_to_public']) && $this->check_row['open_to_public']==1)) echo 'checked="checked"'; ?> /><label for="open_to_publicY"><?php echo _AC('yes'); ?></label>
 			</td>
+		</tr>
+
+		<tr>
+			<th align="left"><div class="required" title="<?php echo _AC('required_field'); ?>">*</div><label for="abbr"><?php echo _AC('abbr'); ?></label>:</th>
+			<td align="left"><input id="abbr" name="abbr" type="text" size="15" value="<?php if (isset($_POST['abbr'])) echo $_POST['abbr']; else echo $this->check_row['abbr']; ?>" /></td>
 		</tr>
 
 		<tr>
@@ -345,14 +357,13 @@ require(AC_INCLUDE_PATH.'header.inc.php');
 
 <script type="text/JavaScript">
 //<!--
-function initial()
-{
+function initial() {
 	// set cursor focus
 	document.input_form.html_tag.focus();
 }
 
 function CheckAll(element_name, selectall_checkbox_name) {
-	for (var i=0;i<document.input_form.elements.length;i++)	{
+	for (var i=0;i<document.input_form.elements.length;i++) {
 		var e = document.input_form.elements[i];
 		if ((e.name == element_name) && (e.type=='checkbox')) {
 			e.checked = document.input_form[selectall_checkbox_name].checked;
@@ -439,10 +450,9 @@ function check_unsaved_info() {
 		has_unsaved_info = true;
 	}
 
-	if (has_unsaved_info)
-	{
+	if (has_unsaved_info) {
 		var answer = confirm("<?php echo _AC('has_unsaved_info'); ?>")
-		if (answer){
+		if (answer) {
 			document.input_form.javascript_submit.value = 1;
 			document.input_form.submit();
 		}

@@ -48,8 +48,7 @@ class Savant2_Filter {
 	* 
 	*/
 	
-	function Savant2_Filter($conf = array())
-	{
+	function Savant2_Filter($conf = array()) {
 		settype($conf, 'array');
 		foreach ($conf as $key => $val) {
 			$this->$key = $val;
@@ -69,8 +68,7 @@ class Savant2_Filter {
 	*
 	*/
 	
-	function filter($text)
-	{
+	function filter($text) {
 	}
 }
 ?>

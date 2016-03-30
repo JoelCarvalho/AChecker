@@ -1,15 +1,17 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+use QChecker\Utils\Menu;
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
 
@@ -48,8 +50,7 @@ $savant->assign('current_page', $_base_path.$current_page);
 
 $savant->assign('page_title', _AC($_all_pages[$current_page]['title_var']));
 
-if (isset($_current_user))
-{
+if (isset($_current_user)) {
   $savant->assign('user_name', $_current_user->getUserName());
 }
 
@@ -67,8 +68,7 @@ $savant->assign('theme', $_SESSION['prefs']['PREF_THEME']);
 $theme_img  = $_base_path . 'themes/'. $_SESSION['prefs']['PREF_THEME'] . '/images/';
 $savant->assign('img', $theme_img);
 
-if (isset($validate_content))
-{
+if (isset($validate_content)) {
 	$savant->assign('show_jump_to_report', 1);
 }
 
@@ -83,8 +83,7 @@ if (isset($_custom_head)) {
 ' . $_custom_head;
 }
 
-if (isset($_pages[$current_page]['guide'])) 
-{
+if (isset($_pages[$current_page]['guide'])) {
 	$script_name = substr($_SERVER['PHP_SELF'], strlen($_base_path));
 	$savant->assign('guide', AC_GUIDES_PATH .'index.php?p='. htmlentities($script_name));
 }

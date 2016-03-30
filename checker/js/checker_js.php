@@ -1,16 +1,16 @@
 <?php 
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id: $
-//
+
 // Noe: This file is essentially a javascript file, but needs to be terminated with
 // a .php extension so that php calls can be used within it. Please put pure javascript
 // in checker.js
@@ -18,7 +18,7 @@
 // This file is currently used to define all the language translations that are used 
 // in checker.js
 
-// Used in themes/default/checker/checker_results.tmpl.php & include/classes/HTMLByGuidelineRpt.class.php
+// Used in themes/default/checker/checker_results.tmpl.php & include/classes/Validator/HTMLByGuidelineRpt.class.php
 global $congrats_msg_for_likely, $congrats_msg_for_potential;
 $congrats_msg_for_likely = '<img src="'.AC_BASE_HREF.'images/feedback.gif" alt="'._AC("feedback").'" />  '. _AC("congrats_no_likely");
 $congrats_msg_for_potential = '<img src="'.AC_BASE_HREF.'images/feedback.gif" alt="'._AC("feedback").'" />  '. _AC("congrats_no_potential");
@@ -29,7 +29,7 @@ AChecker.lang = AChecker.lang || {};
 
 (function () {
 
-    // Define langauge translations that are used in checker.js
+    // Define language translations that are used in checker.js
     // @ see checker/js/checker.js
     AChecker.lang.provide_uri = "<?php echo _AC('provide_uri'); ?>";
     AChecker.lang.provide_html_file = "<?php echo _AC('provide_html_file'); ?>";

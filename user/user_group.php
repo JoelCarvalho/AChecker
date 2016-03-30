@@ -1,17 +1,24 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\PrivilegesDAO;
+use QChecker\DAO\UserGroupsDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/UserGroupsDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/PrivilegesDAO.class.php');
@@ -24,17 +31,14 @@ if ( isset($_GET['edit']) && isset($_GET['id']) && count($_GET['id']) > 1) {
 	exit;
 } else if ( isset($_GET['delete'], $_GET['id'])) {
 	// cannot delete "admin" and "user" groups
-	foreach ($_GET['id'] as $id)
-	{
-		if ($id == AC_USER_GROUP_ADMIN || $id == AC_USER_GROUP_USER)
-		{
+	foreach ($_GET['id'] as $id) {
+		if ($id == AC_USER_GROUP_ADMIN || $id == AC_USER_GROUP_USER) {
 			$msg->addError('USER_GROUP_CANNOT_DELETE');
 			break;
 		}
 	}
 	
-	if (!$msg->containsErrors())
-	{
+	if (!$msg->containsErrors()) {
 		$ids = implode(',', $_GET['id']);
 		header('Location: user_group_delete.php?id='.$ids);
 		exit;

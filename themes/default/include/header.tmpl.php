@@ -1,15 +1,22 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 if (!defined('AC_INCLUDE_PATH')) { exit; }
 /* available header.tmpl.php variables:
@@ -62,17 +69,19 @@ $lang_charset = "UTF-8";
 <head>
 	<title><?php echo SITE_NAME; ?> : <?php echo $this->page_title; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $this->lang_charset; ?>" />
-	<meta name="Generator" content="AChecker - Copyright 2009 by ATRC http://atrc.utoronto.ca/" />
-	<meta name="keywords" content="achecker,free, open source, accessibility checker, accessibility reviewer, accessibility evaluator, accessibility evaluation, WCAG evaluation, 508 evaluation, BITV evaluation, evaluate accessibility, test accessibility, review accessibility, ATRC, WCAG 2, STANCA, BITV, Section 508." />
-	<meta name="description" content="AChecker is a Web accessibility evalution tool designed to help Web content developers and Web application developers ensure their Web content is accessible to everyone regardless to the technology they may be using, or their abilities or disabilities." />
+	<meta name="Generator" content="Quality Checker - Copyright 2015 | Public Evolution of AChecker" />
+	<meta name="keywords" content="qchecker, achecker, free, open source, usability, usability checker, accessibility checker, accessibility reviewer, accessibility evaluator, accessibility evaluation, WCAG evaluation, 508 evaluation, BITV evaluation, evaluate accessibility, test accessibility, review accessibility, ATRC, WCAG 2, STANCA, BITV, Section 508." />
+	<meta name="description" content="QChecker is a Web Quality Evaluation Framework designed to help Web content developers and Web application developers. This framework has evolved from AChecker with PT Innovation And University of Beira Interior Contribution." />
 	<base href="<?php echo $this->base_path; ?>" />
 	<link rel="shortcut icon" href="<?php echo $this->base_path; ?>images/favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="<?php echo $this->base_path.'themes/'.$this->theme; ?>/forms.css" type="text/css" />
-	<link rel="stylesheet" href="<?php echo $this->base_path.'themes/'.$this->theme; ?>/styles.css" type="text/css" />
-	<!--[if IE]>
+    <link rel="stylesheet" href="<?php echo $this->base_path.'themes/'.$this->theme; ?>/styles.css" type="text/css" />
+    <!--[if IE]>
 	  <link rel="stylesheet" href="<?php echo $this->base_path.'themes/'.$this->theme; ?>/ie_styles.css" type="text/css" />
 	<![endif]-->
-	<script src="<?php echo $this->base_path; ?>jscripts/lib/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $this->base_path; ?>jscripts/lib/jquery-2.1.4.min.js" type="text/javascript"></script>
+    <script src="<?php echo $this->base_path; ?>jscripts/lib/sizzle.min.js" type="text/javascript"></script>
+    <script src="<?php echo $this->base_path; ?>jscripts/lib/shuffle.modernizr.min.js" type="text/javascript"></script>
 	<script src="<?php echo $this->base_path; ?>jscripts/lib/jquery-URLEncode.js" type="text/javascript"></script>
 	<script src="<?php echo $this->base_path; ?>jscripts/AChecker.js" type="text/javascript"></script>   
 	<?php echo $this->rtl_css; ?>
@@ -81,20 +90,19 @@ $lang_charset = "UTF-8";
 
 <body onload="<?php echo $this->onload; ?>">
 
-<?php if (isset($this->show_jump_to_report)){ ?>
+<?php if (isset($this->show_jump_to_report)) { ?>
 <a href="checker/index.php#output_div"><img src="images/clr.gif" height="1" width="1" alt="<?php echo _AC("jump_to_report"); ?>" border="0" /></a>
 <?php } ?>
 <div id="liquid-round"><div class="top"><span></span></div>
 <div class="center-content" id="center-content">
 		<div id="logo">
-			<a href="http://www.atutor.ca/achecker/"><img src="<?php echo $this->base_path.'themes/'.$this->theme; ?>/images/checker_logo.png"  alt="AChecker" style="border:none;" /></a>
+			<a href="/"><img src="<?php echo $this->base_path.'themes/'.$this->theme; ?>/images/QChecker-logo.jpg"  alt="QChecker" style="width:100px;border:none;" /></a>
 		</div>
 	<div id="banner">
 
 	<span id="logininfo"> 
         <?php
-        if (isset($this->user_name))
-        {
+        if (isset($this->user_name)) {
           echo _AC('welcome'). ' '.$this->user_name;
         ?>
 				&nbsp;&nbsp;
@@ -120,7 +128,7 @@ $lang_charset = "UTF-8";
 			<?php foreach ($this->top_level_pages as $page): ?>
 				<?php $is_submenu_accessed = false; ?>
 				<?php foreach ($this->sub_menus as $sub_menu) {
-					if ($page['url'] == $sub_menu['url'] || (!empty($this->back_to_page['url']) && $page['url'] == $this->back_to_page['url'])){
+					if ($page['url'] == $sub_menu['url'] || (!empty($this->back_to_page['url']) && $page['url'] == $this->back_to_page['url'])) {
 						$is_submenu_accessed = true;
 					}
 				} ?>

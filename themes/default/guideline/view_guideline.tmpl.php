@@ -1,15 +1,26 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
+
+use QChecker\DAO\GuidelineGroupsDAO;
+use QChecker\DAO\GuidelineSubgroupsDAO;
+use QChecker\DAO\ChecksDAO;
 
 include_once(AC_INCLUDE_PATH.'classes/DAO/GuidelineGroupsDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/GuidelineSubgroupsDAO.class.php');
@@ -23,24 +34,25 @@ $checksDAO = new ChecksDAO();
 
 $num_of_checks = 0;
 
-function dispaly_check_table($checks_array)
-{
-	if (is_array($checks_array)){ 
+function dispaly_check_table($checks_array) {
+	if (is_array($checks_array)) { 
 ?>
 	<table class="data" rules="rows" >
 		<thead>
 		<tr>
-			<th align="center"><?php echo _AC('html_tag'); ?></th>
-			<th align="center"><?php echo _AC('error_type'); ?></th>
-			<th align="center"><?php echo _AC('description'); ?></th>
-			<th align="center"><?php echo _AC('check_id'); ?></th>
+			<th><?php echo _AC('abbr'); ?></th>
+			<th width="100px"><?php echo _AC('html_tag'); ?></th>
+			<th><?php echo _AC('error_type'); ?></th>
+			<th width="600px"><?php echo _AC('description'); ?></th>
+			<th><?php echo _AC('check_id'); ?></th>
 		</tr>
 		</thead>
 		
 		<tbody>
 	<?php foreach ($checks_array as $check_row) { ?>
 		<tr>
-			<td><?php echo htmlspecialchars($check_row['html_tag']); ?></td>
+			<td><?php echo $check_row['abbr']; ?></td>
+			<td ><?php echo htmlspecialchars($check_row['html_tag']); ?></td>
 			<td><?php echo get_confidence_by_code($check_row['confidence']); ?></td>
 			<td><span class="msg"><a target="_new" href="<?php echo AC_BASE_HREF; ?>checker/suggestion.php?id=<?php echo $check_row["check_id"]; ?>" onclick="AChecker.popup('<?php echo AC_BASE_HREF; ?>checker/suggestion.php?id=<?php echo $check_row["check_id"]; ?>'); return false;"><?php echo htmlspecialchars(_AC($check_row['name'])); ?></a></span></td>
 			<td><?php echo $check_row['check_id']; ?></td>
@@ -104,41 +116,34 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 // display guideline level checks
 $guidelineLevel_checks = $checksDAO->getGuidelineLevelChecks($gid);
 
-if (is_array($guidelineLevel_checks))
-{
+if (is_array($guidelineLevel_checks)) {
 	$num_of_checks += count($guidelineLevel_checks);
 	dispaly_check_table($guidelineLevel_checks);
 }
 
 // display named guidelines and their checks 
 $named_groups = $guidelineGroupsDAO->getNamedGroupsByGuidelineID($gid);
-if (is_array($named_groups))
-{
-	foreach ($named_groups as $group)
-	{
+if (is_array($named_groups)) {
+	foreach ($named_groups as $group) {
 ?>
-	<h3><?php echo _AC($group['name']);?></h3><br/>
+	<h3><?php echo "[".$group['abbr']."] "._AC($group['name']);?></h3><br/>
 <?php
 		// get group level checks: the checks in subgroups without subgroup names
 		$groupLevel_checks = $checksDAO->getGroupLevelChecks($group['group_id']);
-		if (is_array($groupLevel_checks))
-		{
+		if (is_array($groupLevel_checks)) {
 			$num_of_checks += count($groupLevel_checks);
 			dispaly_check_table($groupLevel_checks);
 		}
 		
 		// display named subgroups and their checks
 		$named_subgroups = $guidelineSubgroupsDAO->getNamedSubgroupByGroupID($group['group_id']);
-		if (is_array($named_subgroups))
-		{
-			foreach ($named_subgroups as $subgroup)
-			{
+		if (is_array($named_subgroups)) {
+			foreach ($named_subgroups as $subgroup) {
 ?>
-	<h4><?php echo _AC($subgroup['name']);?></h4><br/>
+	<h4><?php echo "[".$subgroup['abbr']."] "._AC($subgroup['name']);?></h4><br/>
 <?php 
 				$subgroup_checks = $checksDAO->getChecksBySubgroupID($subgroup['subgroup_id']);
-				if (is_array($subgroup_checks))
-				{
+				if (is_array($subgroup_checks)) {
 					$num_of_checks += count($subgroup_checks);
 					dispaly_check_table($subgroup_checks);
 				}

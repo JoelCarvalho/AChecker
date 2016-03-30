@@ -1,17 +1,21 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include(AC_INCLUDE_PATH.'handbook_pages.inc.php');
 
@@ -26,14 +30,12 @@ function hb_print_toc($handbook_pages) {
 	echo '<ul id="handbook-toc">';
 	foreach ($handbook_pages as $page_key => $page_value) {
 		echo '<li>';
-		if (is_array($page_value)) 
-		{
-			if (isset($_pages[$page_key]))
-			{
+		if (is_array($page_value)) {
+			if (isset($_pages[$page_key])) {
 				echo '<a href="frame_content.php?p='.$page_key.'" id="id'.$page_key.'" class="tree">'._AC($_pages[$page_key]['title_var']).'</a>';
 				hb_print_toc($page_value);
 			}
-		} else if (isset($_pages[$page_value])){
+		} else if (isset($_pages[$page_value])) {
 			echo '<a href="frame_content.php?p='.$page_value.'" id="id'.$page_value.'" class="leaf">'._AC($_pages[$page_value]['title_var']).'</a>';
 		}
 		echo '</li>';

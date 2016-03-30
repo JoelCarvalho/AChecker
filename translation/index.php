@@ -1,16 +1,23 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\LanguagesDAO;
+use QChecker\DAO\LanguageTextDAO;
+use QChecker\DAO\DAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include_once(AC_INCLUDE_PATH.'vitals.inc.php');
@@ -18,7 +25,7 @@ include_once(AC_INCLUDE_PATH.'classes/DAO/DAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/LanguagesDAO.class.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/LanguageTextDAO.class.php');
 
-global $msg, $addslashes;
+global $msg;
 
 $dao = new DAO();
 $languagesDAO = new LanguagesDAO();
@@ -26,10 +33,8 @@ $languageTextDAO = new LanguageTextDAO();
 
 if (isset($_REQUEST['reset_filter'])) unset($_REQUEST);
 
-if (isset($_REQUEST['submit']) || isset($_REQUEST['search']))
-{
-	if (isset($_REQUEST['submit']))
-	{
+if (isset($_REQUEST['submit']) || isset($_REQUEST['search'])) {
+	if (isset($_REQUEST['submit'])) {
 		if (isset($_REQUEST['term_type']) && $_REQUEST['term_type'] <> '') $term_type = $_REQUEST['term_type'];
 		
 		$sql = "SELECT * FROM ".TABLE_PREFIX."language_text 
@@ -37,8 +42,7 @@ if (isset($_REQUEST['submit']) || isset($_REQUEST['search']))
 		
 		if ($term_type <> '') $sql .= " AND variable = '".$term_type."'";
 		
-		if (isset($_REQUEST['new_or_translated']) && ($_REQUEST['new_or_translated'] == 1 || $_REQUEST['new_or_translated'] == 2))
-		{
+		if (isset($_REQUEST['new_or_translated']) && ($_REQUEST['new_or_translated'] == 1 || $_REQUEST['new_or_translated'] == 2)) {
 			$subquery = "(SELECT term FROM ".TABLE_PREFIX."language_text
 										WHERE language_code='".$_REQUEST['lang_code']."'
 										  AND text <> '')";
@@ -47,8 +51,7 @@ if (isset($_REQUEST['submit']) || isset($_REQUEST['search']))
 			if ($_REQUEST['new_or_translated'] == 2) $sql .= " AND term IN ".$subquery;
 		}
 		
-		if (isset($_REQUEST['new_or_translated']) && $_REQUEST['new_or_translated'] == 3)
-		{
+		if (isset($_REQUEST['new_or_translated']) && $_REQUEST['new_or_translated'] == 3) {
 			$sql = "select * from ".TABLE_PREFIX."language_text a 
 							where language_code='".DEFAULT_LANGUAGE_CODE."' 
 								and exists (select 1 from ".TABLE_PREFIX."language_text b 
@@ -58,11 +61,10 @@ if (isset($_REQUEST['submit']) || isset($_REQUEST['search']))
 		}
 	}
 	
-	if (isset($_REQUEST['search']))
-	{
+	if (isset($_REQUEST['search'])) {
 		$sql = "SELECT * FROM ".TABLE_PREFIX."language_text 
 						WHERE language_code='".DEFAULT_LANGUAGE_CODE."'
-						  AND lower(term) like '%".$addslashes(strtolower(trim($_REQUEST['search_phase'])))."%'";
+						  AND lower(term) like '%".addslashes(strtolower(trim($_REQUEST['search_phase'])))."%'";
 	}
 	
 	$rows = $dao->execute($sql);
@@ -71,9 +73,8 @@ if (isset($_REQUEST['submit']) || isset($_REQUEST['search']))
 	else $num_results = 0;
 }
 
-if (isset($_REQUEST["save"]))
-{
-	$sql_save	= "REPLACE INTO ".TABLE_PREFIX."language_text VALUES ('".$_POST["lang_code"]."', '".$_POST["variable"]."', '".$_POST["term"]."', '".$addslashes($_POST["translated_text"])."', NOW(), '')";
+if (isset($_REQUEST["save"])) {
+	$sql_save	= "REPLACE INTO ".TABLE_PREFIX."language_text VALUES ('".$_POST["lang_code"]."', '".$_POST["variable"]."', '".$_POST["term"]."', '".addslashes($_POST["translated_text"])."', NOW(), '')";
 
 	if (!$dao->execute($sql_save)) {
 		$success_error = '<div class="error">Error: changes not saved!</div>';
@@ -96,8 +97,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 			<label for="lang_code"><?php echo _AC('choose_lang'); ?></label>:
 			<select name="lang_code" id="lang_code"> 
 <?php 
-	foreach ($rows_lang as $row_lang)
-	{
+	foreach ($rows_lang as $row_lang) {
 ?>
 				<option value="<?php echo $row_lang['language_code']; ?>" <?php if ($_REQUEST["lang_code"] == $row_lang['language_code'] || $row_lang['language_code'] == $_SESSION['lang']) echo 'selected="selected"'; ?>><?php echo htmlspecialchars($row_lang["english_name"]); ?></option>
 <?php
@@ -156,8 +156,7 @@ include(AC_INCLUDE_PATH.'header.inc.php');
 </form>
 
 <?php 
-if (isset($_REQUEST['selected_term'])) 
-{
+if (isset($_REQUEST['selected_term'])) {
 	$sql_english	= "SELECT * FROM ".TABLE_PREFIX."language_text WHERE language_code='".DEFAULT_LANGUAGE_CODE."' AND term='".$_REQUEST["selected_term"]."'";
 	if ($_REQUEST["term_type"] <> "") $sql_english .= " AND variable='".$_REQUEST["term_type"]."' ";
 
@@ -171,7 +170,7 @@ function trans_form() {
 	global $langs;
 	global $success_error;
 	global $db;
-	global $addslashes;
+
 
 	if (!is_array($rows_selected)) // add new term
 		$add_new = true;
@@ -233,20 +232,17 @@ function trans_form() {
 	}
 }
 //displaying templates
-if ($num_results > 0)
-{
+if ($num_results > 0) {
 	echo '<h3 class="indent">'. _AC("result") .'</h3>'."\n";
 	echo '<div class="input-form">'."\n";
 	echo '<br /><ul>'."\n";
-	if (is_array($rows))
-	{
+	if (is_array($rows)) {
 		if (isset($_REQUEST["submit"]))
 			$submits = htmlspecialchars(SEP)."submit=1";
 		if (isset($_REQUEST["search"]))
 			$submits .= htmlspecialchars(SEP)."search=1";
 
-		foreach ($rows as $row) 
-		{
+		foreach ($rows as $row) {
 			if ($row['term'] == $_REQUEST["selected_term"])
 				echo '<li>'."\n".'<a name="anchor" title="anchor"></a>'."\n";
 			else

@@ -1,4 +1,18 @@
 <?php 
+/************************************************************************/
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
+/************************************************************************/
+/* @copyright 2015 Inclusive Design Institute & Release Group - UBI     */
+/* @editor Joel Carvalho <joelsilvacarvalho@gmail.com                   */
+/* @version 1.0 2015/03/16                                              */
+/*                                                                      */
+/* This program is free software. You can redistribute it and/or        */
+/* modify it under the terms of the GNU General Public License          */
+/* as published by the Free Software Foundation.                        */
+/************************************************************************/
+
+
 /*
  * @author Jacek Materna
  *

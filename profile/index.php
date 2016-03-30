@@ -1,24 +1,27 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
+
 require(AC_INCLUDE_PATH.'vitals.inc.php');
 require_once(AC_INCLUDE_PATH.'classes/DAO/UsersDAO.class.php');
 
 global $_current_user;
 
-if (!isset($_current_user))
-{
+if (!isset($_current_user)) {
 	require(AC_INCLUDE_PATH.'header.inc.php');
 	$msg->printInfos('INVALID_USER');
 	require(AC_INCLUDE_PATH.'footer.inc.php');
@@ -59,8 +62,7 @@ if (isset($_POST['submit'])) {
 
 	if (!$msg->containsErrors()) {
 		// insert into the db.
-		if (!$_current_user->setName($_POST['first_name'], $_POST['last_name'])) 
-		{
+		if (!$_current_user->setName($_POST['first_name'], $_POST['last_name'])) {
 			$msg->printErrors('DB_NOT_UPDATED');
 			exit;
 		}

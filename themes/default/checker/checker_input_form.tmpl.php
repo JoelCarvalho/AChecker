@@ -1,21 +1,28 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
+
+/**
+* QChecker Default Theme
+* @author Achecker
+* @author Joel Carvalho
+* @version 1.0 2015.03.16
+*/
 
 global $onload, $_custom_head;
 
-if (isset($_POST["validate_file"])){
+if (isset($_POST["validate_file"])) {
 	$init_tab = "AC_by_upload";
-} else if (isset($_POST["validate_paste"])){
+} else if (isset($_POST["validate_paste"])) {
 	$init_tab = "AC_by_paste";
 } else {
 	$init_tab = "AC_by_uri";
@@ -58,12 +65,9 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 	
 	$count_guidelines_in_current_row = 0;
 	
-	if (is_array($guideline_rows))
-	{
-		foreach ($guideline_rows as $id => $row)
-		{
-			if ($count_guidelines_in_current_row == 0 || $count_guidelines_in_current_row == $num_of_guidelines_per_row)
-			{
+	if (is_array($guideline_rows)) {
+		foreach ($guideline_rows as $id => $row) {
+			if ($count_guidelines_in_current_row == 0 || $count_guidelines_in_current_row == $num_of_guidelines_per_row) {
 				$count_guidelines_in_current_row = 0;
 				$output .= "					<tr>\n";
 			}
@@ -105,14 +109,18 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 <div class="center-input-form">
 <form name="input_form" enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" >
 
-	<div class="left-col" style="float:left;clear:left;"><br />
-	<fieldset class="group_form"><legend class="group_form"><?php echo _AC("input"); ?></legend>
+	<div class="group-form"><br />
+	<fieldset class="group_form"><legend class="group_form"><?php echo _AC("check_quality_by"); ?></legend>
 
 		<div class="topnavlistcontainer"><br />
 			<ul class="navigation">
 				<li class="navigation"><a href="javascript:void(0)" accesskey="a" title="<?php echo _AC("check_by_uri"); ?> Alt+1" id="AC_menu_by_uri" onclick="return AChecker.input.onClickTab('AC_by_uri');" <?php if (!isset($_POST["validate_paste"]) && !isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_uri"); ?></span></a></li>
-				<li class="navigation"><a href="javascript:void(0)" accesskey="b" title="<?php echo _AC("check_by_upload"); ?> Alt+2" id="AC_menu_by_upload" onclick="return AChecker.input.onClickTab('AC_by_upload');" <?php if (isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_upload"); ?></span></a></li>
+<?php
+/*
+                <li class="navigation"><a href="javascript:void(0)" accesskey="b" title="<?php echo _AC("check_by_upload"); ?> Alt+2" id="AC_menu_by_upload" onclick="return AChecker.input.onClickTab('AC_by_upload');" <?php if (isset($_POST["validate_file"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_upload"); ?></span></a></li>
 				<li class="navigation"><a href="javascript:void(0)" accesskey="c" title="<?php echo _AC("check_by_paste"); ?> Alt+3" id="AC_menu_by_paste" onclick="return AChecker.input.onClickTab('AC_by_paste');" <?php if (isset($_POST["validate_paste"])) echo 'class="active"'; ?>><span class="nav"><?php echo _AC("check_by_paste"); ?></span></a></li>
+*/
+?>
 			</ul>
 		</div>
 		
@@ -129,7 +137,8 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 				</div>
 			</div>
 		</div>
-		
+<?php
+/*
 		<div id="AC_by_upload" class="input_tab" style="<?php if (isset($_POST["validate_file"])) echo "display:block"; else echo "display:none"; ?>">
 			<div style="text-align:center;">
 				<label for="checkfile"><?php echo _AC('file'); ?>:</label>
@@ -160,7 +169,8 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 				</div>
 			</div>
 		</div>
-		
+*/
+?>
 		<div>
 			<h2 align="left">
 				<img src="images/arrow-closed.png" alt="<?php echo _AC("expand_guidelines"); ?>" title="<?php echo _AC("expand_guidelines"); ?>" id="toggle_image" border="0" />
@@ -171,96 +181,69 @@ function get_guideline_div($guideline_rows, $num_of_guidelines_per_row, $format 
 		<div id="div_options" style="display:none">
 
 		<table class="data static" style="background-colour:#eeeeee;">
-			<tr>
+			<!--<tr>
 				<td class="one_third_width">
 				<input type="checkbox" name="enable_html_validation" id="enable_html_validation" value="1" <?php if (isset($_POST["enable_html_validation"])) echo 'checked="checked"'; ?> />
 				<label for='enable_html_validation'><?php echo _AC("enable_html_validator"); ?></label>
 				</td>
-				
+
 				<td class="one_third_width">
 				<input type="checkbox" name="enable_css_validation" id="enable_css_validation" value="1" <?php if (isset($_POST["enable_css_validation"])) echo 'checked="checked"'; ?> />
 				<label for='enable_css_validation'><?php echo _AC("enable_css_validation"); ?></label>
 				</td>
-				
+
 				<td class="one_third_width">
 				<input type="checkbox" name="show_source" id="show_source" value="1" <?php if (isset($_POST["show_source"])) echo 'checked="checked"'; ?> />
 				<label for='show_source'><?php echo _AC("show_source"); ?></label>
 				</td>
-				
-			</tr>
-			
+
+			</tr>-->
 			<tr>
 				<td colspan="3"><h3><?php echo _AC("guidelins_to_check"); ?></h3></td>
 			</tr>
-<!-- 
-<?php
-$count_guidelines_in_current_row = 0;
 
-if (is_array($this->rows))
-{
-	foreach ($this->rows as $id => $row)
-	{
-		if ($count_guidelines_in_current_row == 0 || $count_guidelines_in_current_row == $this->num_of_guidelines_per_row)
-		{
-			$count_guidelines_in_current_row = 0;
-			echo "			<tr>\n";
-		}
-?>
-				<td>
-					<input type="checkbox" name="gid[]" id='gid_<?php echo $row["guideline_id"]; ?>' value='<?php echo $row["guideline_id"]; ?>' <?php 
-					if (isset($_POST["gid"]) && is_array($_POST["gid"])) {	
-						foreach($_POST["gid"] as $gid) {
-							if (intval($gid) == $row["guideline_id"]) echo 'checked="checked"';
-						}
-					} 
-					?> />
-					<label for='gid_<?php echo $row["guideline_id"]; ?>'><?php echo htmlspecialchars($row["title"]); ?></label>
-				</td>
-<?php
-		$count_guidelines_in_current_row++;
-	
-		if ($count_guidelines_in_current_row == $this->num_of_guidelines_per_row)
-			echo "			</tr>\n";
-	
-	}
-}
-?>
- -->
 			<tr>
 			<td colspan="3">
-<?php 
+<?php
 echo get_guideline_div($this->rows, $this->num_of_guidelines_per_row, "radio");  // used at "view by guideline"
 echo get_guideline_div($this->rows, $this->num_of_guidelines_per_row, "checkbox");  // used at "view by line"
 ?>
 			</td>
 			</tr>
-			
+
 			<tr>
-				<td colspan="3"><h3><?php echo _AC("report_format"); ?></h3></td>
+				<td class="one_third_width"><input type="hidden" name="rpt_format" value="<?php echo REPORT_FORMAT_GUIDELINE; ?>" id="option_rpt_gdl" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) echo 'checked="checked"'; ?> /></td>
 			</tr>
-			<tr>
-				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_GUIDELINE; ?>" id="option_rpt_gdl" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_GUIDELINE) echo 'checked="checked"'; ?> /><label for="option_rpt_gdl"><?php echo _AC("view_by_guideline"); ?></label></td>
-				<td class="one_third_width"><input type="radio" name="rpt_format" value="<?php echo REPORT_FORMAT_LINE; ?>" id="option_rpt_line" <?php if ($_POST["rpt_format"] == REPORT_FORMAT_LINE) echo 'checked="checked"'; ?> /><label for="option_rpt_line"><?php echo _AC("view_by_line"); ?></label></td>
-			</tr>
+            <?php
+            // BEGIN CONTEXT SECTION by Joel Carvalho
+                if (count($this->contexts)>0){
+            ?>
+            <tr>
+                <td colspan="3"><h3><?php echo _AC("context"); ?></h3></td>
+            </tr>
+            <tr>
+                <?php
+                    foreach ($this->contexts as $index=>$c) {
+                        if ($index>0 && $index%3==0) echo '</tr><tr>';
+						if ($c["active"] == '1') $disabled = '';
+						else $disabled = 'disabled';
+						if ((defined('AC_DEVEL') && AC_DEVEL) || ((!defined('AC_DEVEL') || AC_DEVEL==0) && $c["active"]=='1')) {
+							echo '<td class="one_third_width"><input type="radio" name="val_context[]" id="option_val_context_'.$index.'" value="'.$c["context_id"].'" '.$disabled.'/>
+                        	<label for="option_val_context_'.$index.'" title="'.$c["description"].'" class="'.$disabled.'">'.$c["combined_name"].'</label></td>';
+						}
+                    }
+                ?>
+            </tr>
+            <?php
+                } // END CONTEXT SECTION by Joel Carvalho
+            ?>
 		</table>
 		</div>
 	</fieldset>
 	</div>
 </form>
 <div style="float:right;margin-right:2em;clear:right;width:250px;"><br />
-<a href="checker/index.php#skipads"><img src="images/clr.gif" alt="<?php echo _AC("skip_over_ads"); ?>" border="0"/></a>	
-	<script type="text/javascript">
-	<!--
-	google_ad_client = "pub-8538177464726172";
-	/* 250x250, created 3/13/09 */
-	google_ad_slot = "0783349774";
-	google_ad_width = 250;
-	google_ad_height = 250;
-	//-->
-	</script>
-	<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-	</script>
-<a name="skipads" title="passed ads"></a>
+
 </div>
 
 </div>

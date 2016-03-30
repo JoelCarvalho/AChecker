@@ -1,0 +1,4 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteRule ^tests/(.+)/(.+) tests/index.php?type=$1&check=$2 [L]

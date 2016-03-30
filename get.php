@@ -1,17 +1,21 @@
 <?php   
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+/*
+* @ignore
+*/
 define('AC_INCLUDE_PATH', 'include/');
+
 @ob_end_clean();
 header("Content-Encoding: none");
 if (isset($_GET['test'])) {
@@ -28,7 +32,7 @@ $force_download = false;
 
 //get path to file
 if (defined('AC_FORCE_GET_FILE') && AC_FORCE_GET_FILE) {
-	if ((version_compare(phpversion(), '5.2.0', '<') > 0) && !empty($_SERVER['ORIG_PATH_INFO'])){
+	if ((version_compare(phpversion(), '5.2.0', '<') > 0) && !empty($_SERVER['ORIG_PATH_INFO'])) {
 		$current_file = $_SERVER['ORIG_PATH_INFO'];
 	} else if (!empty($_SERVER['PATH_INFO'])) {
         $current_file = $_SERVER['PATH_INFO'];

@@ -1,23 +1,27 @@
 <?php
 /************************************************************************/
-/* AChecker                                                             */
+/* QChecker (former AChecker)											*/
+/* AChecker - https://github.com/inclusive-design/AChecker				*/
 /************************************************************************/
-/* Copyright (c) 2008 - 2011                                            */
-/* Inclusive Design Institute                                           */
+/* Inclusive Design Institute, Copyright (c) 2008 - 2015                */
+/* RELEASE Group And PT Innovation, Copyright (c) 2015 - 2016			*/
 /*                                                                      */
 /* This program is free software. You can redistribute it and/or        */
 /* modify it under the terms of the GNU General Public License          */
 /* as published by the Free Software Foundation.                        */
 /************************************************************************/
-// $Id$
 
+use QChecker\DAO\LanguagesDAO;
+
+/**
+* @ignore
+*/
 define('AC_INCLUDE_PATH', '../include/');
 
 include(AC_INCLUDE_PATH.'vitals.inc.php');
 include_once(AC_INCLUDE_PATH.'classes/DAO/LanguagesDAO.class.php');
 
-if (isset($_REQUEST['id']))
-{
+if (isset($_REQUEST['id'])) {
 	$pieces = explode('_', $_REQUEST['id'], 2);
 	$lang_code = $pieces[0];
 	$charset = $pieces[1];
@@ -25,16 +29,13 @@ if (isset($_REQUEST['id']))
 
 $languagesDAO = new LanguagesDAO();
 
-if (isset($_POST['submit_no'])) 
-{
+if (isset($_POST['submit_no'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: index.php');
 	exit;
 } 
-else if (isset($_POST['submit_yes']))
-{
-	if ($languagesDAO->Delete($lang_code))
-	{
+else if (isset($_POST['submit_yes'])) {
+	if ($languagesDAO->Delete($lang_code)) {
 		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 		header('Location: index.php');
 		exit;
